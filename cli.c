@@ -1,5 +1,16 @@
 #include "cli.h"
+#include "nvram_rule.h"
 extern nvram_handle_t *nvram_h ;
+void puts_trim_cr(char *str)
+{   
+	int len;
+
+	if (!str) return;
+
+	len = strlen(str);
+	if (len && (str[len-1] == '\r')) len--;
+	printf("%.*s\n", len, str);
+}
 
 int _do_show(nvram_handle_t *nvram)
 {
@@ -300,6 +311,7 @@ int main( int argc, const char *argv[] )
 	int stat = 1;
 	int done = 0;
 	int i;
+	char res[EZPLIB_BUF_LEN];
 
 	/* Ugly... iterate over arguments to see whether we can expect a write */
 	for( i = 1; i < argc; i++ ) {
@@ -313,15 +325,43 @@ int main( int argc, const char *argv[] )
 	}
 
 
-
 	if( argc > 1 )
 	{
 		for( i = 1; i < argc; i++ )
 		{
 			if( !strcmp(argv[i], "show") )
 			{
-				stat = do_show();
-				done++;
+				argc -= 2;
+				argv += 2;
+				if( 0==argc ) {
+					stat = do_show();
+					done++;
+				}
+				else if (argc == 2) {
+					/* nvram show <rule-set> <nth> */
+					ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
+					puts_trim_cr(res);
+					/* TODO: fix the return value. */
+					done++;
+					return 0;
+				} else if (argc == 3) {
+					/* nvram show <rule-set> <nth> <attr-type> */
+					ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
+							EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
+					puts_trim_cr(res);
+					/* TODO: fix the return value. */
+					done++;
+					return 0;
+				} else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
+					/* nvram show <rule-set> <nth> subrule <start> <end> */
+					ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
+							atoi(argv[4]), res, EZPLIB_BUF_LEN);
+					puts_trim_cr(res);
+					/* TODO: fix the return value. */
+					done++;
+					return 0;
+				}
+
 			}
 			else if( !strcmp(argv[i], "info") )
 			{
@@ -363,7 +403,9 @@ int main( int argc, const char *argv[] )
 				}
 				else
 				{
-					fprintf(stderr, "Command '%s' requires an argument!\n", argv[i]);
+					fprintf(stderr, 
+						"Command '%s' requires an argument!\n", 
+						argv[i]);
 					done = 0;
 					break;
 				}
@@ -375,7 +417,9 @@ int main( int argc, const char *argv[] )
 			}
 			else
 			{
-				fprintf(stderr, "Unknown option '%s' !\n", argv[i]);
+				fprintf(stderr, 
+					"Unknown option '%s' !\n", 
+					argv[i]);
 				done = 0;
 				break;
 			}
@@ -393,6 +437,9 @@ int main( int argc, const char *argv[] )
 		fprintf(stderr,
 			"Usage:\n"
 			"	nvram show\n"
+			"	nvram show <rule-set> <nth>\n"
+			"	nvram show <rule-set> <nth> <attr-type>\n"
+			"	nvram show <rule-set> <nth> subrule <start> <end>\n"
 			"	nvram info\n"
 			"	nvram get variable\n"
 			"	nvram set variable=value [set ...]\n"

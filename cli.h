@@ -2,6 +2,8 @@
 #define __CLI_H_
 #include "nvram.h"
 
+void puts_trim_cr(char *str);
+
 /*inner function*/
 int _do_show(nvram_handle_t *nvram);
 int _do_get(nvram_handle_t *nvram, const char *var);

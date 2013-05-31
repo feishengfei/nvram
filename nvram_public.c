@@ -2,7 +2,7 @@
 #include "nvram_fw.h"
 #include "nvram_factory.h"
 /* Global */
-nvram_handle_t *nvram_h = NULL;
+nvram_handle_t *nvram_h = -1;
 
 /* **************** public functions **************** */
 char * nvram_get(const char *name)
