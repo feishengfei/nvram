@@ -61,12 +61,6 @@ struct nvram_tuple {
 extern int nvram_init(void *sbh);
 
 /*
- * Disable NVRAM access. May be unnecessary or undefined on certain
- * platforms.
- */
-extern void nvram_exit(void);
-
-/*
  * Get the value of an NVRAM variable. The pointer returned may be
  * invalid after a set.
  * @param	name	name of variable to get

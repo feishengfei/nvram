@@ -115,11 +115,28 @@ int nvram_commit(nvram_handle_t *h);
 
 /********************************************************/
 
+extern char * nvram_get(const char *name);
+extern int nvram_set(const char *name, const char *value);
+extern int nvram_fset(const char *name, const char *value);
+extern int nvram_unset(const char *name);
+extern int nvram_getall(char *buf, int count);
+extern int nvram_commit(void);
+
+extern void nvram_default(void);
+extern void nvram_default_rule(char *rulename);
+extern void nvram_factory(void);
+
+/********************************************************/
 
 
 
 
-/* Open NVRAM and obtain a handle. */
+
+
+
+
+
+/ Open NVRAM and obtain a handle. */
 nvram_handle_t * nvram_open(const char *file, int rdonly);
 
 /* Close NVRAM and free memory. */

@@ -55,7 +55,7 @@
 #if defined(NVRAM_MMAP) && NVRAM_MMAP > 0
 static char *nvram_buf = NULL;
 #endif
-static int nvram_fd = -1;//this means the global variable can only be used at this file ,commented by daniel
+static int nvram_fd = -1;
 int check_action(void);
 int file_to_buf(char *path, char *buf, int len);
 
