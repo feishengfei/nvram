@@ -1,3 +1,4 @@
 *.o
 libnvram.so*
 nvram
+.*.swp
