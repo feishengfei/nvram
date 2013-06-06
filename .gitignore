@@ -1,0 +1,3 @@
+*.o
+libnvram.so*
+nvram
