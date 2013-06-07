@@ -9,7 +9,6 @@ LIB_VERMINOR = 1
 LIB_FILENAME = libnvram.so
 
 LIB_CFLAGS  = $(CFLAGS) -shared -fPIC
-#LIB_LDFLAGS = $(LDFLAGS) -Wl,-soname,$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR)
 
 CLI_CFLAGS  = $(CFLAGS)
 CLI_LDFLAGS = $(LDFLAGS)
@@ -21,8 +20,9 @@ all: cli libnvram
 
 cli: libnvram
 	$(CC) $(CLI_CFLAGS) -c -o cli.o cli.c
-	$(CC) -o $(CLI_FILENAME) $(CLI_LDFLAGS) $(CLI_OBJ) \
-		$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR)
+	$(CC)  $(CLI_LDFLAGS) $(CLI_OBJ) \
+	$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR) \
+		-o $(CLI_FILENAME)
 
 cli.o: cli.c
 	$(CC) $(CLI_CFLAGS) -c -o $@ $<
@@ -30,7 +30,7 @@ cli.o: cli.c
 libnvram:
 	$(CC) $(LIB_CFLAGS) -c -o crc.o crc.c
 	$(CC) $(LIB_CFLAGS) -c -o nvram.o nvram.c
-	$(CC) $(LIB_CFLAGS) $(LIB_LDFLAGS) \
+	$(CC) $(LIB_CFLAGS)  \
 		-o $(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR) $(LIB_OBJ)
 
 clean:

@@ -23,12 +23,10 @@ uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
 size_t nvram_erase_size = 0;
 
 
-/*
- * -- Helper functions --
- */
+/* -- Helper functions -- */
 
 /* String hash */
-static uint32_t hash(const char *s)
+uint32_t hash(const char *s)
 {
 	uint32_t hash = 0;
 
@@ -39,7 +37,7 @@ static uint32_t hash(const char *s)
 }
 
 /* Free all tuples. */
-static void _nvram_free(nvram_handle_t *h)
+void _nvram_free(nvram_handle_t *h)
 {
 	uint32_t i;
 	nvram_tuple_t *t, *next;
@@ -63,7 +61,7 @@ static void _nvram_free(nvram_handle_t *h)
 }
 
 /* (Re)allocate NVRAM tuples. */
-static nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
+nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value )
 {
 	if ((strlen(value) + 1) > NVRAM_SPACE)
@@ -94,9 +92,9 @@ static nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 }
 
 /* (Re)initialize the hash table. */
-static int _nvram_rehash(nvram_handle_t *h)
+int _nvram_rehash(nvram_handle_t *h)
 {
-	nvram_header_t *header = nvram_header(h);
+	nvram_header_t *header = _nvram_header(h);
 	char buf[] = "0xXXXXXXXX", *name, *value, *eq;
 
 	/* (Re)initialize hash table */
@@ -137,14 +135,120 @@ static int _nvram_rehash(nvram_handle_t *h)
 }
 
 
-/*
- * -- Public functions --
- */
+/* -- inner functions -- */
 
 /* Get nvram header. */
-nvram_header_t * nvram_header(nvram_handle_t *h)
+nvram_header_t * _nvram_header(nvram_handle_t *h)
 {
 	return (nvram_header_t *) &h->mmap[h->offset];
+}
+
+/* Open NVRAM and obtain a handle. */
+nvram_handle_t * _nvram_open(const char *file, int rdonly)
+{
+	int i;
+	int fd;
+	char *mtd = NULL;
+	nvram_handle_t *h;
+	nvram_header_t *header;
+	int offset = -1;
+
+	/* If erase size or file are undefined then try to define them */
+	if( (nvram_erase_size == 0) || (file == NULL) )
+	{
+		/* Finding the mtd will set the appropriate erase size */
+		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
+		{
+			free(mtd);
+			return NULL;
+		}
+	}
+
+	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
+	{
+		char *mmap_area = (char *) mmap(
+			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
+			(( rdonly == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
+
+		if( mmap_area != MAP_FAILED )
+		{
+			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
+			{
+				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
+				{
+					offset = i * sizeof(uint32_t);
+					break;
+				}
+			}
+
+			if( offset < 0 )
+			{
+				free(mtd);
+				return NULL;
+			}
+			else if( (h = malloc(sizeof(nvram_handle_t))) != NULL )
+			{
+				memset(h, 0, sizeof(nvram_handle_t));
+
+				h->fd     = fd;
+				h->mmap   = mmap_area;
+				h->length = nvram_erase_size;
+				h->offset = offset;
+
+				header = _nvram_header(h);
+
+				if( header->magic == NVRAM_MAGIC )
+				{
+					_nvram_rehash(h);
+					free(mtd);
+					return h;
+				}
+				else
+				{
+					munmap(h->mmap, h->length);
+					free(h);
+				}
+			}
+		}
+	}
+
+	free(mtd);
+	return NULL;
+}
+
+/* Invoke a nvram handle for get, getall. */
+nvram_handle_t * _nvram_open_rdonly(void)
+{
+	const char *file = nvram_find_staging();
+
+	file = nvram_find_mtd();
+	if( file == NULL )
+		file = nvram_find_mtd();
+
+	if( file != NULL )
+		return _nvram_open(file, NVRAM_RO);
+
+	return NULL;
+}
+
+/* Invoke a nvram handle for set, unset & commit. */
+nvram_handle_t * _nvram_open_staging(void)
+{
+	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
+		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
+
+	return NULL;
+}
+
+/* Close NVRAM and free memory. */
+int _nvram_close(nvram_handle_t *h)
+{
+	_nvram_free(h);
+	munmap(h->mmap, h->length);
+	close(h->fd);
+	free(h);
+
+	return 0;
 }
 
 /* Get the value of an NVRAM variable. */
@@ -167,6 +271,34 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
 
 	return value;
 }
+
+/* Get all NVRAM variables. */
+nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
+{
+	int i;
+	nvram_tuple_t *t, *l, *x;
+
+	l = NULL;
+
+	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
+		for (t = h->nvram_hash[i]; t; t = t->next) {
+			if( (x = (nvram_tuple_t *) malloc(sizeof(nvram_tuple_t))) != NULL )
+			{
+				x->name  = t->name;
+				x->value = t->value;
+				x->next  = l;
+				l = x;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	return l;
+}
+
 
 /* Set the value of an NVRAM variable. */
 int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
@@ -230,37 +362,11 @@ int _nvram_unset(nvram_handle_t *h, const char *name)
 	return 0;
 }
 
-/* Get all NVRAM variables. */
-nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
-{
-	int i;
-	nvram_tuple_t *t, *l, *x;
-
-	l = NULL;
-
-	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
-		for (t = h->nvram_hash[i]; t; t = t->next) {
-			if( (x = (nvram_tuple_t *) malloc(sizeof(nvram_tuple_t))) != NULL )
-			{
-				x->name  = t->name;
-				x->value = t->value;
-				x->next  = l;
-				l = x;
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
-	return l;
-}
 
 /* Regenerate NVRAM. */
 int _nvram_commit(nvram_handle_t *h)
 {
-	nvram_header_t *header = nvram_header(h);
+	nvram_header_t *header = _nvram_header(h);
 	char *init, *config, *refresh, *ncdl;
 	char *ptr, *end;
 	int i;
@@ -337,111 +443,8 @@ int _nvram_commit(nvram_handle_t *h)
 	return _nvram_rehash(h);
 }
 
-/* Open NVRAM and obtain a handle. */
-nvram_handle_t * _nvram_open(const char *file, int rdonly)
-{
-	int i;
-	int fd;
-	char *mtd = NULL;
-	nvram_handle_t *h;
-	nvram_header_t *header;
-	int offset = -1;
 
-	/* If erase size or file are undefined then try to define them */
-	if( (nvram_erase_size == 0) || (file == NULL) )
-	{
-		/* Finding the mtd will set the appropriate erase size */
-		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
-		{
-			free(mtd);
-			return NULL;
-		}
-	}
 
-	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
-	{
-		char *mmap_area = (char *) mmap(
-			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
-			(( rdonly == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
-
-		if( mmap_area != MAP_FAILED )
-		{
-			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
-			{
-				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
-				{
-					offset = i * sizeof(uint32_t);
-					break;
-				}
-			}
-
-			if( offset < 0 )
-			{
-				free(mtd);
-				return NULL;
-			}
-			else if( (h = malloc(sizeof(nvram_handle_t))) != NULL )
-			{
-				memset(h, 0, sizeof(nvram_handle_t));
-
-				h->fd     = fd;
-				h->mmap   = mmap_area;
-				h->length = nvram_erase_size;
-				h->offset = offset;
-
-				header = nvram_header(h);
-
-				if( header->magic == NVRAM_MAGIC )
-				{
-					_nvram_rehash(h);
-					free(mtd);
-					return h;
-				}
-				else
-				{
-					munmap(h->mmap, h->length);
-					free(h);
-				}
-			}
-		}
-	}
-
-	free(mtd);
-	return NULL;
-}
-
-nvram_handle_t * _nvram_open_rdonly(void)
-{
-	const char *file = nvram_find_staging();
-
-	file = nvram_find_mtd();
-	if( file == NULL )
-		file = nvram_find_mtd();
-
-	if( file != NULL )
-		return _nvram_open(file, NVRAM_RO);
-
-	return NULL;
-}
-
-nvram_handle_t * _nvram_open_staging(void)
-{
-	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
-		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
-
-	return NULL;
-}
-
-/* Close NVRAM and free memory. */
-int _nvram_close(nvram_handle_t *h)
-{
-	_nvram_free(h);
-	munmap(h->mmap, h->length);
-	close(h->fd);
-	free(h);
-
-	return 0;
-}
 
 /* Determine NVRAM device node. */
 char * nvram_find_mtd(void)
@@ -468,7 +471,7 @@ char * nvram_find_mtd(void)
 	{
 		while( fgets(dev, sizeof(dev), fp) )
 		{
-			if( strstr(dev, "nvram") && sscanf(dev, "mtd%d: %08x", &i, &esz) )
+			if( strstr(dev, NVRAM_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
 			{
 				nvram_erase_size = esz;
 

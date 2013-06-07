@@ -82,7 +82,7 @@ static int do_set(nvram_handle_t *nvram, const char *pair)
 
 static int do_info(nvram_handle_t *nvram)
 {
-	nvram_header_t *hdr = nvram_header(nvram);
+	nvram_header_t *hdr = _nvram_header(nvram);
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
 	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
