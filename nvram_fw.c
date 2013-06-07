@@ -24,31 +24,13 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-#include <typedefs.h>
-#include <bcmnvram.h>
-#include <shutils.h>
-#include <utils.h>
-#include "ezp-lib.h"
-#include "nvram_fw.h"
-#include "nvram_ezpacket.h"
-
-//link to sdk lib
 #include "nvram.h"
+#include "nvram_rule.h"
+#include "nvram_fw.h"
 
-//TODO masked by frankzhou
-//#include <linux/autoconf.h>
-
-/* 3G/4G Wireless broadband device definition. */
-#if defined(EZP_PROD_CAT_M) || defined(EZP_PROD_CAT_N) 
-#include "ezpcom-lib.h"
-#endif
-
-#define PATH_DEV_NVRAM "/dev/nvram"
-#define NVRAM_TMP_LEN 4096
-
-#ifndef EZP_PROD_VERSION
-#error "Undefinied firmware version"
-#endif
+#define WAN_NUM 1
+#define LAN_NUM 1
+#define WL_NUM 1
 
 
 /* Globals */
@@ -154,551 +136,6 @@ struct nvram_fw_tuple nvram_fw_table[] = {
     { NULL, 0, NULL, NULL }
 };
 
-int nvram_init(void *unused)
-{
-	
-	return nvram_init_ralink(RT2860_NVRAM, &nvram_fd);
-}
-
-void nvram_close(int index)
-{
-	nvram_close_ralink(index);
-}
-
-char *nvram_get(const char *name)
-{
-	char *ret = NULL;
-	int nvram_fd_tmp = nvram_fd;
-	
-	if (nvram_fd < 0)
-		if (nvram_init(NULL))
-		{
-			nvram_close(RT2860_NVRAM);
-			return NULL;
-		}
-	
-	ret = nvram_get_ralink(RT2860_NVRAM, name);
-    
-	return ret;
-}
-
-int nvram_getall(char *buf, int count)
-{
-	int ret;
-       int nvram_fd_tmp = nvram_fd;
-	   
-	if (nvram_fd < 0)
-		if ((ret = nvram_init(NULL)))
-		{
-			nvram_close(RT2860_NVRAM);
-			return ret;
-		}
-
-	if (count == 0)
-	{
-		if (nvram_fd_tmp  < 0)
-			nvram_close(RT2860_NVRAM);
-		return 0;
-	}
-
-	ret=nvram_getall_ralink(RT2860_NVRAM, buf,count);
-
-	if (nvram_fd_tmp  < 0)
-		nvram_close(RT2860_NVRAM);
-   
-	return  ret;
-}
-
-int nvram_get_option(const char *name)
-{
-    struct nvram_tuple *v;
-    for (v = &nvram_ezpacket_default[0]; v->name ; v++) {
-        if (!strcmp(v->name, name)) 
-            return v->option;
-    }
-    /* No option is found. */
-    return NVRAM_UNDEFINED;
-}
-
-static int _nvram_set(const char *name, const char *value)
-{	
-	int ret;
-	if (nvram_fd < 0)
-		if ((ret = nvram_init_ralink(RT2860_NVRAM,&nvram_fd)))
-			return ret;
-
-	ret=nvram_set_ralink(RT2860_NVRAM, name, value);
-
-	return ret;
-}
-
-int nvram_set(const char *name, const char *value)
-{
-    uint32 opt = nvram_get_option(name);
-    int ret = 0;
-    nvram_init(NULL);
-    //printf("==============in nvram_set=== opt  %x,name %s,value %s===========\n",opt,name,value);
-    if (opt & NVRAM_UNDEFINED) {
-		
-	 nvram_close(RT2860_NVRAM);
-        return EINVAL;
-    }
-    if (opt & NVRAM_PROTECTED) {
-        char *exist = nvram_get(name);
-        if (exist && *exist) {
-	     nvram_close(RT2860_NVRAM);
-            return EACCES; /* If anything exists, return permission denied. */
-        }
-    }
-	
-    ret = _nvram_set(name, value);
-    nvram_close(RT2860_NVRAM);
-	
-    return ret;
-}
-
-int nvram_set_boot(const char *name, const char *value)
-{
-    uint32 opt = nvram_get_option(name);
-    int ret = 0;
-  
-    //printf("==============in nvram_set=== opt  %x,name %s,value %s===========\n",opt,name,value);
-    if (opt & NVRAM_UNDEFINED) {
-        return EINVAL;
-    }
-    if (opt & NVRAM_PROTECTED) {
-        char *exist = nvram_get(name);
-        if (exist && *exist) {
-            return EACCES; /* If anything exists, return permission denied. */
-        }
-    }
-	
-    ret = _nvram_set(name, value);
-   
-    return ret;
-}
-
-int nvram_fset(const char *name, const char *value)
-{
-     int ret = 0;
-    nvram_init(NULL);
-    ret = _nvram_set(name, value);
-    nvram_close(RT2860_NVRAM);
-	
-    return ret;
-}
-
-int nvram_unset(const char *name)
-{
-	return nvram_fset(name, "");
-}
-
-int nvram_commit(void)
-{
-	//return 0;
-	nvram_init(NULL);
-	nvram_commit_ralink(RT2860_NVRAM);
-	nvram_close(RT2860_NVRAM);
-}
-
-void nvram_boot(void)
-{
-    struct nvram_tuple *v;
-    char *value;
-	
-    nvram_init(NULL);
-	
-    for (v = &nvram_ezpacket_default[0]; v->name ; v++) {
-        value = nvram_get(v->name);
-        if (!value || !*value) {
-	//printf("=============in if condition ,v->name is  %s ==================\n",v->name);
-            /* NULL or "\0" */
-            if (v->option & NVRAM_EMPTY)
-                continue; /* NULL or "\0" is allowed. */
-
-            if (v->option & NVRAM_DEFAULT) {
-                char default_name[64];
-                /* Get the default value. */
-                sprintf(default_name, "%s_default", v->name);
-                v->value = nvram_get(default_name);
-            }
-
-            //nvram_set(v->name, v->value);
-            nvram_set_boot(v->name, v->value);
-        } else {
-         //   printf("=============in else condition, v->name is  %s==================\n",v->name);
-            /* Some value exist. */
-            if (v->option & NVRAM_TEMP)
-                /* Reset the value! */
-              //  nvram_set(v->name, v->value);
-               nvram_set_boot(v->name, v->value);
-        }
-    }
-	
-    nvram_close(RT2860_NVRAM);
-}
-
-static int special_processing()
-{
-    char tmp[32];
-    char *val;
-
-    ezplib_get_attr_val("ssh_rule", 0, "enable", tmp, sizeof(tmp),
-                    EZPLIB_USE_CLI);
-    if (tmp[0] != '0') {
-        ezplib_replace_attr("ssh_rule", 0, "enable", "0");
-        return 1;
-    }
-
-    val = nvram_get("turbonat_enable");
-    if (!val || *val == '0') {
-        nvram_fset("turbonat_enable", "1");
-    }
-
-    return 0;
-}
-
-int nvram_upgrade(char *source)
-{
-    struct nvram_fw_tuple *v;
-    int old, new;
-    char old_str[32];
-    char new_str[32];
-    int i, change = 0;
-
-    /* If source is empty, get it from fw_version. */
-    if (source && *source) {
-        strcpy(old_str, source);
-    } else {
-        strcpy(old_str, nvram_safe_get("fw_version"));
-    }
-    strcpy(new_str, xstr(EZP_PROD_VERSION));
-	//add for test
-	//printf("====== old_str :%s ===  new_str :%s=====\n",old_str,new_str);
-
-    if (strcmp(old_str, new_str)) {
-        /* If the versions have any difference, eg., 2.0.2-RC1 to 2.0.2-RC3, we
-         * should enforce the special processing, fg., closing the backdoor.
-         */
-         //printf(" =======nvram_upgrade===strcmp(old_str, new_str)=== \n"); 
-        change = special_processing();
-    }
-
-    /* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
-    for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
-    old_str[i]='\0';
-    for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
-    new_str[i]='\0';
-
-    /* Use "0.0.0" instead of "". */
-    if (!*old_str) {
-        strcpy(old_str, nvram_fw_table[0].fw_str);
-    }
-
-    /* We might not be able to find out the version. Skip upgrade if cannot. */
-    old = 0xEFFFFFFF;
-    for (v = &nvram_fw_table[0]; v->fw_str ; v++) {
-        if (!strcmp(v->fw_str, old_str)) {
-            old = v->fw_version;
-	   //  printf("~~~~~~old : %d~~~~~~\n",old);
-        }
-        if (!strcmp(v->fw_str, new_str)) {
-            new = v->fw_version;
-	   //   printf("~~~~~~new : %d~~~~~~\n",new);
-        }
-    }
-	//printf("=======old:%d==new:%d=======\n",old,new);
-	
-    if (old < new) {
-        printf("Upgrade [%s->%s]\n", old_str, new_str);
-        /* Upgrade. Use the upgrade functions from (old + 1) to new. */
-        for (i = old + 1; i <= new; i++) {
-            if (nvram_fw_table[i].fw_upgrade_func) {
-                (*nvram_fw_table[i].fw_upgrade_func)();
-            }
-        }
-        /* nvram is the only place to set fw_version. */
-        nvram_fset("fw_version", xstr(EZP_PROD_VERSION));
-        change = 1;
-    }
-    
-    if(strcmp(nvram_safe_get("prod_subsubcat"), "")) {
-        /* unset prod_subsubcat to make sure prod_subsubcat the same with 
-         * special firmware */
-        nvram_unset("prod_subsubcat"); 
-        change = 1;
-    }
-    return change;
-}
-
-int nvram_downgrade(char *target)
-{
-    struct nvram_fw_tuple *v;
-    int old, new;
-    char old_str[32];
-    char new_str[32];
-    int i, change = 0;
-
-    strcpy(old_str, nvram_safe_get("fw_version"));
-    strcpy(new_str, target);
-
-    if (strcmp(old_str, new_str)) {
-        /* If the versions have any difference, eg., 2.0.2-RC1 to 2.0.2-RC3, we
-         * should enforce the special processing, fg., closing the backdoor.
-         */
-        change = special_processing();
-    }
-
-    /* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
-    for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
-    old_str[i]='\0';
-    for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
-    new_str[i]='\0';
-
-    /* Use "0.0.0" instead of "". */
-    if (!*old_str) {
-        strcpy(old_str, nvram_fw_table[0].fw_str);
-    }
-    if (!*new_str) {
-        strcpy(new_str, nvram_fw_table[0].fw_str);
-    }
-
-    /* We might not find out the version. Skip downgrade if cannot. */
-    old = 0;
-    for (v = &nvram_fw_table[0]; v->fw_str ; v++) {
-        if (!strcmp(v->fw_str, old_str)) {
-            old = v->fw_version;
-        }
-        if (!strcmp(v->fw_str, new_str)) {
-            new = v->fw_version;
-        }
-    }
-    if (old > new) {
-        printf("Downgrade [%s->%s]\n", old_str, new_str);
-        /* Downgrade. Use the upgrade functions from old to (new + 1). */
-        for (i = old; i >= new + 1; i-- ) {
-            if (nvram_fw_table[i].fw_downgrade_func) {
-                (*nvram_fw_table[i].fw_downgrade_func)();
-            }
-        }
-        /* nvram is the only place to set fw_version. */
-        if (!strcmp(new_str, nvram_fw_table[0].fw_str)) {
-            nvram_unset("fw_version"); /* 0.0.0 */
-        } else {
-            nvram_fset("fw_version", target);
-        }
-        change = 1;
-    }
-    if(strcmp(nvram_safe_get("prod_subsubcat"), "")) {
-        /* unset prod_subsubcat to make sure prod_subsubcat the same with 
-         * special firmware */
-        nvram_unset("prod_subsubcat"); 
-        change = 1;
-    }
-    return change;
-}
-
-void nvram_default(void)
-{
-    struct nvram_tuple *v;
-    for (v = &nvram_ezpacket_default[0]; v->name ; v++)
-        nvram_set(v->name, v->value);
-}
-
-void nvram_default_rule(char *rulename)
-{
-    struct nvram_tuple *v;
-    for (v = &nvram_ezpacket_default[0]; v->name ; v++) {
-        if(!strcmp(v->name, rulename)) {
-            nvram_set(v->name, v->value);
-            break;
-        }
-    }
-}
-
-void nvram_export(char *filename)
-{
-    FILE *fp;
-    struct nvram_tuple *v;
-    char *value;
-
-    if ( !(fp = fopen(filename, "wb") ))
-        return;
-
-    fprintf(fp, "[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n", 
-            nvram_safe_get("brand"), nvram_safe_get("model"), 
-            nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat")); 
-
-    for (v = &nvram_ezpacket_default[0]; v->name ; v++) {
-        /* Skip NVRAM_PROTECTED or NVRAM_TEMP. */
-        if ((v->option & NVRAM_PROTECTED) || 
-                (v->option & NVRAM_TEMP)) {
-            continue;
-        } 
-        value = nvram_safe_get(v->name);
-        fprintf(fp, "%s=%s\n", v->name, value);
-    }
-    fclose(fp);
-}
-
-int nvram_import(char *filename)
-{
-    FILE *fp;
-    char *p, *q;
-    char buf[NVRAM_TMP_LEN];
-    char old_str[32], new_str[32];
-    int old, new;
-    int i;
-
-    struct nvram_tuple *v;
-    struct nvram_fw_tuple *w;
-
-    if ( !(fp = fopen(filename, "r") ))
-        return 1;
-
-    /* First line should begin with "EZP_LOG". */
-    fgets(buf, sizeof(buf), fp);
-    if ((p = strstr(buf, "EZP_LOG")) == NULL) {
-        printf("log file format error\n");
-        return 1;
-    }
-    if ((p = strstr(p + strlen("EZP_LOG"), "EZP_")) == NULL) {
-        printf("log file format error: product\n");
-        return 1;
-    }
-    p += strlen("EZP_");
-    /* prod_cat */
-    q = nvram_safe_get("prod_cat");
-    if (p[0] != q[0]) {
-        printf("log file format error: category\n");
-        return 1;
-    }
-    /* prod_subcat */
-    q = nvram_safe_get("prod_subcat");
-    if (p[1] != q[0]) {
-        printf("log file format error: subcategory\n");
-        return 1;
-    }
-
-    p = strchr(p, ']');
-    p += 1;
-
-    if (*p == '\n' || *p == '\0') {
-        strcpy(old_str, "0.0.0");
-    } else {
-        strncpy(old_str, p + 1, strlen(p + 1));
-    }
-
-    /* XXX:We don't accept any thing higher than our current version. */
-    strcpy(new_str, xstr(EZP_PROD_VERSION));
-    /* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
-    for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
-    old_str[i]='\0';
-    for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
-    new_str[i]='\0';
-
-    /* Very likely we cannot find the matched version since our firmware might
-     * be older than the config file. */
-    old = 0x0FFFFFFF;
-
-    for (w = &nvram_fw_table[0]; w->fw_str ; w++) {
-        if (!strcmp(w->fw_str, old_str)) {
-            old = w->fw_version;
-        }
-        if (!strcmp(w->fw_str, new_str)) {
-            new = w->fw_version;
-        }
-    }
-
-    if (old > new) {
-        printf("log file format error: newer version configuration format\n");
-        return 1;
-    }
-
-    while (fgets(buf, sizeof(buf), fp)) {
-        if ((p = strchr(buf, '=')) == NULL)
-            continue;
-
-        /* Please the end of the string to replace "=". */
-        *p = 0; 
-
-        for (v = &nvram_ezpacket_default[0]; v->name ; v++) {
-            if (!strcmp(v->name, buf)) {
-                break;
-            }
-        }
-
-        if (!v->name || (v->option & NVRAM_PROTECTED) || 
-                (v->option & NVRAM_TEMP)) {
-            /* No match or NVRAM_PROTECTED or NVRAM_TEMP. */
-            printf("invalid: %s=%s\n", buf, p + 1);
-            continue;
-        }
-
-        if (*(p + 1) == '\n') {
-            /* "key=\n" */
-            nvram_set(buf, "");
-        } else {
-            /* "key=value\n" */
-            p++;
-            /* Replace \n with \0 */
-            if (*(p + strlen(p) - 1) == '\n') {
-                *(p + strlen(p) - 1) = '\0';
-            }
-            nvram_set(buf, p);
-        }
-    }
-    fclose(fp);
-
-    nvram_upgrade(old_str);
-
-    return 0;
-}
-
-int check_action(void)
-{
-	char buf[80] = "";
-	
-	if(file_to_buf(ACTION_FILE, buf, sizeof(buf))){
-		if(!strcmp(buf, "ACT_TFTP_UPGRADE")){
-			cprintf("Upgrading from tftp now, quiet exit....\n");
-			return ACT_TFTP_UPGRADE;
-		}
-		else if(!strcmp(buf, "ACT_WEBS_UPGRADE")){
-			cprintf("Upgrading from web (https) now, quiet exit....\n");
-			return ACT_WEBS_UPGRADE;
-		}
-		else if(!strcmp(buf, "ACT_WEB_UPGRADE")){
-			cprintf("Upgrading from web (http) now, quiet exit....\n");
-			return ACT_WEB_UPGRADE;
-		}
-		else if(!strcmp(buf, "ACT_SW_RESTORE")){
-			cprintf("Receive restore command from web, quiet exit....\n");
-			return ACT_SW_RESTORE;
-		}
-		else if(!strcmp(buf, "ACT_HW_RESTORE")){
-			cprintf("Receive restore commond from resetbutton, quiet exit....\n");
-			return ACT_HW_RESTORE;
-		}
-	}
-	//fprintf(stderr, "Waiting for upgrading....\n");
-	return ACT_IDLE;
-}
-
-int file_to_buf(char *path, char *buf, int len)
-{
-	FILE *fp;
-
-	memset(buf, 0 , len);
-
-	if ((fp = fopen(path, "r"))) {
-		fgets(buf, len, fp);
-		fclose(fp);
-		return 1;
-	}
-
-	return 0;
-}
 
 int fw_func_0_0_0_to_1_6_5(void)
 {
@@ -723,7 +160,7 @@ int fw_func_0_0_0_to_1_6_5(void)
          * global_percent^user_percent^dbm_upmax^dbm_upmin^dbm_downmax^
          * dbm_downmin 
          */
-        for (i = 0, j = 0, len = 0; i < WAN_NUM; i++) {
+		for (i = 0, j = 0, len = 0; i < WAN_NUM; i++) {
             /* Removed expert_dl/expert_ul. */
             ezplib_get_attr_val(rule_set, i, "type", tmp, sizeof(tmp),
                     EZPLIB_USE_CLI);
@@ -1302,6 +739,8 @@ int fw_func_1_7_5_to_1_7_4(void)
 
 int fw_func_1_7_5_to_1_7_6(void)
 {
+//TODO
+#if 0
     int i, j, len, rule_num, max;
     char new[1024], old[1024];
     char tmp[64], tmp2[64], tmp3[64];
@@ -1799,6 +1238,7 @@ int fw_func_1_7_5_to_1_7_6(void)
     }
 #endif
 
+#endif //#if 0
     return 0;
 }
 
@@ -2036,8 +1476,10 @@ int fw_func_1_7_6_to_1_7_5(void)
     return 0;
 }
 
+//TODO
 int fw_func_1_7_6_to_1_7_7(void)
 {
+#if 0 
     char *rule_set;
     char new[1024], old[1024];
     char tmp[64];
@@ -2105,6 +1547,8 @@ int fw_func_1_7_6_to_1_7_7(void)
 
     /* Unset upnp_rule. So it falls back to default. */
     nvram_unset("upnp_rule");
+#endif
+	return 0;
 }
 
 int fw_func_1_7_7_to_1_7_6(void)
@@ -2703,8 +2147,11 @@ int fw_func_2_0_5_to_2_0_4(void)
     
     return 0;
 }
+
+//TODO
 int fw_func_2_0_4_to_2_0_5(void)
 {
+#if 0
     char tmp[256], buf[256];
     int rule_num;
     printf("fw_func_2_0_4_to_2_0_5\n");
@@ -2739,5 +2186,6 @@ int fw_func_2_0_4_to_2_0_5(void)
         nvram_set("lan_num", tmp);
     }
     ezplib_append_rule("",GuestLANtoLAN);
+#endif
     return 0;
 }

@@ -3,7 +3,7 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+!_TAG_PROGRAM_VERSION	5.8	//
 ABO_AUTO	include/wlioctl.h	1090;"	d
 ABO_OFF	include/wlioctl.h	1091;"	d
 ABO_ON	include/wlioctl.h	1092;"	d
@@ -12,15 +12,15 @@ ACCESS1	src/nvram_ezpacket6239.h	1381;"	d
 ACCESS2	src/nvram_ezpacket.h	1207;"	d
 ACCESS2	src/nvram_ezpacket6239.h	1382;"	d
 ACI	include/proto/802.11.h	/^	uint8	ACI;$/;"	m	struct:wme_acparam
-ACTION	include/utils.h	/^	       ACT_HW_RESTORE } ACTION;$/;"	t	typeref:enum:__anon3
+ACTION	include/utils.h	/^	       ACT_HW_RESTORE } ACTION;$/;"	t	typeref:enum:__anon23
 ACTION	include/utils.h	63;"	d
 ACTION_FILE	include/utils.h	98;"	d
-ACT_HW_RESTORE	include/utils.h	/^	       ACT_HW_RESTORE } ACTION;$/;"	e	enum:__anon3
-ACT_IDLE	include/utils.h	/^typedef enum { ACT_IDLE, $/;"	e	enum:__anon3
-ACT_SW_RESTORE	include/utils.h	/^	       ACT_SW_RESTORE, $/;"	e	enum:__anon3
-ACT_TFTP_UPGRADE	include/utils.h	/^	       ACT_TFTP_UPGRADE, $/;"	e	enum:__anon3
-ACT_WEBS_UPGRADE	include/utils.h	/^	       ACT_WEBS_UPGRADE, $/;"	e	enum:__anon3
-ACT_WEB_UPGRADE	include/utils.h	/^	       ACT_WEB_UPGRADE, $/;"	e	enum:__anon3
+ACT_HW_RESTORE	include/utils.h	/^	       ACT_HW_RESTORE } ACTION;$/;"	e	enum:__anon23
+ACT_IDLE	include/utils.h	/^typedef enum { ACT_IDLE, $/;"	e	enum:__anon23
+ACT_SW_RESTORE	include/utils.h	/^	       ACT_SW_RESTORE, $/;"	e	enum:__anon23
+ACT_TFTP_UPGRADE	include/utils.h	/^	       ACT_TFTP_UPGRADE, $/;"	e	enum:__anon23
+ACT_WEBS_UPGRADE	include/utils.h	/^	       ACT_WEBS_UPGRADE, $/;"	e	enum:__anon23
+ACT_WEB_UPGRADE	include/utils.h	/^	       ACT_WEB_UPGRADE, $/;"	e	enum:__anon23
 AC_BE	include/proto/802.11.h	340;"	d
 AC_BK	include/proto/802.11.h	341;"	d
 AC_MAX	include/proto/802.11.h	344;"	d
@@ -57,13 +57,13 @@ BACKGROUND_HEURISTICS_CLASSIFY	src/nvram_ezpacket.h	503;"	d
 BACKUP_RESTORE_SUPPORT	include/cy_conf.h	65;"	d
 BATTLENET_APP	src/nvram_ezpacket.h	1188;"	d
 BATTLENET_APP	src/nvram_ezpacket6239.h	1363;"	d
-BCM4702_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
-BCM4704_BCM5325F_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
-BCM4712_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
+BCM4702_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
+BCM4704_BCM5325F_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
+BCM4712_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
 BCM4712_CHIP_SUPPORT_BOOT_VERSION_FROM	include/code_pattern.h	76;"	d
 BCM4712_CHIP_SUPPORT_VERSION_FROM	include/code_pattern.h	74;"	d
-BCM5325E_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
-BCM5352E_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
+BCM5325E_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
+BCM5352E_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
 BCN_PRB_SSID	include/proto/802.11.h	465;"	d
 BOOT_IPADDR	include/cyutils.h	12;"	d
 BOOT_NETMASK	include/cyutils.h	13;"	d
@@ -265,7 +265,7 @@ CEIL	src/include/bcmutils.h	25;"	d
 CERT_NVRAM	src/nvram.h	12;"	d
 CERT_NVRAM	src/nvram.h	17;"	d
 CFES_BOOT_VERSION	include/cyutils.h	10;"	d
-CFE_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon4
+CFE_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon24
 CFE_BOOT_VERSION	include/cyutils.h	9;"	d
 CISCO	include/code_pattern.h	12;"	d
 CMN_IOCTL_OFF	include/wlioctl.h	915;"	d
@@ -299,7 +299,7 @@ CONFIG_WL_STA	include/cy_conf.h	64;"	d
 CONFIG_WRITE_MAC	include/cy_conf.h	46;"	d
 CONFIG_XBOX	include/cy_conf.h	54;"	d
 CONFIG_ZEBRA	include/cy_conf.h	17;"	d
-CONSOLE_ONLY	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon7
+CONSOLE_ONLY	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon27
 COS_CLASSIFICATION_STATUS_VALUE	src/nvram_ezpacket.h	380;"	d
 COS_CLASSIFY_VALUE	src/nvram_ezpacket.h	497;"	d
 COUNTRY	include/code_pattern.h	42;"	d
@@ -350,7 +350,7 @@ DBM_MAX	src/nvram_ezpacket6239.h	428;"	d
 DBM_MAX	src/nvram_ezpacket6239.h	471;"	d
 DBM_MAX	src/nvram_ezpacket6239.h	76;"	d
 DDNS_SUPPORT	include/cy_conf.h	20;"	d
-DEBUG_CONSOLE	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon7
+DEBUG_CONSOLE	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon27
 DEFAULT_QLEN	include/bcmutils.h	88;"	d
 DEFAULT_QLEN	src/include/bcmutils.h	88;"	d
 DELETE_RULE	src/ezp-lib.c	/^    DELETE_RULE = 1,$/;"	e	enum:opcode	file:
@@ -362,11 +362,11 @@ DEV_MODEL	include/cyutils.h	64;"	d
 DEV_MODEL_DESCRIPTION	include/cyutils.h	63;"	d
 DEV_MODEL_NO	include/cyutils.h	65;"	d
 DEV_MODEL_URL	include/cyutils.h	66;"	d
-DIAG	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon1
+DIAG	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon21
 DIAG_SUPPORT	include/cy_conf.h	47;"	d
 DIRECT_MULTICAST_MAXNUM_VALUE	src/nvram_ezpacket.h	378;"	d
 DIRECT_MULTICAST_STATUS_VALUE	src/nvram_ezpacket.h	376;"	d
-DMZ	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon1
+DMZ	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon21
 DNSMASQ_SUPPORT	include/cy_conf.h	2;"	d
 DO1	src/crc32.c	58;"	d	file:
 DO2	src/crc32.c	59;"	d	file:
@@ -728,15 +728,15 @@ FC_TYPE_MNG	include/proto/802.11.h	503;"	d
 FC_TYPE_SHIFT	include/proto/802.11.h	476;"	d
 FC_WEP	include/proto/802.11.h	491;"	d
 FC_WEP_SHIFT	include/proto/802.11.h	492;"	d
-FIRST	include/utils.h	/^enum { FIRST, SECOND };$/;"	e	enum:__anon6
+FIRST	include/utils.h	/^enum { FIRST, SECOND };$/;"	e	enum:__anon26
 FIXED_MSDU_SIZE	include/proto/802.11.h	434;"	d
-FLASH_BASE	include/bcmnvram.h	183;"	d
+FLASH_BASE	include/bcmnvram.h	177;"	d
 FLASH_BASE	src/include/bcmnvram.h	141;"	d
 FLASH_BLOCK_NUM	src/nvram.h	61;"	d
 FLASH_BLOCK_NUM	src/nvram.h	63;"	d
-FLASH_MAX	include/bcmnvram.h	185;"	d
+FLASH_MAX	include/bcmnvram.h	179;"	d
 FLASH_MAX	src/include/bcmnvram.h	143;"	d
-FLASH_MIN	include/bcmnvram.h	184;"	d
+FLASH_MIN	include/bcmnvram.h	178;"	d
 FLASH_MIN	src/include/bcmnvram.h	142;"	d
 FL_HWADDR_RULE_MAX	src/nvram_ezpacket.h	62;"	d
 FL_HWADDR_RULE_MAX	src/nvram_ezpacket6239.h	120;"	d
@@ -1079,7 +1079,7 @@ LIBSHARED_OBJS	src/Makefile	/^LIBSHARED_OBJS := shutils.o wl.o wl_linux.o linux_
 LINKSYS	include/code_pattern.h	11;"	d
 LINKSYS_MODEL	include/code_pattern.h	37;"	d
 LOCALE	include/code_pattern.h	43;"	d
-LOG_CONSOLE	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon7
+LOG_CONSOLE	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon27
 LOG_FILE	include/utils.h	96;"	d
 LOG_RULE	src/nvram_ezpacket.h	128;"	d
 LOG_RULE	src/nvram_ezpacket6239.h	147;"	d
@@ -1146,7 +1146,7 @@ NBITS	include/bcmutils.h	41;"	d
 NBITS	src/include/bcmutils.h	41;"	d
 NON_WLAN	include/wlioctl.h	1016;"	d
 NOT_USING	include/utils.h	70;"	d
-NO_DEFINE_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon5
+NO_DEFINE_CHIP	include/utils.h	/^enum { BCM4702_CHIP, BCM4712_CHIP, BCM5325E_CHIP, BCM4704_BCM5325F_CHIP, BCM5352E_CHIP, NO_DEFINE_CHIP };$/;"	e	enum:__anon25
 NULL	include/typedefs.h	239;"	d
 NULL	src/include/typedefs.h	239;"	d
 NVRAM_CUSTOMIZED	include/bcmnvram.h	42;"	d
@@ -1180,19 +1180,19 @@ NVRAM_FW_2_0_2	src/nvram_fw.h	/^    NVRAM_FW_2_0_2,$/;"	e	enum:__anon30
 NVRAM_FW_2_0_3	src/nvram_fw.h	/^    NVRAM_FW_2_0_3,$/;"	e	enum:__anon30
 NVRAM_FW_2_0_4	src/nvram_fw.h	/^    NVRAM_FW_2_0_4,$/;"	e	enum:__anon30
 NVRAM_FW_2_0_5	src/nvram_fw.h	/^    NVRAM_FW_2_0_5,$/;"	e	enum:__anon30
-NVRAM_HEADER_SIZE	include/bcmnvram.h	181;"	d
+NVRAM_HEADER_SIZE	include/bcmnvram.h	175;"	d
 NVRAM_HEADER_SIZE	src/include/bcmnvram.h	139;"	d
-NVRAM_MAGIC	include/bcmnvram.h	179;"	d
+NVRAM_MAGIC	include/bcmnvram.h	173;"	d
 NVRAM_MAGIC	src/include/bcmnvram.h	137;"	d
 NVRAM_NONE	include/bcmnvram.h	31;"	d
 NVRAM_PRIVATE	include/bcmnvram.h	33;"	d
 NVRAM_PROTECTED	include/bcmnvram.h	38;"	d
-NVRAM_SPACE	include/bcmnvram.h	182;"	d
+NVRAM_SPACE	include/bcmnvram.h	176;"	d
 NVRAM_SPACE	src/include/bcmnvram.h	140;"	d
 NVRAM_TEMP	include/bcmnvram.h	40;"	d
 NVRAM_TMP_LEN	src/nvram_linux.c	47;"	d	file:
 NVRAM_UNDEFINED	include/bcmnvram.h	48;"	d
-NVRAM_VERSION	include/bcmnvram.h	180;"	d
+NVRAM_VERSION	include/bcmnvram.h	174;"	d
 NVRAM_VERSION	src/include/bcmnvram.h	138;"	d
 NV_DEV	src/nvram.h	21;"	d
 OF	src/zconf.h	54;"	d
@@ -1254,7 +1254,7 @@ PKG_NAME	Makefile	/^PKG_NAME:=ezp-nvram$/;"	m
 PKG_RELEASE	Makefile	/^PKG_RELEASE:=1$/;"	m
 PLAYSTATION_APP	src/nvram_ezpacket.h	1186;"	d
 PLAYSTATION_APP	src/nvram_ezpacket6239.h	1361;"	d
-PMON_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon4
+PMON_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon24
 PMON_BOOT_VERSION	include/cyutils.h	8;"	d
 PM_FAST	include/wlioctl.h	1012;"	d
 PM_MAX	include/wlioctl.h	1011;"	d
@@ -1443,12 +1443,12 @@ SCHED_RULE_NUM	src/nvram_ezpacket6239.h	401;"	d
 SCHED_RULE_NUM	src/nvram_ezpacket6239.h	444;"	d
 SCHED_RULE_NUM	src/nvram_ezpacket6239.h	487;"	d
 SCHED_RULE_NUM	src/nvram_ezpacket6239.h	92;"	d
-SECOND	include/utils.h	/^enum { FIRST, SECOND };$/;"	e	enum:__anon6
+SECOND	include/utils.h	/^enum { FIRST, SECOND };$/;"	e	enum:__anon26
 SEQNUM_SHIFT	include/proto/802.11.h	497;"	d
 SERIALNUMBER	src/nvram_ezpacket.h	2398;"	d
 SERIALNUMBER	src/nvram_ezpacket6239.h	2529;"	d
 SERIAL_NUMBER	include/cyutils.h	6;"	d
-SESSION	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon1
+SESSION	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon21
 SETUP_WIZARD_SUPPORT	include/cy_conf.h	34;"	d
 SIGN_UP_URL	include/cyutils.h	72;"	d
 SIGN_UP_URL	include/cyutils.h	76;"	d
@@ -1466,7 +1466,7 @@ SSID	include/wlioctl.h	/^	uint8		SSID[32];$/;"	m	struct:wl_bss_info106
 SSID_len	include/wlioctl.h	/^	uint32		SSID_len;$/;"	m	struct:wlc_ssid
 SSID_len	include/wlioctl.h	/^	uint8		SSID_len;$/;"	m	struct:wl_bss_info
 SSID_len	include/wlioctl.h	/^	uint8		SSID_len;$/;"	m	struct:wl_bss_info106
-START_LED	include/utils.h	/^enum { START_LED, STOP_LED };$/;"	e	enum:__anon2
+START_LED	include/utils.h	/^enum { START_LED, STOP_LED };$/;"	e	enum:__anon22
 STATS_RULE	src/nvram_ezpacket-rt305x.h	126;"	d
 STATS_RULE	src/nvram_ezpacket-rt305x.h	205;"	d
 STATS_RULE	src/nvram_ezpacket-rt3883.h	128;"	d
@@ -1474,7 +1474,7 @@ STATS_RULE	src/nvram_ezpacket-rt3883.h	211;"	d
 STA_PRIORITY_DEFAULT_VALUE	src/nvram_ezpacket.h	449;"	d
 STA_PRIORITY_VALUE	src/nvram_ezpacket.h	450;"	d
 STDC	src/zconf.h	19;"	d
-STOP_LED	include/utils.h	/^enum { START_LED, STOP_LED };$/;"	e	enum:__anon2
+STOP_LED	include/utils.h	/^enum { START_LED, STOP_LED };$/;"	e	enum:__anon22
 STREAM_PRIORITY_VALUE	src/nvram_ezpacket.h	447;"	d
 STRUCT_LEN	include/utils.h	112;"	d
 SUBCAT_MAX	src/nvram_ezpacket.h	161;"	d
@@ -1484,8 +1484,8 @@ SUPPORT_4712_CHIP	include/cyutils.h	15;"	d
 SUPPORT_5325E_SWITCH	include/cyutils.h	17;"	d
 SUPPORT_5352E_CHIP	include/cyutils.h	19;"	d
 SUPPORT_INTEL_FLASH	include/cyutils.h	16;"	d
-SYSLOG_DEBUG	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon7
-SYSLOG_LOG	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon7
+SYSLOG_DEBUG	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon27
+SYSLOG_LOG	include/utils.h	/^enum { SYSLOG_LOG=1, SYSLOG_DEBUG, CONSOLE_ONLY, LOG_CONSOLE, DEBUG_CONSOLE };$/;"	e	enum:__anon27
 TFTPD_SUPPORT	include/cy_conf.h	18;"	d
 TKIP_ENABLED	include/wlioctl.h	339;"	d
 TKIP_EOM_FLAG	include/proto/802.11.h	839;"	d
@@ -1589,7 +1589,7 @@ UDHCPD_SUPPORT	include/cy_conf.h	4;"	d
 UDN	src/nvram_ezpacket.h	2399;"	d
 UDN	src/nvram_ezpacket6239.h	2530;"	d
 UI_STYLE	include/code_pattern.h	56;"	d
-UNKNOWN_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon4
+UNKNOWN_BOOT	include/utils.h	/^enum { UNKNOWN_BOOT = -1, PMON_BOOT, CFE_BOOT };$/;"	e	enum:__anon24
 UPNP_FRIENDLYNAME	src/nvram_ezpacket.h	2391;"	d
 UPNP_FRIENDLYNAME	src/nvram_ezpacket6239.h	2522;"	d
 UP_CODE	include/code_pattern.h	5;"	d
@@ -1835,7 +1835,7 @@ WF_RULE_MAX	src/nvram_ezpacket6239.h	381;"	d
 WF_RULE_MAX	src/nvram_ezpacket6239.h	424;"	d
 WF_RULE_MAX	src/nvram_ezpacket6239.h	467;"	d
 WF_RULE_MAX	src/nvram_ezpacket6239.h	72;"	d
-WL	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon1
+WL	include/utils.h	/^enum { DMZ, SESSION, DIAG , WL};$/;"	e	enum:__anon21
 WL0_APCLI_RULE	src/nvram_ezpacket.h	290;"	d
 WL0_APCLI_RULE	src/nvram_ezpacket6239.h	631;"	d
 WL0_APCLI_SEC_WEP_RULE	src/nvram_ezpacket.h	292;"	d
@@ -2680,13 +2680,13 @@ a3	include/proto/802.11.h	/^	struct ether_addr	a3;		\/* address 3 *\/$/;"	m	stru
 a4	include/proto/802.11.h	/^	struct ether_addr	a4;		\/* address 4 *\/$/;"	m	struct:dot11_header	typeref:struct:dot11_header::ether_addr
 acinfo	include/proto/802.11.h	/^	uint8 acinfo;$/;"	m	struct:wme_ie
 acinfo	include/proto/802.11.h	/^	uint8 acinfo;$/;"	m	struct:wme_params
-acount	include/wlioctl.h	/^		uint8 acount;		\/* count of auth modes *\/$/;"	m	struct:wl_bss_info106::__anon9
+acount	include/wlioctl.h	/^		uint8 acount;		\/* count of auth modes *\/$/;"	m	struct:wl_bss_info106::__anon11
 acparam	include/proto/802.11.h	/^	wme_acparam_t acparam[4];$/;"	m	struct:wme_params
 action	include/proto/802.11.h	/^	uint8	action;$/;"	m	struct:dot11_action_measure
 action	include/proto/802.11.h	/^	uint8 action;$/;"	m	struct:dot11_management_notification
 active_time	include/wlioctl.h	/^	int32 active_time;	\/* -1 use default, dwell time per channel for active scanning *\/$/;"	m	struct:wl_scan_params
 activehi	include/wlioctl.h	/^	bool		activehi;$/;"	m	struct:wl_led_info
-addr	include/wlioctl.h	/^	struct ether_addr *addr;	\/* Station address (if applicable) *\/$/;"	m	struct:__anon17	typeref:struct:__anon17::ether_addr
+addr	include/wlioctl.h	/^	struct ether_addr *addr;	\/* Station address (if applicable) *\/$/;"	m	struct:__anon19	typeref:struct:__anon19::ether_addr
 addr	include/wlioctl.h	/^	struct ether_addr *addr;$/;"	m	struct:_mac_event_params	typeref:struct:_mac_event_params::ether_addr
 adler	src/zlib.h	/^    uLong   adler;      \/* adler32 value of the uncompressed data *\/$/;"	m	struct:z_stream_s
 adtool_rule_attr	src/ezp-lib.c	/^struct attr adtool_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -2702,16 +2702,16 @@ apn	src/ezpcom-lib.h	/^    char *apn;$/;"	m	struct:ezp_com_isp_map_entry_type
 assoc	include/proto/802.11.h	/^	uchar	assoc;		\/*  # of assoc STAs *\/$/;"	m	struct:brcm_ie
 atim_window	include/wlioctl.h	/^	uint16		atim_window;	\/* units are Kusec *\/$/;"	m	struct:wl_bss_info
 atim_window	include/wlioctl.h	/^	uint16		atim_window;	\/* units are Kusec *\/$/;"	m	struct:wl_bss_info106
-atten_t	include/wlioctl.h	/^} atten_t;$/;"	t	typeref:struct:__anon15
+atten_t	include/wlioctl.h	/^} atten_t;$/;"	t	typeref:struct:__anon17
 attr	src/ezp-lib.c	/^    struct attr *attr;$/;"	m	struct:rule	typeref:struct:rule::attr	file:
 attr	src/ezp-lib.c	/^struct attr {$/;"	s	file:
 attr	src/ezp-lib6239.c	/^    struct attr *attr;$/;"	m	struct:rule	typeref:struct:rule::attr	file:
 attr	src/ezp-lib6239.c	/^struct attr {$/;"	s	file:
-auth	include/wlioctl.h	/^		uint8 auth[4];		\/* Authentication modes *\/$/;"	m	struct:wl_bss_info106::__anon9
+auth	include/wlioctl.h	/^		uint8 auth[4];		\/* Authentication modes *\/$/;"	m	struct:wl_bss_info106::__anon11
 auth	src/ezpcom-lib.h	/^    char *auth;$/;"	m	struct:ezp_com_isp_map_entry_type
-auth_type	include/wlioctl.h	/^	uint auth_type;			\/* WLC_E_AUTH *\/$/;"	m	struct:__anon17
+auth_type	include/wlioctl.h	/^	uint auth_type;			\/* WLC_E_AUTH *\/$/;"	m	struct:__anon19
 auth_type	include/wlioctl.h	/^	uint auth_type;$/;"	m	struct:_mac_event_params
-auto_ctrl	include/wlioctl.h	/^	uint16	auto_ctrl;	\/* 1: Automatic control, 0: overriden *\/$/;"	m	struct:__anon15
+auto_ctrl	include/wlioctl.h	/^	uint16	auto_ctrl;	\/* 1: Automatic control, 0: overriden *\/$/;"	m	struct:__anon17
 avail_in	src/zlib.h	/^    uInt     avail_in;  \/* number of bytes available at next_in *\/$/;"	m	struct:z_stream_s
 avail_out	src/zlib.h	/^    uInt     avail_out; \/* remaining free space at next_out *\/$/;"	m	struct:z_stream_s
 backtick	include/shutils.h	128;"	d
@@ -2719,8 +2719,8 @@ backtick	src/include/shutils.h	137;"	d
 band	include/wlioctl.h	/^	uint32 band;$/;"	m	struct:wl_channels_in_country
 band	include/wlioctl.h	/^	uint32 band;$/;"	m	struct:wl_country_list
 band_set	include/wlioctl.h	/^	uint32 band_set;$/;"	m	struct:wl_country_list
-basic	include/proto/802.11.h	/^		} PACKED basic;$/;"	m	union:dot11_meas_rep::__anon24	typeref:struct:dot11_meas_rep::__anon24::__anon25
-bb	include/wlioctl.h	/^	uint16	bb;		\/* Baseband attenuation *\/$/;"	m	struct:__anon15
+basic	include/proto/802.11.h	/^		} PACKED basic;$/;"	m	union:dot11_meas_rep::__anon6	typeref:struct:dot11_meas_rep::__anon6::__anon7
+bb	include/wlioctl.h	/^	uint16	bb;		\/* Baseband attenuation *\/$/;"	m	struct:__anon17
 bcm_isalnum	include/bcmutils.h	55;"	d
 bcm_isalnum	src/include/bcmutils.h	55;"	d
 bcm_isalpha	include/bcmutils.h	56;"	d
@@ -2784,7 +2784,7 @@ bssid	include/proto/802.11.h	/^	struct ether_addr	bssid;		\/* BSS ID *\/$/;"	m	s
 bssid	include/proto/802.11.h	/^	struct ether_addr	bssid;		\/* receiver address, STA in AP *\/$/;"	m	struct:dot11_ps_poll_frame	typeref:struct:dot11_ps_poll_frame::ether_addr
 bssid	include/proto/802.11.h	/^	struct ether_addr	bssid;		\/* transmitter address, STA in AP *\/$/;"	m	struct:dot11_cf_end_frame	typeref:struct:dot11_cf_end_frame::ether_addr
 bssid	include/wlioctl.h	/^	struct ether_addr bssid;\/* default is bcast *\/$/;"	m	struct:wl_scan_params	typeref:struct:wl_scan_params::ether_addr
-buf	include/wlioctl.h	/^	uint16 buf[1];$/;"	m	struct:__anon13
+buf	include/wlioctl.h	/^	uint16 buf[1];$/;"	m	struct:__anon15
 buf	include/wlioctl.h	/^	void *buf;	\/* pointer to user buffer *\/$/;"	m	struct:wl_ioctl
 buf	src/include/wlutils.h	/^	void *buf;	\/* pointer to user buffer *\/$/;"	m	struct:wl_ioctl
 buflen	include/wlioctl.h	/^	uint32 buflen;$/;"	m	struct:wl_channels_in_country
@@ -2804,15 +2804,15 @@ bw_sbm_rule_attr	src/ezp-lib6239.c	/^struct attr bw_sbm_rule_attr[] = {$/;"	v	ty
 bwm_level_attr	src/ezp-lib.c	/^struct attr bwm_level_attr[] = {$/;"	v	typeref:struct:attr
 bwm_level_dl_index_attr	src/ezp-lib.c	/^struct attr bwm_level_dl_index_attr[] = {$/;"	v	typeref:struct:attr
 bwm_level_up_index_attr	src/ezp-lib.c	/^struct attr bwm_level_up_index_attr[] = {$/;"	v	typeref:struct:attr
-byteoff	include/wlioctl.h	/^	uint   byteoff;		\/* byte offset *\/$/;"	m	struct:__anon13
-byteoff	include/wlioctl.h	/^	uint32	byteoff;	\/* byte offset of the field in d11regs_t *\/$/;"	m	struct:__anon14
+byteoff	include/wlioctl.h	/^	uint   byteoff;		\/* byte offset *\/$/;"	m	struct:__anon15
+byteoff	include/wlioctl.h	/^	uint32	byteoff;	\/* byte offset of the field in d11regs_t *\/$/;"	m	struct:__anon16
 cache	src/nvram.h	/^	cache_t	cache[MAX_CACHE_ENTRY];	\/\/env cache entry by entry$/;"	m	struct:block_s
 cache_environment_s	src/nvram.h	/^typedef struct cache_environment_s {$/;"	s
 cache_idx	src/nvram_env.c	/^static int cache_idx(int index, char *name)$/;"	f	file:
 cache_t	src/nvram.h	/^} cache_t;$/;"	t	typeref:struct:cache_environment_s
 callback	include/wlioctl.h	/^	callback_t callback;$/;"	m	struct:_set_callback
 callback_t	include/wlioctl.h	/^} callback_t;$/;"	t	typeref:struct:_callback
-cap	include/wlioctl.h	/^	uint16		cap;	\/* sta's advertized capabilities *\/$/;"	m	struct:__anon18
+cap	include/wlioctl.h	/^	uint16		cap;	\/* sta's advertized capabilities *\/$/;"	m	struct:__anon20
 capability	include/proto/802.11.h	/^	uint16			capability;	\/* capability information *\/$/;"	m	struct:dot11_assoc_req
 capability	include/proto/802.11.h	/^	uint16			capability;	\/* capability information *\/$/;"	m	struct:dot11_assoc_resp
 capability	include/proto/802.11.h	/^	uint16			capability;$/;"	m	struct:dot11_bcn_prb
@@ -2820,10 +2820,10 @@ capability	include/wlioctl.h	/^	uint16		capability;	\/* Capability information *
 capability	include/wlioctl.h	/^	uint16		capability;	\/* Capability information *\/$/;"	m	struct:wl_bss_info106
 category	include/proto/802.11.h	/^	uint8	category;$/;"	m	struct:dot11_action_measure
 category	include/proto/802.11.h	/^	uint8 category;			\/* DOT11_ACTION_NOTIFICATION *\/$/;"	m	struct:dot11_management_notification
-chan_map_tuple_t	include/proto/802.11.h	/^} chan_map_tuple_t;$/;"	t	typeref:struct:__anon26
-channel	include/proto/802.11.h	/^			uint8 channel;$/;"	m	struct:dot11_meas_rep::__anon24::__anon25
-channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:__anon23
-channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:__anon26
+chan_map_tuple_t	include/proto/802.11.h	/^} chan_map_tuple_t;$/;"	t	typeref:struct:__anon8
+channel	include/proto/802.11.h	/^			uint8 channel;$/;"	m	struct:dot11_meas_rep::__anon6::__anon7
+channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:__anon5
+channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:__anon8
 channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:dot11_channel_switch
 channel	include/proto/802.11.h	/^	uint8 channel;$/;"	m	struct:dot11_meas_rep_basic
 channel	include/wlioctl.h	/^	uint32 channel[1];$/;"	m	struct:wl_channels_in_country
@@ -2858,8 +2858,8 @@ cos_classification_status_attr	src/ezp-lib.c	/^struct attr cos_classification_st
 cos_classify_attr	src/ezp-lib.c	/^struct attr cos_classify_attr[] = {$/;"	v	typeref:struct:attr
 count	include/proto/802.11.h	/^	uint8 count;	\/* TBTTs until beacon interval in quiet starts *\/$/;"	m	struct:dot11_quiet
 count	include/proto/802.11.h	/^	uint8 count;$/;"	m	struct:dot11_channel_switch
-count	include/wlioctl.h	/^		uint	count;		\/* # rates in this set *\/$/;"	m	struct:wl_bss_info106::__anon8
-count	include/wlioctl.h	/^		uint	count;		\/* # rates in this set *\/$/;"	m	struct:wl_bss_info::__anon10
+count	include/wlioctl.h	/^		uint	count;		\/* # rates in this set *\/$/;"	m	struct:wl_bss_info106::__anon10
+count	include/wlioctl.h	/^		uint	count;		\/* # rates in this set *\/$/;"	m	struct:wl_bss_info::__anon12
 count	include/wlioctl.h	/^	uint count;			\/* number of MAC addresses *\/$/;"	m	struct:maclist
 count	include/wlioctl.h	/^	uint32	count;			\/* # rates in this set *\/$/;"	m	struct:wl_rateset
 count	include/wlioctl.h	/^	uint32	count;		\/* number of measurement reqests *\/$/;"	m	struct:wl_rm_req
@@ -2884,7 +2884,7 @@ d11cnt	include/proto/802.11.h	/^typedef struct d11cnt {$/;"	s
 d11cnt_t	include/proto/802.11.h	/^} d11cnt_t;$/;"	t	typeref:struct:d11cnt
 da	include/proto/802.11.h	/^	struct ether_addr	da;		\/* receiver address *\/$/;"	m	struct:dot11_management_header	typeref:struct:dot11_management_header::ether_addr
 data	include/bcmutils.h	/^	uint8	data[1];$/;"	m	struct:bcm_tlv
-data	include/proto/802.11.h	/^		uint8 data[1];$/;"	m	union:dot11_meas_rep::__anon24
+data	include/proto/802.11.h	/^		uint8 data[1];$/;"	m	union:dot11_meas_rep::__anon6
 data	include/proto/802.11.h	/^	uint8	data[1];$/;"	m	struct:dot11_action_measure
 data	include/proto/802.11.h	/^	uint8 data[1];			\/* Elements *\/$/;"	m	struct:dot11_management_notification
 data	include/wlioctl.h	/^	uint8		data[DOT11_MAX_KEY_SIZE];	\/* key data *\/$/;"	m	struct:wl_wsec_key
@@ -2916,7 +2916,7 @@ dot11_channel_switch	include/proto/802.11.h	/^struct dot11_channel_switch {$/;"	
 dot11_channel_switch_t	include/proto/802.11.h	/^typedef struct dot11_channel_switch dot11_channel_switch_t;$/;"	t	typeref:struct:dot11_channel_switch
 dot11_cts_frame	include/proto/802.11.h	/^struct dot11_cts_frame {$/;"	s
 dot11_header	include/proto/802.11.h	/^struct dot11_header {$/;"	s
-dot11_ibss_dfs_t	include/proto/802.11.h	/^} dot11_ibss_dfs_t;$/;"	t	typeref:struct:__anon27
+dot11_ibss_dfs_t	include/proto/802.11.h	/^} dot11_ibss_dfs_t;$/;"	t	typeref:struct:__anon9
 dot11_llc_snap_header	include/proto/802.11.h	/^struct dot11_llc_snap_header {$/;"	s
 dot11_management_header	include/proto/802.11.h	/^struct dot11_management_header {$/;"	s
 dot11_management_notification	include/proto/802.11.h	/^struct dot11_management_notification {$/;"	s
@@ -2924,15 +2924,15 @@ dot11_meas_rep	include/proto/802.11.h	/^struct dot11_meas_rep {$/;"	s
 dot11_meas_rep_basic	include/proto/802.11.h	/^struct dot11_meas_rep_basic {$/;"	s
 dot11_meas_rep_basic_t	include/proto/802.11.h	/^typedef struct dot11_meas_rep_basic dot11_meas_rep_basic_t;$/;"	t	typeref:struct:dot11_meas_rep_basic
 dot11_meas_rep_t	include/proto/802.11.h	/^typedef struct dot11_meas_rep dot11_meas_rep_t;$/;"	t	typeref:struct:dot11_meas_rep
-dot11_meas_req_t	include/proto/802.11.h	/^} dot11_meas_req_t;$/;"	t	typeref:struct:__anon23
-dot11_power_cap_t	include/proto/802.11.h	/^} dot11_power_cap_t;$/;"	t	typeref:struct:__anon20
-dot11_power_cnst_t	include/proto/802.11.h	/^} dot11_power_cnst_t;$/;"	t	typeref:struct:__anon19
+dot11_meas_req_t	include/proto/802.11.h	/^} dot11_meas_req_t;$/;"	t	typeref:struct:__anon5
+dot11_power_cap_t	include/proto/802.11.h	/^} dot11_power_cap_t;$/;"	t	typeref:struct:__anon2
+dot11_power_cnst_t	include/proto/802.11.h	/^} dot11_power_cnst_t;$/;"	t	typeref:struct:__anon1
 dot11_ps_poll_frame	include/proto/802.11.h	/^struct dot11_ps_poll_frame {$/;"	s
 dot11_quiet	include/proto/802.11.h	/^struct dot11_quiet {$/;"	s
 dot11_quiet_t	include/proto/802.11.h	/^typedef struct dot11_quiet dot11_quiet_t;$/;"	t	typeref:struct:dot11_quiet
 dot11_rts_frame	include/proto/802.11.h	/^struct dot11_rts_frame {$/;"	s
-dot11_supp_channels_t	include/proto/802.11.h	/^} dot11_supp_channels_t;$/;"	t	typeref:struct:__anon22
-dot11_tpc_rep_t	include/proto/802.11.h	/^} dot11_tpc_rep_t;$/;"	t	typeref:struct:__anon21
+dot11_supp_channels_t	include/proto/802.11.h	/^} dot11_supp_channels_t;$/;"	t	typeref:struct:__anon4
+dot11_tpc_rep_t	include/proto/802.11.h	/^} dot11_tpc_rep_t;$/;"	t	typeref:struct:__anon3
 dprintf	include/shutils.h	167;"	d
 dprintf	include/shutils.h	169;"	d
 dprintf	include/shutils.h	195;"	d
@@ -2948,8 +2948,8 @@ dtim_period	include/wlioctl.h	/^        uint8           dtim_period;    \/* DTIM
 dummy	src/zlib.h	/^    struct internal_state {int dummy;}; \/* hack for buggy compilers *\/$/;"	m	struct:internal_state
 dur	include/wlioctl.h	/^	uint32	dur;		\/* TUs *\/$/;"	m	struct:wl_rm_rep_elt
 dur	include/wlioctl.h	/^	uint32	dur;		\/* TUs *\/$/;"	m	struct:wl_rm_req_elt
-duration	include/proto/802.11.h	/^			uint16 duration;$/;"	m	struct:dot11_meas_rep::__anon24::__anon25
-duration	include/proto/802.11.h	/^	uint16 duration;$/;"	m	struct:__anon23
+duration	include/proto/802.11.h	/^			uint16 duration;$/;"	m	struct:dot11_meas_rep::__anon6::__anon7
+duration	include/proto/802.11.h	/^	uint16 duration;$/;"	m	struct:__anon5
 duration	include/proto/802.11.h	/^	uint16 duration;$/;"	m	struct:dot11_meas_rep_basic
 duration	include/proto/802.11.h	/^	uint16 duration;\/* Length of quiet period, in TU's *\/$/;"	m	struct:dot11_quiet
 durid	include/proto/802.11.h	/^	uint16			durid;		\/* AID *\/$/;"	m	struct:dot11_ps_poll_frame
@@ -2959,13 +2959,13 @@ durid	include/proto/802.11.h	/^	uint16			durid;		\/* duration\/ID *\/$/;"	m	stru
 durid	include/proto/802.11.h	/^	uint16			durid;		\/* duration\/ID *\/$/;"	m	struct:dot11_header
 durid	include/proto/802.11.h	/^	uint16			durid;		\/* duration\/ID *\/$/;"	m	struct:dot11_management_header
 durid	include/proto/802.11.h	/^	uint16			durid;		\/* duration\/ID *\/$/;"	m	struct:dot11_rts_frame
-ea	include/wlioctl.h	/^	struct ether_addr	ea;	\/* Station address *\/$/;"	m	struct:__anon18	typeref:struct:__anon18::ether_addr
+ea	include/wlioctl.h	/^	struct ether_addr	ea;	\/* Station address *\/$/;"	m	struct:__anon20	typeref:struct:__anon20::ether_addr
 ea	include/wlioctl.h	/^	struct ether_addr *ea;$/;"	m	struct:_mic_error_params	typeref:struct:_mic_error_params::ether_addr
 ea	include/wlioctl.h	/^	struct ether_addr ea;		\/* per station *\/$/;"	m	struct:wl_wsec_key	typeref:struct:wl_wsec_key::ether_addr
 ea	include/wlioctl.h	/^	struct ether_addr ea;		\/* per station *\/$/;"	m	struct:wsec_key	typeref:struct:wsec_key::ether_addr
-ea	include/wlioctl.h	/^	struct ether_addr ea;$/;"	m	struct:__anon16	typeref:struct:__anon16::ether_addr
+ea	include/wlioctl.h	/^	struct ether_addr ea;$/;"	m	struct:__anon18	typeref:struct:__anon18::ether_addr
 ea	include/wlioctl.h	/^	struct ether_addr ea[1];	\/* variable length array of MAC addresses *\/$/;"	m	struct:maclist	typeref:struct:maclist::ether_addr
-eaddr	include/proto/802.11.h	/^	uint8 eaddr[ETHER_ADDR_LEN];$/;"	m	struct:__anon27
+eaddr	include/proto/802.11.h	/^	uint8 eaddr[ETHER_ADDR_LEN];$/;"	m	struct:__anon9
 eccsize	src/flash_api.c	/^	u_int32_t eccsize;$/;"	m	struct:mtd_info_user	file:
 ecctype	src/flash_api.c	/^	u_int32_t ecctype;$/;"	m	struct:mtd_info_user	file:
 element	include/wlioctl.h	/^	uint32 element[1];$/;"	m	struct:wl_uint32_list
@@ -3029,7 +3029,7 @@ fc	include/proto/802.11.h	/^	uint16			fc;		\/* frame control *\/$/;"	m	struct:do
 fc	include/proto/802.11.h	/^	uint16			fc;		\/* frame control *\/$/;"	m	struct:dot11_ps_poll_frame
 fc	include/proto/802.11.h	/^	uint16			fc;		\/* frame control *\/$/;"	m	struct:dot11_rts_frame
 file_to_buf	src/nvram_linux.c	/^int file_to_buf(char *path, char *buf, int len)$/;"	f
-first_channel	include/proto/802.11.h	/^	uint8 first_channel;$/;"	m	struct:__anon22
+first_channel	include/proto/802.11.h	/^	uint8 first_channel;$/;"	m	struct:__anon4
 fl_hwaddr_rule_attr	src/ezp-lib.c	/^struct attr fl_hwaddr_rule_attr[] = {$/;"	v	typeref:struct:attr
 fl_hwaddr_rule_attr	src/ezp-lib6239.c	/^struct attr fl_hwaddr_rule_attr[] = {$/;"	v	typeref:struct:attr
 fl_rule_attr	src/ezp-lib.c	/^struct attr fl_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3040,8 +3040,8 @@ flags	include/wlioctl.h	/^	int8	flags;$/;"	m	struct:wl_rm_rep_elt
 flags	include/wlioctl.h	/^	int8	flags;$/;"	m	struct:wl_rm_req_elt
 flags	include/wlioctl.h	/^	uint32		flags;		\/* misc flags *\/$/;"	m	struct:wl_wsec_key
 flags	include/wlioctl.h	/^	uint32		flags;		\/* misc flags *\/$/;"	m	struct:wsec_key
-flags	include/wlioctl.h	/^	uint32 		flags;	\/* flags defined below *\/$/;"	m	struct:__anon18
-flags	include/wlioctl.h	/^	ushort	flags;			\/* key handling qualification *\/$/;"	m	struct:__anon12
+flags	include/wlioctl.h	/^	uint32 		flags;	\/* flags defined below *\/$/;"	m	struct:__anon20
+flags	include/wlioctl.h	/^	ushort	flags;			\/* key handling qualification *\/$/;"	m	struct:__anon14
 flags	src/flash_api.c	/^	u_int32_t flags;$/;"	m	struct:mtd_info_user	file:
 flash_max_len	src/nvram.h	/^	unsigned long flash_max_len;	\/\/ENV_BLK_SIZE$/;"	m	struct:block_s
 flash_offset	src/nvram.h	/^	unsigned long flash_offset;$/;"	m	struct:block_s
@@ -3057,7 +3057,7 @@ float_t	include/typedefs.h	/^typedef float32 float_t;$/;"	t
 float_t	include/typedefs.h	/^typedef float64 float_t;$/;"	t
 float_t	src/include/typedefs.h	/^typedef float32 float_t;$/;"	t
 float_t	src/include/typedefs.h	/^typedef float64 float_t;$/;"	t
-flush_txq	include/wlioctl.h	/^	bool flush_txq;			\/* WLC_E_MIC_ERROR *\/$/;"	m	struct:__anon17
+flush_txq	include/wlioctl.h	/^	bool flush_txq;			\/* WLC_E_MIC_ERROR *\/$/;"	m	struct:__anon19
 flush_txq	include/wlioctl.h	/^	bool flush_txq;$/;"	m	struct:_mic_error_params
 fn	include/wlioctl.h	/^	void (*fn)(void *);$/;"	m	struct:_scan_callback
 fn	include/wlioctl.h	/^	void (*fn)(void *, void *);$/;"	m	struct:_callback
@@ -3136,7 +3136,7 @@ getNvramNum	src/nvram_env.c	/^int getNvramNum(void)$/;"	f
 getNvramOffset	src/nvram_env.c	/^unsigned int getNvramOffset(int index)$/;"	f
 get_pktcnt	include/wlioctl.h	/^typedef struct get_pktcnt {$/;"	s
 get_pktcnt_t	include/wlioctl.h	/^} get_pktcnt_t;$/;"	t	typeref:struct:get_pktcnt
-group	include/wlioctl.h	/^	bool group;			\/* WLC_E_MIC_ERROR *\/$/;"	m	struct:__anon17
+group	include/wlioctl.h	/^	bool group;			\/* WLC_E_MIC_ERROR *\/$/;"	m	struct:__anon19
 group	include/wlioctl.h	/^	bool group;$/;"	m	struct:_mic_error_params
 guest_lan_rule_attr	src/ezp-lib.c	/^struct attr guest_lan_rule_attr[] = {$/;"	v	typeref:struct:attr
 guest_lan_rule_attr	src/ezp-lib6239.c	/^struct attr guest_lan_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3144,7 +3144,7 @@ head	include/bcmutils.h	/^	void *head;	\/* first packet to dequeue *\/$/;"	m	str
 head	src/include/bcmutils.h	/^	void *head;	\/* first packet to dequeue *\/$/;"	m	struct:pktq
 heuristics_classification_status_attr	src/ezp-lib.c	/^struct attr heuristics_classification_status_attr[] = {$/;"	v	typeref:struct:attr
 heuristics_classify_attr	src/ezp-lib.c	/^struct attr heuristics_classify_attr[] = {$/;"	v	typeref:struct:attr
-hi	include/wlioctl.h	/^		uint32	hi;		\/* upper 32 bits of IV *\/$/;"	m	struct:wl_wsec_key::__anon11
+hi	include/wlioctl.h	/^		uint32	hi;		\/* upper 32 bits of IV *\/$/;"	m	struct:wl_wsec_key::__anon13
 hi	include/wlioctl.h	/^	uint32		hi;	\/* upper 32 bits of IV *\/$/;"	m	struct:_wsec_iv
 home_time	include/wlioctl.h	/^	int32 home_time;	\/* -1 use default, dwell time for the home channel between channel scans *\/$/;"	m	struct:wl_scan_params
 http_rule_attr	src/ezp-lib.c	/^struct attr http_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3159,16 +3159,16 @@ id	include/bcmutils.h	/^	uint8	id;$/;"	m	struct:bcm_tlv
 id	include/cyutils.h	/^	char id[4];	\/\/ U2ND$/;"	m	struct:code_header
 id	include/cyutils.h	/^        char id[4];     \/\/ U2ND$/;"	m	struct:lang_header
 id	include/proto/802.11.h	/^	uchar	id;		$/;"	m	struct:brcm_ie
-id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon19
-id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon21
-id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon22
-id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon23
-id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon27
+id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon1
+id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon3
+id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon4
+id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon5
+id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:__anon9
 id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:dot11_channel_switch
 id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:dot11_meas_rep
 id	include/proto/802.11.h	/^	uint8 id;$/;"	m	struct:dot11_quiet
 id	src/include/bcmutils.h	/^	uint8	id;$/;"	m	struct:bcm_tlv
-idle	include/wlioctl.h	/^	uint32		idle;	\/* time since data pkt rx'd from sta *\/$/;"	m	struct:__anon18
+idle	include/wlioctl.h	/^	uint32		idle;	\/* time since data pkt rx'd from sta *\/$/;"	m	struct:__anon20
 ie_length	include/wlioctl.h	/^	uint32		ie_length;	\/* byte length of Information Elements *\/$/;"	m	struct:wl_bss_info
 ifname	include/wlioctl.h	/^	char ifname[WL_WPA_MSG_IFNAME_MAX];$/;"	m	struct:wl_eapol_header
 ifname	include/wlioctl.h	/^	char ifname[WL_WPA_MSG_IFNAME_MAX];$/;"	m	struct:wl_wpa_header
@@ -3201,7 +3201,7 @@ int64	src/include/typedefs.h	/^typedef signed long long int64;$/;"	t
 int8	include/typedefs.h	/^typedef signed char	int8;$/;"	t
 int8	src/include/typedefs.h	/^typedef signed char	int8;$/;"	t
 internal_state	src/zlib.h	/^    struct internal_state {int dummy;}; \/* hack for buggy compilers *\/$/;"	s
-interval	include/proto/802.11.h	/^	uint8 interval;$/;"	m	struct:__anon27
+interval	include/proto/802.11.h	/^	uint8 interval;$/;"	m	struct:__anon9
 intf	src/zconf.h	/^typedef int   FAR intf;$/;"	t
 ipsec_rule_attr	src/ezp-lib.c	/^struct attr ipsec_rule_attr[] = {$/;"	v	typeref:struct:attr
 ipsec_rule_attr	src/ezp-lib6239.c	/^struct attr ipsec_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3216,8 +3216,8 @@ isset	src/include/bcmutils.h	37;"	d
 iv_initialized	include/wlioctl.h	/^	int		iv_initialized;	\/* has IV been initialized already? *\/		$/;"	m	struct:wl_wsec_key
 iv_initialized	include/wlioctl.h	/^	int		iv_initialized;	\/* has IV been initialized already? *\/		$/;"	m	struct:wsec_key
 iv_len	include/wlioctl.h	/^	int		iv_len;		\/* IV length *\/		$/;"	m	struct:wsec_key
-key	include/wlioctl.h	/^	uint8	key[WSEC_MAX_PSK_LEN];	\/* PMK material *\/$/;"	m	struct:__anon12
-key_len	include/wlioctl.h	/^	ushort	key_len;		\/* octets in key material *\/$/;"	m	struct:__anon12
+key	include/wlioctl.h	/^	uint8	key[WSEC_MAX_PSK_LEN];	\/* PMK material *\/$/;"	m	struct:__anon14
+key_len	include/wlioctl.h	/^	ushort	key_len;		\/* octets in key material *\/$/;"	m	struct:__anon14
 l2tpd_rule_attr	src/ezp-lib.c	/^struct attr l2tpd_rule_attr[] = {$/;"	v	typeref:struct:attr
 l2tpd_rule_attr	src/ezp-lib6239.c	/^struct attr l2tpd_rule_attr[] = {$/;"	v	typeref:struct:attr
 l2tpd_user_rule_attr	src/ezp-lib.c	/^struct attr l2tpd_user_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3246,11 +3246,11 @@ len	include/bcmutils.h	/^	uint len;	\/* number of queued packets *\/$/;"	m	struc
 len	include/bcmutils.h	/^	uint8	len;$/;"	m	struct:bcm_tlv
 len	include/cyutils.h	/^        unsigned long len;$/;"	m	struct:lang_header
 len	include/proto/802.11.h	/^	uchar	len;   $/;"	m	struct:brcm_ie
-len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon19
-len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon21
-len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon22
-len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon23
-len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon27
+len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon1
+len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon3
+len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon4
+len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon5
+len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:__anon9
 len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:dot11_channel_switch
 len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:dot11_meas_rep
 len	include/proto/802.11.h	/^	uint8 len;$/;"	m	struct:dot11_quiet
@@ -3266,10 +3266,10 @@ len	src/include/wlutils.h	/^	uint len;	\/* length of user buffer *\/$/;"	m	struc
 length	include/wlioctl.h	/^	uint32		length;		\/* byte length of data in this record, starting at version and including IEs *\/$/;"	m	struct:wl_bss_info
 length	src/flash_api.c	/^	u_int32_t length;$/;"	m	struct:erase_info_user	file:
 libnvram_debug	src/nvram_env.c	/^char libnvram_debug = 0;$/;"	v
-link	include/wlioctl.h	/^	bool link;			\/* WLC_E_LINK *\/$/;"	m	struct:__anon17
+link	include/wlioctl.h	/^	bool link;			\/* WLC_E_LINK *\/$/;"	m	struct:__anon19
 listen	include/proto/802.11.h	/^	uint16			listen;		\/* listen interval *\/$/;"	m	struct:dot11_assoc_req
 ln	src/ezpcom-lib.h	/^    ezp_com_location_name_type ln;$/;"	m	struct:ezp_com_location_map_entry_type
-lo	include/wlioctl.h	/^		uint16	lo;		\/* lower 16 bits of IV *\/$/;"	m	struct:wl_wsec_key::__anon11
+lo	include/wlioctl.h	/^		uint16	lo;		\/* lower 16 bits of IV *\/$/;"	m	struct:wl_wsec_key::__anon13
 lo	include/wlioctl.h	/^	uint16		lo;	\/* lower 16 bits of IV *\/$/;"	m	struct:_wsec_iv
 load32_ua	include/bcmutils.h	120;"	d
 load32_ua	include/bcmutils.h	123;"	d
@@ -3288,14 +3288,14 @@ magic	include/cyutils.h	/^        char magic[4];$/;"	m	struct:lang_header
 magic	src/include/bcmnvram.h	/^	uint32 magic;$/;"	m	struct:nvram_header
 main	src/main.c	/^main(int argc, char **argv)$/;"	f
 make_crc_table	src/crc32.c	/^local void make_crc_table()$/;"	f
-map	include/proto/802.11.h	/^			uint8 map;$/;"	m	struct:dot11_meas_rep::__anon24::__anon25
-map	include/proto/802.11.h	/^	chan_map_tuple_t map[1];$/;"	m	struct:__anon27
-map	include/proto/802.11.h	/^	uint8 map;$/;"	m	struct:__anon26
+map	include/proto/802.11.h	/^			uint8 map;$/;"	m	struct:dot11_meas_rep::__anon6::__anon7
+map	include/proto/802.11.h	/^	chan_map_tuple_t map[1];$/;"	m	struct:__anon9
+map	include/proto/802.11.h	/^	uint8 map;$/;"	m	struct:__anon8
 map	include/proto/802.11.h	/^	uint8 map;$/;"	m	struct:dot11_meas_rep_basic
-margin	include/proto/802.11.h	/^	uint8 margin;$/;"	m	struct:__anon21
+margin	include/proto/802.11.h	/^	uint8 margin;$/;"	m	struct:__anon3
 mask	src/ezp-lib.c	/^static char *mask[] = {$/;"	v	file:
 mask	src/ezp-lib6239.c	/^static char *mask[] = {$/;"	v	file:
-max	include/proto/802.11.h	/^	uint8 max;$/;"	m	struct:__anon20
+max	include/proto/802.11.h	/^	uint8 max;$/;"	m	struct:__anon2
 max	include/utils.h	/^        char	*max;	\/* max mtu *\/$/;"	m	struct:mtu_lists
 max_burst_size	include/proto/802.11.h	/^	uint32 max_burst_size;		\/* Maximum Burst Size (bytes) *\/$/;"	m	struct:wme_tspec
 max_msdu_size	include/proto/802.11.h	/^	uint16 max_msdu_size;		\/* Maximum MSDU Size (bytes) *\/$/;"	m	struct:wme_tspec
@@ -3307,23 +3307,23 @@ medium_time	include/proto/802.11.h	/^	uint16 medium_time;		\/* Medium Time (32 u
 mic_error_params_t	include/wlioctl.h	/^} mic_error_params_t;$/;"	t	typeref:struct:_mic_error_params
 micl	include/wlioctl.h	/^	uint32		micl;$/;"	m	struct:wlc_tkip_info
 micr	include/wlioctl.h	/^	uint32		micr;$/;"	m	struct:wlc_tkip_info
-min	include/proto/802.11.h	/^	uint8 min;$/;"	m	struct:__anon20
+min	include/proto/802.11.h	/^	uint8 min;$/;"	m	struct:__anon2
 min	include/utils.h	/^        char	*min;	\/* min mtu *\/$/;"	m	struct:mtu_lists
 min	src/flash_api.c	124;"	d	file:
 min_phy_rate	include/proto/802.11.h	/^	uint32 min_phy_rate;		\/* Minimum PHY Rate (bps) *\/$/;"	m	struct:wme_tspec
 min_rate	include/proto/802.11.h	/^	uint32 min_rate;		\/* Minimum Data Rate (bps) *\/$/;"	m	struct:wme_tspec
 min_service_interval	include/proto/802.11.h	/^	uint32 min_service_interval;	\/* Minimum Service Interval (us) *\/$/;"	m	struct:wme_tspec
-mode	include/proto/802.11.h	/^	uint8 mode;$/;"	m	struct:__anon23
+mode	include/proto/802.11.h	/^	uint8 mode;$/;"	m	struct:__anon5
 mode	include/proto/802.11.h	/^	uint8 mode;$/;"	m	struct:dot11_channel_switch
 mode	include/proto/802.11.h	/^	uint8 mode;$/;"	m	struct:dot11_meas_rep
 msg	include/wlioctl.h	/^	uint msg;				\/* Event message or 0 for all *\/$/;"	m	struct:wlc_event_cb
-msg	include/wlioctl.h	/^	uint msg;			\/* Message (see below) *\/$/;"	m	struct:__anon17
+msg	include/wlioctl.h	/^	uint msg;			\/* Message (see below) *\/$/;"	m	struct:__anon19
 msg	include/wlioctl.h	/^	uint msg;$/;"	m	struct:_mac_event_params
 msg	src/zlib.h	/^    char     *msg;      \/* last error message, NULL if no error *\/$/;"	m	struct:z_stream_s
 mtd_info_user	src/flash_api.c	/^struct mtd_info_user {$/;"	s	file:
 mtd_open	src/flash_api.c	/^int mtd_open(const char *name, int flags)$/;"	f
 mtu_lists	include/utils.h	/^struct mtu_lists {$/;"	s
-multicast	include/wlioctl.h	/^		uint8 multicast;	\/* multicast cipher *\/$/;"	m	struct:wl_bss_info106::__anon9
+multicast	include/wlioctl.h	/^		uint8 multicast;	\/* multicast cipher *\/$/;"	m	struct:wl_bss_info106::__anon11
 name	include/bcmnvram.h	/^	char *name;$/;"	m	struct:nvram_tuple
 name	src/ezp-lib.c	/^    char *name;$/;"	m	struct:attr	file:
 name	src/ezp-lib.c	/^    char *name;$/;"	m	struct:rule	file:
@@ -3337,7 +3337,7 @@ nat_pass_rule_attr	src/ezp-lib.c	/^struct attr nat_pass_rule_attr[] = {$/;"	v	ty
 nat_pass_rule_attr	src/ezp-lib6239.c	/^struct attr nat_pass_rule_attr[] = {$/;"	v	typeref:struct:attr
 nat_rule_attr	src/ezp-lib.c	/^struct attr nat_rule_attr[] = {$/;"	v	typeref:struct:attr
 nat_rule_attr	src/ezp-lib6239.c	/^struct attr nat_rule_attr[] = {$/;"	v	typeref:struct:attr
-nbytes	include/wlioctl.h	/^	uint   nbytes;		\/* number of bytes *\/$/;"	m	struct:__anon13
+nbytes	include/wlioctl.h	/^	uint   nbytes;		\/* number of bytes *\/$/;"	m	struct:__anon15
 needed	include/wlioctl.h	/^	uint needed;	\/* bytes needed (optional) *\/$/;"	m	struct:wl_ioctl
 needed	src/include/wlutils.h	/^	uint needed;	\/* bytes needed (optional) *\/$/;"	m	struct:wl_ioctl
 next	include/bcmnvram.h	/^	struct nvram_tuple *next;$/;"	m	struct:nvram_tuple	typeref:struct:nvram_tuple::nvram_tuple
@@ -3349,7 +3349,7 @@ nom_msdu_size	include/proto/802.11.h	/^	uint16 nom_msdu_size;		\/* (Nominal or f
 nprobes	include/wlioctl.h	/^	int32 nprobes;		\/* -1 use default, number of probes per channel *\/$/;"	m	struct:wl_scan_params
 ntp_rule_attr	src/ezp-lib.c	/^struct attr ntp_rule_attr[] = {$/;"	v	typeref:struct:attr
 ntp_rule_attr	src/ezp-lib6239.c	/^struct attr ntp_rule_attr[] = {$/;"	v	typeref:struct:attr
-num_channels	include/proto/802.11.h	/^	uint8 num_channels;$/;"	m	struct:__anon22
+num_channels	include/proto/802.11.h	/^	uint8 num_channels;$/;"	m	struct:__anon4
 num_servers	include/utils.h	/^        int num_servers;$/;"	m	struct:dns_lists
 nvram_boot	src/nvram_linux.c	/^void nvram_boot(void)$/;"	f
 nvram_buf	src/nvram_linux.c	/^static char *nvram_buf = NULL;$/;"	v	file:
@@ -3388,11 +3388,11 @@ nvram_ioctl_s	src/nvram.h	/^typedef struct nvram_ioctl_s {$/;"	s
 nvram_ioctl_t	src/nvram.h	/^} nvram_ioctl_t;$/;"	t	typeref:struct:nvram_ioctl_s
 nvram_match	include/bcmnvram.h	/^nvram_match(char *name, char *match) {$/;"	f
 nvram_match	src/include/bcmnvram.h	/^nvram_match(char *name, char *match) {$/;"	f
-nvram_safe_get	include/bcmnvram.h	82;"	d
+nvram_safe_get	include/bcmnvram.h	76;"	d
 nvram_safe_get	src/include/bcmnvram.h	61;"	d
-nvram_safe_set	include/bcmnvram.h	89;"	d
+nvram_safe_set	include/bcmnvram.h	83;"	d
 nvram_safe_set	src/include/bcmnvram.h	68;"	d
-nvram_safe_unset	include/bcmnvram.h	84;"	d
+nvram_safe_unset	include/bcmnvram.h	78;"	d
 nvram_safe_unset	src/include/bcmnvram.h	63;"	d
 nvram_set	src/nvram_linux.c	/^int nvram_set(const char *name, const char *value)$/;"	f
 nvram_set_boot	src/nvram_linux.c	/^int nvram_set_boot(const char *name, const char *value)$/;"	f
@@ -3437,7 +3437,7 @@ pktq_head	include/bcmutils.h	92;"	d
 pktq_head	src/include/bcmutils.h	92;"	d
 pktq_len	include/bcmutils.h	90;"	d
 pktq_len	src/include/bcmutils.h	90;"	d
-power	include/proto/802.11.h	/^	uint8 power;$/;"	m	struct:__anon19
+power	include/proto/802.11.h	/^	uint8 power;$/;"	m	struct:__anon1
 pptpd_rule_attr	src/ezp-lib.c	/^struct attr pptpd_rule_attr[] = {$/;"	v	typeref:struct:attr
 pptpd_rule_attr	src/ezp-lib6239.c	/^struct attr pptpd_rule_attr[] = {$/;"	v	typeref:struct:attr
 pptpd_user_rule_attr	src/ezp-lib.c	/^struct attr pptpd_user_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3459,16 +3459,16 @@ ra	include/proto/802.11.h	/^	struct ether_addr	ra;		\/* receiver address *\/$/;"
 ra	include/proto/802.11.h	/^	struct ether_addr	ra;		\/* receiver address *\/$/;"	m	struct:dot11_cf_end_frame	typeref:struct:dot11_cf_end_frame::ether_addr
 ra	include/proto/802.11.h	/^	struct ether_addr	ra;		\/* receiver address *\/$/;"	m	struct:dot11_cts_frame	typeref:struct:dot11_cts_frame::ether_addr
 ra	include/proto/802.11.h	/^	struct ether_addr	ra;		\/* receiver address *\/$/;"	m	struct:dot11_rts_frame	typeref:struct:dot11_rts_frame::ether_addr
-radio	include/wlioctl.h	/^	uint16	radio;		\/* Radio attenuation *\/$/;"	m	struct:__anon15
+radio	include/wlioctl.h	/^	uint16	radio;		\/* Radio attenuation *\/$/;"	m	struct:__anon17
 radiorev	include/wlioctl.h	/^	uint		radiorev;	\/* radio revision *\/$/;"	m	struct:wlc_rev_info
-rates	include/wlioctl.h	/^		uint8	rates[12];	\/* rates in 500kbps units w\/hi bit set if basic *\/$/;"	m	struct:wl_bss_info106::__anon8
-rates	include/wlioctl.h	/^		uint8	rates[16];	\/* rates in 500kbps units w\/hi bit set if basic *\/$/;"	m	struct:wl_bss_info::__anon10
+rates	include/wlioctl.h	/^		uint8	rates[12];	\/* rates in 500kbps units w\/hi bit set if basic *\/$/;"	m	struct:wl_bss_info106::__anon10
+rates	include/wlioctl.h	/^		uint8	rates[16];	\/* rates in 500kbps units w\/hi bit set if basic *\/$/;"	m	struct:wl_bss_info::__anon12
 rates	include/wlioctl.h	/^	uint8	rates[WL_NUMRATES];	\/* rates in 500kbps units w\/hi bit set if basic *\/$/;"	m	struct:wl_rateset
-rateset	include/wlioctl.h	/^	wl_rateset_t	rateset;	\/* rateset in use *\/$/;"	m	struct:__anon18
-rateset	include/wlioctl.h	/^	} rateset;			\/* supported rates *\/$/;"	m	struct:wl_bss_info	typeref:struct:wl_bss_info::__anon10
-rateset	include/wlioctl.h	/^	} rateset;			\/* supported rates *\/$/;"	m	struct:wl_bss_info106	typeref:struct:wl_bss_info106::__anon8
-reason	include/wlioctl.h	/^	uint reason;			\/* Reason code (if applicable) *\/$/;"	m	struct:__anon17
-rep	include/proto/802.11.h	/^	} PACKED rep;$/;"	m	struct:dot11_meas_rep	typeref:union:dot11_meas_rep::__anon24
+rateset	include/wlioctl.h	/^	wl_rateset_t	rateset;	\/* rateset in use *\/$/;"	m	struct:__anon20
+rateset	include/wlioctl.h	/^	} rateset;			\/* supported rates *\/$/;"	m	struct:wl_bss_info	typeref:struct:wl_bss_info::__anon12
+rateset	include/wlioctl.h	/^	} rateset;			\/* supported rates *\/$/;"	m	struct:wl_bss_info106	typeref:struct:wl_bss_info106::__anon10
+reason	include/wlioctl.h	/^	uint reason;			\/* Reason code (if applicable) *\/$/;"	m	struct:__anon19
+rep	include/proto/802.11.h	/^	} PACKED rep;$/;"	m	struct:dot11_meas_rep	typeref:union:dot11_meas_rep::__anon6
 rep	include/wlioctl.h	/^	wl_rm_rep_elt_t	rep[1];	\/* variable length block of reports *\/$/;"	m	struct:wl_rm_rep
 req	include/wlioctl.h	/^	wl_rm_req_elt_t	req[1];	\/* variable length block of requests *\/$/;"	m	struct:wl_rm_req
 res	include/cyutils.h	/^	char res[29];$/;"	m	struct:boot_header
@@ -3496,14 +3496,14 @@ rule	src/ezp-lib.c	/^struct rule {$/;"	s	file:
 rule	src/ezp-lib6239.c	/^struct rule {$/;"	s	file:
 rules	src/ezp-lib.c	/^struct rule rules[] = {$/;"	v	typeref:struct:rule
 rules	src/ezp-lib6239.c	/^struct rule rules[] = {$/;"	v	typeref:struct:rule
-rw_reg_t	include/wlioctl.h	/^} rw_reg_t;$/;"	t	typeref:struct:__anon14
+rw_reg_t	include/wlioctl.h	/^} rw_reg_t;$/;"	t	typeref:struct:__anon16
 rx_bad_pkt	include/wlioctl.h	/^	uint rx_bad_pkt;$/;"	m	struct:get_pktcnt
 rx_good_pkt	include/wlioctl.h	/^	uint rx_good_pkt;$/;"	m	struct:get_pktcnt
 rxcrc	include/proto/802.11.h	/^	uint32		rxcrc;		\/* dot11FCSErrorCount *\/$/;"	m	struct:d11cnt
 rxdup	include/proto/802.11.h	/^	uint32		rxdup;		\/* dot11FrameduplicateCount *\/$/;"	m	struct:d11cnt
 rxfrag	include/proto/802.11.h	/^	uint32		rxfrag;		\/* dot11ReceivedFragmentCount *\/$/;"	m	struct:d11cnt
 rxiv	include/wlioctl.h	/^	wsec_iv_t	rxiv;		\/* Rx IV *\/$/;"	m	struct:wsec_key
-rxiv	include/wlioctl.h	/^	} rxiv;$/;"	m	struct:wl_wsec_key	typeref:struct:wl_wsec_key::__anon11
+rxiv	include/wlioctl.h	/^	} rxiv;$/;"	m	struct:wl_wsec_key	typeref:struct:wl_wsec_key::__anon13
 rxmulti	include/proto/802.11.h	/^	uint32		rxmulti;	\/* dot11MulticastReceivedFrameCount *\/$/;"	m	struct:d11cnt
 rxundec	include/proto/802.11.h	/^	uint32		rxundec;	\/* dot11WEPUndecryptableCount *\/$/;"	m	struct:d11cnt
 sa	include/proto/802.11.h	/^	struct ether_addr	sa;		\/* transmitter address *\/$/;"	m	struct:dot11_management_header	typeref:struct:dot11_management_header::ether_addr
@@ -3512,7 +3512,7 @@ safe_getenv	src/include/shutils.h	163;"	d
 scan_callback_t	include/wlioctl.h	/^} scan_callback_t;$/;"	t	typeref:struct:_scan_callback
 scan_channel	include/wlioctl.h	/^	int scan_channel;$/;"	m	struct:channel_info
 scan_type	include/wlioctl.h	/^	int8 scan_type;		\/* -1 use default, DOT11_SCANTYPE_ACTIVE\/PASSIVE *\/$/;"	m	struct:wl_scan_params
-scb_val_t	include/wlioctl.h	/^} scb_val_t;$/;"	t	typeref:struct:__anon16
+scb_val_t	include/wlioctl.h	/^} scb_val_t;$/;"	t	typeref:struct:__anon18
 sched_rule_attr	src/ezp-lib.c	/^struct attr sched_rule_attr[] = {$/;"	v	typeref:struct:attr
 sched_rule_attr	src/ezp-lib6239.c	/^struct attr sched_rule_attr[] = {$/;"	v	typeref:struct:attr
 sep_string	src/ezp-lib.c	/^sep_string(char *word, const char *delim, char **idx_arr, int max_tok)$/;"	f	file:
@@ -3539,7 +3539,7 @@ show_value	src/ezp-lib6239.c	/^show_value(char *type, char *val, char *buf, int 
 shown	src/ezpcom-lib.h	/^    char shown;$/;"	m	struct:ezp_com_isp_map_entry_type
 shown	src/ezpcom-lib.h	/^    char shown;$/;"	m	struct:ezp_com_location_map_entry_type
 shown	src/ezpcom-lib.h	/^    char shown;$/;"	m	struct:ezp_com_vendor_map_entry_type
-size	include/wlioctl.h	/^	uint32	size;		\/* sizeof the field *\/$/;"	m	struct:__anon14
+size	include/wlioctl.h	/^	uint32	size;		\/* sizeof the field *\/$/;"	m	struct:__anon16
 size	src/flash_api.c	/^	u_int32_t size;$/;"	m	struct:mtd_info_user	file:
 smb_vpn_passthrough_rule_attr	src/ezp-lib.c	/^struct attr smb_vpn_passthrough_rule_attr[] = {$/;"	v	typeref:struct:attr
 smb_vpn_passthrough_rule_attr	src/ezp-lib6239.c	/^struct attr smb_vpn_passthrough_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3558,16 +3558,16 @@ snmpd_view_rule_attr	src/ezp-lib.c	/^struct attr snmpd_view_rule_attr[] = {$/;"	
 snmpd_view_rule_attr	src/ezp-lib6239.c	/^struct attr snmpd_view_rule_attr[] = {$/;"	v	typeref:struct:attr
 special_processing	src/nvram_linux.c	/^static int special_processing()$/;"	f	file:
 split	include/utils.h	101;"	d
-srom_rw_t	include/wlioctl.h	/^} srom_rw_t;$/;"	t	typeref:struct:__anon13
+srom_rw_t	include/wlioctl.h	/^} srom_rw_t;$/;"	t	typeref:struct:__anon15
 ssap	include/proto/802.11.h	/^	uint8	ssap;				\/* always 0xAA *\/$/;"	m	struct:dot11_llc_snap_header
 ssh_rule_attr	src/ezp-lib.c	/^struct attr ssh_rule_attr[] = {$/;"	v	typeref:struct:attr
 ssh_rule_attr	src/ezp-lib6239.c	/^struct attr ssh_rule_attr[] = {$/;"	v	typeref:struct:attr
 ssid	include/wlioctl.h	/^	wlc_ssid_t ssid;	\/* default is {0, ""} *\/$/;"	m	struct:wl_scan_params
-sta_info_t	include/wlioctl.h	/^} sta_info_t;$/;"	t	typeref:struct:__anon18
+sta_info_t	include/wlioctl.h	/^} sta_info_t;$/;"	t	typeref:struct:__anon20
 sta_priority_attr	src/ezp-lib.c	/^struct attr sta_priority_attr[] = {$/;"	v	typeref:struct:attr
 start	src/flash_api.c	/^	u_int32_t start;$/;"	m	struct:erase_info_user	file:
-start_time	include/proto/802.11.h	/^			uint8 start_time[8];$/;"	m	struct:dot11_meas_rep::__anon24::__anon25
-start_time	include/proto/802.11.h	/^	uint8 start_time[8];$/;"	m	struct:__anon23
+start_time	include/proto/802.11.h	/^			uint8 start_time[8];$/;"	m	struct:dot11_meas_rep::__anon6::__anon7
+start_time	include/proto/802.11.h	/^	uint8 start_time[8];$/;"	m	struct:__anon5
 start_time	include/proto/802.11.h	/^	uint8 start_time[8];$/;"	m	struct:dot11_meas_rep_basic
 state	src/zlib.h	/^    struct internal_state FAR *state; \/* not visible by applications *\/$/;"	m	struct:z_stream_s	typeref:struct:z_stream_s::FAR
 stats_rule_attr	src/ezp-lib.c	/^struct attr stats_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3575,7 +3575,7 @@ stats_rule_attr	src/ezp-lib6239.c	/^struct attr stats_rule_attr[] = {$/;"	v	type
 status	include/proto/802.11.h	/^	uint16			status;		\/* status code *\/$/;"	m	struct:dot11_assoc_resp
 status	include/proto/802.11.h	/^	uint16			status;		\/* status code *\/$/;"	m	struct:dot11_auth
 status	include/proto/802.11.h	/^	uint8 status;$/;"	m	struct:dot11_management_notification
-status	include/wlioctl.h	/^	uint status;			\/* Status code (see below) *\/$/;"	m	struct:__anon17
+status	include/wlioctl.h	/^	uint status;			\/* Status code (see below) *\/$/;"	m	struct:__anon19
 status	include/wlioctl.h	/^	uint status; $/;"	m	struct:_mac_event_params
 str	src/nvram_ezpacket.h	370;"	d
 str	src/nvram_ezpacket6239.h	711;"	d
@@ -3587,7 +3587,7 @@ subtype	include/proto/802.11.h	/^	uint8 subtype;$/;"	m	struct:wme_ie
 subtype	include/proto/802.11.h	/^	uint8 subtype;$/;"	m	struct:wme_params
 sup_auth_status	include/wlioctl.h	/^typedef enum sup_auth_status {$/;"	g
 sup_auth_status_t	include/wlioctl.h	/^} sup_auth_status_t;$/;"	t	typeref:enum:sup_auth_status
-supported	include/wlioctl.h	/^		uint8 supported;	\/* wpa supported *\/$/;"	m	struct:wl_bss_info106::__anon9
+supported	include/wlioctl.h	/^		uint8 supported;	\/* wpa supported *\/$/;"	m	struct:wl_bss_info106::__anon11
 surplus_bandwidth	include/proto/802.11.h	/^	uint16 surplus_bandwidth;	\/* Surplus Bandwidth Allowance Factor *\/$/;"	m	struct:wme_tspec
 ta	include/proto/802.11.h	/^	struct ether_addr	ta;		\/* transmitter address *\/$/;"	m	struct:dot11_ps_poll_frame	typeref:struct:dot11_ps_poll_frame::ether_addr
 ta	include/proto/802.11.h	/^	struct ether_addr	ta;		\/* transmitter address *\/$/;"	m	struct:dot11_rts_frame	typeref:struct:dot11_rts_frame::ether_addr
@@ -3602,7 +3602,7 @@ tkip_rx	include/wlioctl.h	/^	tkip_info_t	tkip_rx;	\/* tkip receive state *\/$/;"
 tkip_tx	include/wlioctl.h	/^	tkip_info_t	tkip_tx;	\/* tkip transmit state *\/$/;"	m	struct:wsec_key
 toggleNvramDebug	src/nvram_env.c	/^void toggleNvramDebug()$/;"	f
 token	include/proto/802.11.h	/^	uint8	token;$/;"	m	struct:dot11_action_measure
-token	include/proto/802.11.h	/^	uint8 token;$/;"	m	struct:__anon23
+token	include/proto/802.11.h	/^	uint8 token;$/;"	m	struct:__anon5
 token	include/proto/802.11.h	/^	uint8 token;$/;"	m	struct:dot11_management_notification
 token	include/proto/802.11.h	/^	uint8 token;$/;"	m	struct:dot11_meas_rep
 token	include/wlioctl.h	/^	uint32	token;		\/* overall measurement set token *\/$/;"	m	struct:wl_rm_rep
@@ -3625,8 +3625,8 @@ ttl_rule_attr	src/ezp-lib.c	/^struct attr ttl_rule_attr[] = {$/;"	v	typeref:stru
 ttl_rule_attr	src/ezp-lib6239.c	/^struct attr ttl_rule_attr[] = {$/;"	v	typeref:struct:attr
 tx_bad_pkt	include/wlioctl.h	/^	uint tx_bad_pkt;$/;"	m	struct:get_pktcnt
 tx_good_pkt	include/wlioctl.h	/^	uint tx_good_pkt;$/;"	m	struct:get_pktcnt
-tx_pwr	include/proto/802.11.h	/^	uint8 tx_pwr;$/;"	m	struct:__anon21
-txctl1	include/wlioctl.h	/^	uint16	txctl1;		\/* Radio TX_CTL1 value *\/$/;"	m	struct:__anon15
+tx_pwr	include/proto/802.11.h	/^	uint8 tx_pwr;$/;"	m	struct:__anon3
+txctl1	include/wlioctl.h	/^	uint16	txctl1;		\/* Radio TX_CTL1 value *\/$/;"	m	struct:__anon17
 txfail	include/proto/802.11.h	/^	uint32		txfail;		\/* dot11FailedCount *\/$/;"	m	struct:d11cnt
 txfrag	include/proto/802.11.h	/^	uint32		txfrag;		\/* dot11TransmittedFragmentCount *\/$/;"	m	struct:d11cnt
 txfrmsnt	include/proto/802.11.h	/^	uint32		txfrmsnt;	\/* dot11TransmittedFrameCount *\/$/;"	m	struct:d11cnt
@@ -3639,7 +3639,7 @@ txretry	include/proto/802.11.h	/^	uint32		txretry;	\/* dot11RetryCount *\/$/;"	m
 txrts	include/proto/802.11.h	/^	uint32		txrts;		\/* dot11RTSSuccessCount *\/$/;"	m	struct:d11cnt
 type	include/proto/802.11.h	/^	uint16	type;				\/* ethertype *\/$/;"	m	struct:dot11_llc_snap_header
 type	include/proto/802.11.h	/^	uint8 type;			\/* WME_TYPE *\/$/;"	m	struct:wme_tspec
-type	include/proto/802.11.h	/^	uint8 type;$/;"	m	struct:__anon23
+type	include/proto/802.11.h	/^	uint8 type;$/;"	m	struct:__anon5
 type	include/proto/802.11.h	/^	uint8 type;$/;"	m	struct:dot11_meas_rep
 type	include/proto/802.11.h	/^	uint8 type;$/;"	m	struct:wme_ie
 type	include/proto/802.11.h	/^	uint8 type;$/;"	m	struct:wme_params
@@ -3654,7 +3654,7 @@ uLongf	src/zconf.h	/^typedef uLong FAR uLongf;$/;"	t
 uchar	include/typedefs.h	/^typedef unsigned char	uchar;$/;"	t
 uchar	src/include/typedefs.h	/^typedef unsigned char	uchar;$/;"	t
 ucoderev	include/wlioctl.h	/^	uint		ucoderev;	\/* microcode version *\/$/;"	m	struct:wlc_rev_info
-ucount	include/wlioctl.h	/^		uint8 ucount;		\/* count of unicast ciphers *\/$/;"	m	struct:wl_bss_info106::__anon9
+ucount	include/wlioctl.h	/^		uint8 ucount;		\/* count of unicast ciphers *\/$/;"	m	struct:wl_bss_info106::__anon11
 uint	include/typedefs.h	/^typedef unsigned int	uint;$/;"	t
 uint	src/include/typedefs.h	/^typedef unsigned int	uint;$/;"	t
 uint16	include/typedefs.h	/^typedef unsigned short	uint16;$/;"	t
@@ -3669,7 +3669,7 @@ uint8	include/typedefs.h	/^typedef unsigned char	uint8;$/;"	t
 uint8	src/include/typedefs.h	/^typedef unsigned char	uint8;$/;"	t
 ulong	include/typedefs.h	/^typedef unsigned long	ulong;$/;"	t
 ulong	src/include/typedefs.h	/^typedef unsigned long	ulong;$/;"	t
-unicast	include/wlioctl.h	/^		uint8 unicast[4];	\/* unicast ciphers *\/$/;"	m	struct:wl_bss_info106::__anon9
+unicast	include/wlioctl.h	/^		uint8 unicast[4];	\/* unicast ciphers *\/$/;"	m	struct:wl_bss_info106::__anon11
 upnp_rule_attr	src/ezp-lib.c	/^struct attr upnp_rule_attr[] = {$/;"	v	typeref:struct:attr
 upnp_rule_attr	src/ezp-lib6239.c	/^struct attr upnp_rule_attr[] = {$/;"	v	typeref:struct:attr
 upnpxml_rule_attr	src/ezp-lib.c	/^struct attr upnpxml_rule_attr[] = {$/;"	v	typeref:struct:attr
@@ -3680,8 +3680,8 @@ used	src/include/wlutils.h	/^	uint used;	\/* bytes read or written (optional) *\
 user_name	src/ezpcom-lib.h	/^    char *user_name;$/;"	m	struct:ezp_com_isp_map_entry_type
 ushort	include/typedefs.h	/^typedef unsigned short	ushort;$/;"	t
 ushort	src/include/typedefs.h	/^typedef unsigned short	ushort;$/;"	t
-val	include/wlioctl.h	/^	uint32	val;		\/* read\/write value of the field *\/$/;"	m	struct:__anon14
-val	include/wlioctl.h	/^	uint32	val;$/;"	m	struct:__anon16
+val	include/wlioctl.h	/^	uint32	val;		\/* read\/write value of the field *\/$/;"	m	struct:__anon16
+val	include/wlioctl.h	/^	uint32	val;$/;"	m	struct:__anon18
 valid	src/nvram.h	/^	char valid;$/;"	m	struct:block_s
 value	include/bcmnvram.h	/^	char *value;$/;"	m	struct:nvram_tuple
 value	src/include/bcmnvram.h	/^	char *value;$/;"	m	struct:nvram_tuple
@@ -3689,7 +3689,7 @@ value	src/nvram.h	/^	char *value;$/;"	m	struct:cache_environment_s
 value	src/nvram.h	/^	char *value;$/;"	m	struct:nvram_ioctl_s
 vendorid	include/wlioctl.h	/^	uint		vendorid;	\/* PCI vendor id *\/$/;"	m	struct:wlc_rev_info
 ver	include/proto/802.11.h	/^	uchar	ver;$/;"	m	struct:brcm_ie
-ver	include/wlioctl.h	/^	uint16		ver;	\/* version of this struct *\/$/;"	m	struct:__anon18
+ver	include/wlioctl.h	/^	uint16		ver;	\/* version of this struct *\/$/;"	m	struct:__anon20
 version	include/proto/802.11.h	/^	uint8 version;			\/* WME_VERSION *\/$/;"	m	struct:wme_tspec
 version	include/proto/802.11.h	/^	uint8 version;$/;"	m	struct:wme_ie
 version	include/proto/802.11.h	/^	uint8 version;$/;"	m	struct:wme_params
@@ -3839,7 +3839,7 @@ wlan_st_rule_attr	src/ezp-lib.c	/^struct attr wlan_st_rule_attr[] = {$/;"	v	type
 wlan_st_rule_attr	src/ezp-lib6239.c	/^struct attr wlan_st_rule_attr[] = {$/;"	v	typeref:struct:attr
 wlc_event_cb	include/wlioctl.h	/^typedef struct wlc_event_cb {$/;"	s
 wlc_event_cb_t	include/wlioctl.h	/^} wlc_event_cb_t;$/;"	t	typeref:struct:wlc_event_cb
-wlc_event_t	include/wlioctl.h	/^} wlc_event_t;$/;"	t	typeref:struct:__anon17
+wlc_event_t	include/wlioctl.h	/^} wlc_event_t;$/;"	t	typeref:struct:__anon19
 wlc_locale_t	include/wlioctl.h	/^} wlc_locale_t;$/;"	t	typeref:enum:_wlc_locale
 wlc_rev_info	include/wlioctl.h	/^typedef struct wlc_rev_info {$/;"	s
 wlc_rev_info_t	include/wlioctl.h	/^} wlc_rev_info_t;$/;"	t	typeref:struct:wlc_rev_info
@@ -3875,12 +3875,12 @@ wme_tspec_t	include/proto/802.11.h	/^typedef struct wme_tspec wme_tspec_t;$/;"	t
 wol_rule_attr	src/ezp-lib.c	/^struct attr wol_rule_attr[] = {$/;"	v	typeref:struct:attr
 wol_rule_attr	src/ezp-lib6239.c	/^struct attr wol_rule_attr[] = {$/;"	v	typeref:struct:attr
 workspace	src/zlib.h	/^    void     *workspace; \/* memory allocated for this stream *\/$/;"	m	struct:z_stream_s
-wpa	include/wlioctl.h	/^	} wpa;$/;"	m	struct:wl_bss_info106	typeref:struct:wl_bss_info106::__anon9
+wpa	include/wlioctl.h	/^	} wpa;$/;"	m	struct:wl_bss_info106	typeref:struct:wl_bss_info106::__anon11
 wpa_snap_template	include/wlioctl.h	/^static const uint8 wpa_snap_template[] =$/;"	v
 wsec_iv_t	include/wlioctl.h	/^} wsec_iv_t;$/;"	t	typeref:struct:_wsec_iv
 wsec_key	include/wlioctl.h	/^typedef struct wsec_key {$/;"	s
 wsec_key_t	include/wlioctl.h	/^} wsec_key_t;$/;"	t	typeref:struct:wsec_key
-wsec_pmk_t	include/wlioctl.h	/^} wsec_pmk_t;$/;"	t	typeref:struct:__anon12
+wsec_pmk_t	include/wlioctl.h	/^} wsec_pmk_t;$/;"	t	typeref:struct:__anon14
 xstr	src/nvram_ezpacket.h	369;"	d
 xstr	src/nvram_ezpacket6239.h	710;"	d
 z_off_t	src/zconf.h	88;"	d

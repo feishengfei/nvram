@@ -130,14 +130,23 @@ int _nvram_commit(nvram_handle_t *h);
 
 /* **************** public functions **************** */
 char * nvram_get(const char *name);
+#define nvram_safe_get(name) (nvram_get(name) ? : "")
+int nvram_get_option(const char *name);
 int nvram_set(const char *name, const char *value);
-int nvram_fset(const char *name, const char *value);
+//int nvram_fset(const char *name, const char *value);
 int nvram_unset(const char *name);
 int nvram_getall(char *buf, int count);
 int nvram_commit(void);
 
 void nvram_default(void);
 void nvram_default_rule(char *rulename);
+
 void nvram_factory(void);
+
+void nvram_export(char *filename);
+int nvram_import(char *filename);
+
+int nvram_upgrade(char *source);
+int nvram_downgrade(char *target);
 /********************************************************/
 #endif /* _nvram_h_ */

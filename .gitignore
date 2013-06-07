@@ -2,4 +2,4 @@
 libnvram.so*
 nvram
 .*.swp
-tags
+*tags
