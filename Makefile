@@ -14,7 +14,7 @@ CLI_CFLAGS  = $(CFLAGS)
 CLI_LDFLAGS = $(LDFLAGS)
 
 CLI_OBJ = cli.o
-LIB_OBJ = crc.o nvram.o
+LIB_OBJ = crc.o nvram.o nvram_public.o
 
 all: cli libnvram
 
@@ -30,6 +30,7 @@ cli.o: cli.c
 libnvram:
 	$(CC) $(LIB_CFLAGS) -c -o crc.o crc.c
 	$(CC) $(LIB_CFLAGS) -c -o nvram.o nvram.c
+	$(CC) $(LIB_CFLAGS) -c -o nvram_public.o nvram_public.c
 	$(CC) $(LIB_CFLAGS)  \
 		-o $(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR) $(LIB_OBJ)
 

@@ -1,17 +1,3 @@
-/*
- * NVRAM variable manipulation (common)
- *
- * Copyright 2004, Broadcom Corporation
- * Copyright 2009-2010, OpenWrt.org
- * All Rights Reserved.
- *
- * THIS SOFTWARE IS OFFERED "AS IS", AND BROADCOM GRANTS NO WARRANTIES OF ANY
- * KIND, EXPRESS OR IMPLIED, BY STATUTE, COMMUNICATION OR OTHERWISE. BROADCOM
- * SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS
- * FOR A SPECIFIC PURPOSE OR NONINFRINGEMENT CONCERNING THIS SOFTWARE.
- *
- */
-
 #include "nvram.h"
 
 #define TRACE(msg) \
@@ -19,8 +5,6 @@
 		__FILE__, __LINE__, __FUNCTION__, msg ? msg : "?")
 
 size_t nvram_erase_size = 0;
-static nvram_handle_t *nvram = NULL;
-
 
 /* -- Helper functions -- */
 

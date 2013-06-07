@@ -1,32 +1,6 @@
-/*
- * Command line interface for libnvram
- *
- * Copyright 2009, Jo-Philipp Wich <xm@subsignal.org>
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
- * The libnvram code is based on Broadcom code for Linux 2.4.x .
- *
- */
+#include "cli.h"
 
-#include "nvram.h"
-
-
-
-static int do_show(nvram_handle_t *nvram)
+int do_show(nvram_handle_t *nvram)
 {
 	nvram_tuple_t *t;
 	int stat = 1;
@@ -45,7 +19,7 @@ static int do_show(nvram_handle_t *nvram)
 	return stat;
 }
 
-static int do_get(nvram_handle_t *nvram, const char *var)
+int do_get(nvram_handle_t *nvram, const char *var)
 {
 	const char *val;
 	int stat = 1;
@@ -59,12 +33,12 @@ static int do_get(nvram_handle_t *nvram, const char *var)
 	return stat;
 }
 
-static int do_unset(nvram_handle_t *nvram, const char *var)
+int do_unset(nvram_handle_t *nvram, const char *var)
 {
 	return _nvram_unset(nvram, var);
 }
 
-static int do_set(nvram_handle_t *nvram, const char *pair)
+int do_set(nvram_handle_t *nvram, const char *pair)
 {
 	char *val = strstr(pair, "=");
 	char var[strlen(pair)];
@@ -80,7 +54,7 @@ static int do_set(nvram_handle_t *nvram, const char *pair)
 	return stat;
 }
 
-static int do_info(nvram_handle_t *nvram)
+int do_info(nvram_handle_t *nvram)
 {
 	nvram_header_t *hdr = _nvram_header(nvram);
 
