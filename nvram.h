@@ -83,63 +83,21 @@ typedef struct nvram_tuple  nvram_tuple_t;
 most of which need nvram_handle_t as parameter*/
 /********************************************************/
 
-/* Open NVRAM and obtain a handle. 
- * @param	file	 
- * @param	rdonly	 
- * @return */
 nvram_handle_t * _nvram_open(const char *file, int rdonly);
+nvram_handle_t * _nvram_open_rdonly(void);
+nvram_handle_t * _nvram_open_staging(void);
 
-/* Close NVRAM and free memory. 
- * @param	h	 
- * @return */
 int _nvram_close(nvram_handle_t *h);
 
-/* Get nvram header. 
- * @param	h	 
- * @return */
 nvram_header_t * nvram_header(nvram_handle_t *h);
 
-/* Set the value of an NVRAM variable. The name and value strings are
- * copied into private storage. Pointers to previously set values
- * may become invalid. The new value may be immediately
- * retrieved but will not be permanently stored until a commit.
- * @param	h	nvram handle
- * @param	name	name of variable to set
- * @param	value	value of variable
- * @return	0 on success and errno on failure */
-int _nvram_set(nvram_handle_t *h, const char *name, const char *value);
-
-/* Get the value of an NVRAM variable. The pointer returned may be
- * invalid after a set.
- * @param	h	nvram handle
- * @param	name	name of variable to get
- * @return	value of variable or NULL if undefined */
 char * _nvram_get(nvram_handle_t *h, const char *name);
-
-/*
- * Get all NVRAM variables one by one
- * @param	h	nvram handle
- * @return	name-value tuple
- */
 nvram_tuple_t * _nvram_getall(nvram_handle_t *h);
 
-/* Unset an NVRAM variable. Pointers to previously set values
- * remain valid until a set.
- * @param	h	nvram handle
- * @param	name	name of variable to unset
- * @return	0 on success and errno on failure
- * NOTE: use _nvram_commit to commit this change to flash. */
+int _nvram_set(nvram_handle_t *h, const char *name, const char *value);
 int _nvram_unset(nvram_handle_t *h, const char *name);
 
-/*
- * Commit NVRAM variables to permanent storage. All pointers to values
- * may be invalid after a commit.
- * NVRAM values are undefined after a commit.
- * @param	h	nvram handle
- * @return	0 on success and errno on failure
- */
 int _nvram_commit(nvram_handle_t *h);
-
 
 /********************************************************/
 char * nvram_get(const char *name);

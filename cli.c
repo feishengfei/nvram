@@ -25,27 +25,6 @@
 #include "nvram.h"
 
 
-static nvram_handle_t * _nvram_open_rdonly(void)
-{
-	const char *file = nvram_find_staging();
-
-	file = nvram_find_mtd();
-	if( file == NULL )
-		file = nvram_find_mtd();
-
-	if( file != NULL )
-		return _nvram_open(file, NVRAM_RO);
-
-	return NULL;
-}
-
-static nvram_handle_t * _nvram_open_staging(void)
-{
-	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
-		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
-
-	return NULL;
-}
 
 static int do_show(nvram_handle_t *nvram)
 {
