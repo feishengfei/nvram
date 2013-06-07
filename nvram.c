@@ -110,27 +110,27 @@ static int _nvram_rehash(nvram_handle_t *h)
 			break;
 		*eq = '\0';
 		value = eq + 1;
-		nvram_set(h, name, value);
+		_nvram_set(h, name, value);
 		*eq = '=';
 	}
 
 	/* Set special SDRAM parameters */
-	if (!nvram_get(h, "sdram_init")) {
+	if (!_nvram_get(h, "sdram_init")) {
 		sprintf(buf, "0x%04X", (uint16_t)(header->crc_ver_init >> 16));
-		nvram_set(h, "sdram_init", buf);
+		_nvram_set(h, "sdram_init", buf);
 	}
-	if (!nvram_get(h, "sdram_config")) {
+	if (!_nvram_get(h, "sdram_config")) {
 		sprintf(buf, "0x%04X", (uint16_t)(header->config_refresh & 0xffff));
-		nvram_set(h, "sdram_config", buf);
+		_nvram_set(h, "sdram_config", buf);
 	}
-	if (!nvram_get(h, "sdram_refresh")) {
+	if (!_nvram_get(h, "sdram_refresh")) {
 		sprintf(buf, "0x%04X",
 			(uint16_t)((header->config_refresh >> 16) & 0xffff));
-		nvram_set(h, "sdram_refresh", buf);
+		_nvram_set(h, "sdram_refresh", buf);
 	}
-	if (!nvram_get(h, "sdram_ncdl")) {
+	if (!_nvram_get(h, "sdram_ncdl")) {
 		sprintf(buf, "0x%08X", header->config_ncdl);
-		nvram_set(h, "sdram_ncdl", buf);
+		_nvram_set(h, "sdram_ncdl", buf);
 	}
 
 	return 0;
@@ -148,7 +148,7 @@ nvram_header_t * nvram_header(nvram_handle_t *h)
 }
 
 /* Get the value of an NVRAM variable. */
-char * nvram_get(nvram_handle_t *h, const char *name)
+char * _nvram_get(nvram_handle_t *h, const char *name)
 {
 	uint32_t i;
 	nvram_tuple_t *t;
@@ -169,7 +169,7 @@ char * nvram_get(nvram_handle_t *h, const char *name)
 }
 
 /* Set the value of an NVRAM variable. */
-int nvram_set(nvram_handle_t *h, const char *name, const char *value)
+int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 {
 	uint32_t i;
 	nvram_tuple_t *t, *u, **prev;
@@ -205,7 +205,7 @@ int nvram_set(nvram_handle_t *h, const char *name, const char *value)
 }
 
 /* Unset the value of an NVRAM variable. */
-int nvram_unset(nvram_handle_t *h, const char *name)
+int _nvram_unset(nvram_handle_t *h, const char *name)
 {
 	uint32_t i;
 	nvram_tuple_t *t, **prev;
@@ -231,7 +231,7 @@ int nvram_unset(nvram_handle_t *h, const char *name)
 }
 
 /* Get all NVRAM variables. */
-nvram_tuple_t * nvram_getall(nvram_handle_t *h)
+nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 {
 	int i;
 	nvram_tuple_t *t, *l, *x;
@@ -258,7 +258,7 @@ nvram_tuple_t * nvram_getall(nvram_handle_t *h)
 }
 
 /* Regenerate NVRAM. */
-int nvram_commit(nvram_handle_t *h)
+int _nvram_commit(nvram_handle_t *h)
 {
 	nvram_header_t *header = nvram_header(h);
 	char *init, *config, *refresh, *ncdl;
@@ -271,10 +271,10 @@ int nvram_commit(nvram_handle_t *h)
 	/* Regenerate header */
 	header->magic = NVRAM_MAGIC;
 	header->crc_ver_init = (NVRAM_VERSION << 8);
-	if (!(init = nvram_get(h, "sdram_init")) ||
-		!(config = nvram_get(h, "sdram_config")) ||
-		!(refresh = nvram_get(h, "sdram_refresh")) ||
-		!(ncdl = nvram_get(h, "sdram_ncdl"))) {
+	if (!(init = _nvram_get(h, "sdram_init")) ||
+		!(config = _nvram_get(h, "sdram_config")) ||
+		!(refresh = _nvram_get(h, "sdram_refresh")) ||
+		!(ncdl = _nvram_get(h, "sdram_ncdl"))) {
 		header->crc_ver_init |= SDRAM_INIT << 16;
 		header->config_refresh = SDRAM_CONFIG;
 		header->config_refresh |= SDRAM_REFRESH << 16;
@@ -338,7 +338,7 @@ int nvram_commit(nvram_handle_t *h)
 }
 
 /* Open NVRAM and obtain a handle. */
-nvram_handle_t * nvram_open(const char *file, int rdonly)
+nvram_handle_t * _nvram_open(const char *file, int rdonly)
 {
 	int i;
 	int fd;
@@ -411,7 +411,7 @@ nvram_handle_t * nvram_open(const char *file, int rdonly)
 }
 
 /* Close NVRAM and free memory. */
-int nvram_close(nvram_handle_t *h)
+int _nvram_close(nvram_handle_t *h)
 {
 	_nvram_free(h);
 	munmap(h->mmap, h->length);

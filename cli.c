@@ -25,7 +25,7 @@
 #include "nvram.h"
 
 
-static nvram_handle_t * nvram_open_rdonly(void)
+static nvram_handle_t * _nvram_open_rdonly(void)
 {
 	const char *file = nvram_find_staging();
 
@@ -34,15 +34,15 @@ static nvram_handle_t * nvram_open_rdonly(void)
 		file = nvram_find_mtd();
 
 	if( file != NULL )
-		return nvram_open(file, NVRAM_RO);
+		return _nvram_open(file, NVRAM_RO);
 
 	return NULL;
 }
 
-static nvram_handle_t * nvram_open_staging(void)
+static nvram_handle_t * _nvram_open_staging(void)
 {
 	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
-		return nvram_open(NVRAM_STAGING, NVRAM_RW);
+		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
 
 	return NULL;
 }
@@ -52,7 +52,7 @@ static int do_show(nvram_handle_t *nvram)
 	nvram_tuple_t *t;
 	int stat = 1;
 
-	if( (t = nvram_getall(nvram)) != NULL )
+	if( (t = _nvram_getall(nvram)) != NULL )
 	{
 		while( t )
 		{
@@ -71,7 +71,7 @@ static int do_get(nvram_handle_t *nvram, const char *var)
 	const char *val;
 	int stat = 1;
 
-	if( (val = nvram_get(nvram, var)) != NULL )
+	if( (val = _nvram_get(nvram, var)) != NULL )
 	{
 		printf("%s\n", val);
 		stat = 0;
@@ -82,7 +82,7 @@ static int do_get(nvram_handle_t *nvram, const char *var)
 
 static int do_unset(nvram_handle_t *nvram, const char *var)
 {
-	return nvram_unset(nvram, var);
+	return _nvram_unset(nvram, var);
 }
 
 static int do_set(nvram_handle_t *nvram, const char *pair)
@@ -95,7 +95,7 @@ static int do_set(nvram_handle_t *nvram, const char *pair)
 	{
 		memset(var, 0, sizeof(var));
 		strncpy(var, pair, (int)(val-pair));
-		stat = nvram_set(nvram, var, (char *)(val + 1));
+		stat = _nvram_set(nvram, var, (char *)(val + 1));
 	}
 
 	return stat;
@@ -151,7 +151,7 @@ int main( int argc, const char *argv[] )
 		}
 
 
-	nvram = write ? nvram_open_staging() : nvram_open_rdonly();
+	nvram = write ? _nvram_open_staging() : _nvram_open_rdonly();
 
 	if( nvram != NULL && argc > 1 )
 	{
@@ -208,9 +208,9 @@ int main( int argc, const char *argv[] )
 		}
 
 		if( write )
-			stat = nvram_commit(nvram);
+			stat = _nvram_commit(nvram);
 
-		nvram_close(nvram);
+		_nvram_close(nvram);
 
 		if( commit )
 			stat = staging_to_nvram();
