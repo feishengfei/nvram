@@ -104,10 +104,12 @@ void nvram_export(char *filename)
 
 	if ( !(fp = fopen(filename, "wb") ))
 		return;
-
+/*
+	//HEADER of export
 	fprintf(fp, "[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
 			nvram_safe_get("brand"), nvram_safe_get("model"),
 			nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat"));
+*/
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		if ((v->option & NVRAM_PROTECTED) ||
@@ -115,6 +117,7 @@ void nvram_export(char *filename)
 			continue;
 		}
 		value = nvram_safe_get(v->name);
+		printf("%s=%s\n", v->name, value);
 		fprintf(fp, "%s=%s\n", v->name, value);
 	}
 	fclose(fp);
