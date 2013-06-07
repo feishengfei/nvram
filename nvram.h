@@ -90,10 +90,17 @@ nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value );
 /* (Re)initialize the hash table. */
 int _nvram_rehash(nvram_handle_t *h);
+/* Computes a crc8 over the input data. */
+uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
 
 /* **************** inner functions **************** */
 /* Get nvram header. */
 nvram_header_t * _nvram_header(nvram_handle_t *h);
+
+/* Copy NVRAM contents to staging file. */
+int nvram_to_staging(void);
+/* Copy staging file to NVRAM device. */
+int staging_to_nvram(void);
 
 /* Determine NVRAM device node. */
 char * nvram_find_mtd(void);
@@ -133,19 +140,4 @@ void nvram_default(void);
 void nvram_default_rule(char *rulename);
 void nvram_factory(void);
 /********************************************************/
-
-/* Computes a crc8 over the input data. */
-uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
-
-
-
-/* Copy NVRAM contents to staging file. */
-int nvram_to_staging(void);
-
-/* Copy staging file to NVRAM device. */
-int staging_to_nvram(void);
-
-
-/* Returns the crc value of the nvram. */
-//uint8_t nvram_calc_crc(nvram_header_t * nvh);
 #endif /* _nvram_h_ */

@@ -117,6 +117,74 @@ int _nvram_rehash(nvram_handle_t *h)
 	return 0;
 }
 
+/* Copy NVRAM contents to staging file. */
+int nvram_to_staging(void)
+{
+	int fdmtd, fdstg, stat;
+	char *mtd = nvram_find_mtd();
+	char buf[nvram_erase_size];
+
+	stat = -1;
+
+	if( (mtd != NULL) && (nvram_erase_size > 0) )
+	{
+		if( (fdmtd = open(mtd, O_RDONLY)) > -1 )
+		{
+			if( read(fdmtd, buf, sizeof(buf)) == sizeof(buf) )
+			{
+				if((fdstg = open(NVRAM_STAGING, O_WRONLY | O_CREAT, 0600)) > -1)
+				{
+					write(fdstg, buf, sizeof(buf));
+					fsync(fdstg);
+					close(fdstg);
+
+					stat = 0;
+				}
+			}
+
+			close(fdmtd);
+		}
+	}
+
+	free(mtd);
+	return stat;
+}
+
+/* Copy staging file to NVRAM device. */
+int staging_to_nvram(void)
+{
+	int fdmtd, fdstg, stat;
+	char *mtd = nvram_find_mtd();
+	char buf[nvram_erase_size];
+
+	stat = -1;
+
+	if( (mtd != NULL) && (nvram_erase_size > 0) )
+	{
+		if( (fdstg = open(NVRAM_STAGING, O_RDONLY)) > -1 )
+		{
+			if( read(fdstg, buf, sizeof(buf)) == sizeof(buf) )
+			{
+				if( (fdmtd = open(mtd, O_WRONLY | O_SYNC)) > -1 )
+				{
+					write(fdmtd, buf, sizeof(buf));
+					fsync(fdmtd);
+					close(fdmtd);
+					stat = 0;
+				}
+			}
+
+			close(fdstg);
+
+			if( !stat )
+				stat = unlink(NVRAM_STAGING) ? 1 : 0;
+		}
+	}
+
+	free(mtd);
+	return stat;
+}
+
 
 /* -- inner functions -- */
 
@@ -135,17 +203,6 @@ char * nvram_find_mtd(void)
 	char *path = NULL;
 	struct stat s;
 	int supported = 1;
-
-	/* Refuse any operation on the WGT634U */
-	/*
-	if( (fp = fopen("/proc/diag/model", "r")) )
-	{
-		if( fgets(dev, sizeof(dev), fp) && !strncmp(dev, "Netgear WGT634U", 15) )
-			supported = 0;
-
-		fclose(fp);
-	}
-	*/
 
 	if( supported && (fp = fopen("/proc/mtd", "r")) )
 	{
@@ -502,70 +559,3 @@ int _nvram_commit(nvram_handle_t *h)
 
 
 
-/* Copy NVRAM contents to staging file. */
-int nvram_to_staging(void)
-{
-	int fdmtd, fdstg, stat;
-	char *mtd = nvram_find_mtd();
-	char buf[nvram_erase_size];
-
-	stat = -1;
-
-	if( (mtd != NULL) && (nvram_erase_size > 0) )
-	{
-		if( (fdmtd = open(mtd, O_RDONLY)) > -1 )
-		{
-			if( read(fdmtd, buf, sizeof(buf)) == sizeof(buf) )
-			{
-				if((fdstg = open(NVRAM_STAGING, O_WRONLY | O_CREAT, 0600)) > -1)
-				{
-					write(fdstg, buf, sizeof(buf));
-					fsync(fdstg);
-					close(fdstg);
-
-					stat = 0;
-				}
-			}
-
-			close(fdmtd);
-		}
-	}
-
-	free(mtd);
-	return stat;
-}
-
-/* Copy staging file to NVRAM device. */
-int staging_to_nvram(void)
-{
-	int fdmtd, fdstg, stat;
-	char *mtd = nvram_find_mtd();
-	char buf[nvram_erase_size];
-
-	stat = -1;
-
-	if( (mtd != NULL) && (nvram_erase_size > 0) )
-	{
-		if( (fdstg = open(NVRAM_STAGING, O_RDONLY)) > -1 )
-		{
-			if( read(fdstg, buf, sizeof(buf)) == sizeof(buf) )
-			{
-				if( (fdmtd = open(mtd, O_WRONLY | O_SYNC)) > -1 )
-				{
-					write(fdmtd, buf, sizeof(buf));
-					fsync(fdmtd);
-					close(fdmtd);
-					stat = 0;
-				}
-			}
-
-			close(fdstg);
-
-			if( !stat )
-				stat = unlink(NVRAM_STAGING) ? 1 : 0;
-		}
-	}
-
-	free(mtd);
-	return stat;
-}
