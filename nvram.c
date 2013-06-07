@@ -14,13 +14,12 @@
 
 #include "nvram.h"
 
-uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
-
 #define TRACE(msg) \
 	printf("%s(%i) in %s(): %s\n", \
 		__FILE__, __LINE__, __FUNCTION__, msg ? msg : "?")
 
 size_t nvram_erase_size = 0;
+static nvram_handle_t *nvram = NULL;
 
 
 /* -- Helper functions -- */
@@ -141,6 +140,77 @@ int _nvram_rehash(nvram_handle_t *h)
 nvram_header_t * _nvram_header(nvram_handle_t *h)
 {
 	return (nvram_header_t *) &h->mmap[h->offset];
+}
+
+/* Determine NVRAM device node. */
+char * nvram_find_mtd(void)
+{
+	FILE *fp;
+	int i, esz;
+	char dev[PATH_MAX];
+	char *path = NULL;
+	struct stat s;
+	int supported = 1;
+
+	/* Refuse any operation on the WGT634U */
+	/*
+	if( (fp = fopen("/proc/diag/model", "r")) )
+	{
+		if( fgets(dev, sizeof(dev), fp) && !strncmp(dev, "Netgear WGT634U", 15) )
+			supported = 0;
+
+		fclose(fp);
+	}
+	*/
+
+	if( supported && (fp = fopen("/proc/mtd", "r")) )
+	{
+		while( fgets(dev, sizeof(dev), fp) )
+		{
+			if( strstr(dev, NVRAM_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
+			{
+				nvram_erase_size = esz;
+
+				sprintf(dev, "/dev/mtdblock/%d", i);
+				if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
+				{
+					if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
+					{
+						strncpy(path, dev, strlen(dev)+1);
+						break;
+					}
+				}
+				else
+				{
+					sprintf(dev, "/dev/mtdblock%d", i);
+					if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
+					{
+						if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
+						{
+							strncpy(path, dev, strlen(dev)+1);
+							break;
+						}
+					}
+				}
+			}
+		}
+		fclose(fp);
+	}
+
+	return path;
+}
+
+/* Check NVRAM staging file. */
+char * nvram_find_staging(void)
+{
+	struct stat s;
+
+	if( (stat(NVRAM_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
+	{
+		return NVRAM_STAGING;
+	}
+
+	return NULL;
 }
 
 /* Open NVRAM and obtain a handle. */
@@ -446,76 +516,7 @@ int _nvram_commit(nvram_handle_t *h)
 
 
 
-/* Determine NVRAM device node. */
-char * nvram_find_mtd(void)
-{
-	FILE *fp;
-	int i, esz;
-	char dev[PATH_MAX];
-	char *path = NULL;
-	struct stat s;
-	int supported = 1;
 
-	/* Refuse any operation on the WGT634U */
-	/*
-	if( (fp = fopen("/proc/diag/model", "r")) )
-	{
-		if( fgets(dev, sizeof(dev), fp) && !strncmp(dev, "Netgear WGT634U", 15) )
-			supported = 0;
-
-		fclose(fp);
-	}
-	*/
-
-	if( supported && (fp = fopen("/proc/mtd", "r")) )
-	{
-		while( fgets(dev, sizeof(dev), fp) )
-		{
-			if( strstr(dev, NVRAM_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
-			{
-				nvram_erase_size = esz;
-
-				sprintf(dev, "/dev/mtdblock/%d", i);
-				if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
-				{
-					if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
-					{
-						strncpy(path, dev, strlen(dev)+1);
-						break;
-					}
-				}
-				else
-				{
-					sprintf(dev, "/dev/mtdblock%d", i);
-					if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
-					{
-						if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
-						{
-							strncpy(path, dev, strlen(dev)+1);
-							break;
-						}
-					}
-				}
-			}
-		}
-		fclose(fp);
-	}
-
-	return path;
-}
-
-/* Check NVRAM staging file. */
-char * nvram_find_staging(void)
-{
-	struct stat s;
-
-	if( (stat(NVRAM_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
-	{
-		return NVRAM_STAGING;
-	}
-
-	return NULL;
-}
 
 /* Copy NVRAM contents to staging file. */
 int nvram_to_staging(void)

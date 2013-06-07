@@ -95,6 +95,10 @@ int _nvram_rehash(nvram_handle_t *h);
 /* Get nvram header. */
 nvram_header_t * _nvram_header(nvram_handle_t *h);
 
+/* Determine NVRAM device node. */
+char * nvram_find_mtd(void);
+/* Check NVRAM staging file. */
+char * nvram_find_staging(void);
 /* Open NVRAM and obtain a handle. */
 nvram_handle_t * _nvram_open(const char *file, int rdonly);
 /* Invoke a NVRAM handle for get, getall. */
@@ -133,14 +137,7 @@ void nvram_factory(void);
 /* Computes a crc8 over the input data. */
 uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
 
-/* Returns the crc value of the nvram. */
-uint8_t nvram_calc_crc(nvram_header_t * nvh);
 
-/* Determine NVRAM device node. */
-char * nvram_find_mtd(void);
-
-/* Check NVRAM staging file. */
-char * nvram_find_staging(void);
 
 /* Copy NVRAM contents to staging file. */
 int nvram_to_staging(void);
@@ -149,4 +146,6 @@ int nvram_to_staging(void);
 int staging_to_nvram(void);
 
 
+/* Returns the crc value of the nvram. */
+//uint8_t nvram_calc_crc(nvram_header_t * nvh);
 #endif /* _nvram_h_ */
