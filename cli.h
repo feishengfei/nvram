@@ -20,6 +20,6 @@ int do_info();
 
 //TODO
 int do_export(const char *to_file);
-int do_import(const char *to_file);
+int do_import(const char *from_file);
 
 #endif

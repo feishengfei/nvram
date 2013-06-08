@@ -146,7 +146,7 @@ void nvram_default_rule(char *rulename);
 
 void nvram_factory(void);
 
-void nvram_export(char *filename);
+int nvram_export(char *filename);
 int nvram_import(char *filename);
 
 int nvram_upgrade(char *source);

@@ -85,7 +85,7 @@ int _do_unset(nvram_handle_t *nvram, const char *var)
 
 int do_unset(const char *var)
 {
-	return do_unset(var);
+	return nvram_unset(var);
 }
 
 int _do_set(nvram_handle_t *nvram, const char *pair)
@@ -181,17 +181,13 @@ int do_info()
 //TODO
 int do_export(const char *to_file)
 {
-	int stat = 1;
-	nvram_export(to_file);
-	return stat;
+	return nvram_export(to_file);
 }
 
 //TODO
-int do_import(const char *to_file)
+int do_import(const char *from_file)
 {
-	int stat = 1;
-
-	return stat;
+	return nvram_import(from_file);
 }
 
 #if 0

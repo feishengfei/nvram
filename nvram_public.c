@@ -124,14 +124,14 @@ void nvram_factory(void)
 #define EZP_PROD_VERSION "UNSTABLE_VERSION"
 #define NVRAM_TMP_LEN 256
 //TODO
-void nvram_export(char *filename)
+int nvram_export(char *filename)
 {   
 	FILE *fp;
 	struct nvram_tuple *v;
 	char *value;
 
 	if ( !(fp = fopen(filename, "wb") ))
-		return;
+		return EACCES;
 /*
 	//HEADER of export
 	fprintf(fp, "[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
@@ -149,6 +149,7 @@ void nvram_export(char *filename)
 		fprintf(fp, "%s=%s\n", v->name, value);
 	}
 	fclose(fp);
+	return 0;
 }
 
 //TODO
