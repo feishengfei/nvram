@@ -331,13 +331,21 @@ nvram_handle_t * _nvram_open(const char *file, int rdonly)
 nvram_handle_t * _nvram_open_rdonly(void)
 {
 	const char *file = nvram_find_staging();
+printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
 
 	file = nvram_find_mtd();
-	if( file == NULL )
+printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
+	if( file == NULL ) {
 		file = nvram_find_mtd();
+printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
+	}
 
-	if( file != NULL )
+	if( file != NULL ) {
+		printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
 		return _nvram_open(file, NVRAM_RO);
+	}
+
+	printf("__%s_%d:\r\n", __FUNCTION__, __LINE__);
 
 	return NULL;
 }

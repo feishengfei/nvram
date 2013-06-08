@@ -1,6 +1,6 @@
 #include "cli.h"
 #include "nvram_rule.h"
-extern nvram_handle_t *nvram_h ;
+
 void puts_trim_cr(char *str)
 {   
 	int len;
@@ -33,15 +33,21 @@ int _do_show(nvram_handle_t *nvram)
 
 int do_show()
 {
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_rdonly();
-		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
-		}
-	}
-	printf("__%s_%d:%08x\r\n", __FUNCTION__, __LINE__, nvram_h);
+	nvram_tuple_t *t;
+	int stat = 1;
 
-	return _do_show(nvram_h);
+	if( (t = nvram_getall()) != NULL )
+	{
+		while( t )
+		{
+			printf("%s=%s\n", t->name, t->value);
+			t = t->next;
+		}
+
+		stat = 0;
+	}
+
+	return stat;
 }
 
 int _do_get(nvram_handle_t *nvram, const char *var)
@@ -60,14 +66,16 @@ int _do_get(nvram_handle_t *nvram, const char *var)
 
 int do_get(const char *var)
 {
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_rdonly();
-		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
-		}
+	const char *val;
+	int stat = 1;
+
+	if( (val = nvram_get(var)) != NULL )
+	{
+		printf("%s\n", val);
+		stat = 0;
 	}
-	printf("__%s_%d:%08x\r\n", __FUNCTION__, __LINE__, nvram_h);
-	return _do_get(nvram_h, var);
+
+	return stat;
 }
 
 int _do_unset(nvram_handle_t *nvram, const char *var)
@@ -77,15 +85,7 @@ int _do_unset(nvram_handle_t *nvram, const char *var)
 
 int do_unset(const char *var)
 {
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_staging();
-		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
-		}
-	}
-
-	printf("__%s_%d:%08x\r\n", __FUNCTION__, __LINE__, nvram_h);
-	return _do_unset(nvram_h, var);
+	return do_unset(var);
 }
 
 int _do_set(nvram_handle_t *nvram, const char *pair)
@@ -106,15 +106,18 @@ int _do_set(nvram_handle_t *nvram, const char *pair)
 
 int do_set(const char *pair)
 {
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_staging();
-		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
-		}
+	char *val = strstr(pair, "=");
+	char var[strlen(pair)];
+	int stat = 1;
+
+	if( val != NULL )
+	{
+		memset(var, 0, sizeof(var));
+		strncpy(var, pair, (int)(val-pair));
+		stat = nvram_set(var, (char *)(val + 1));
 	}
 
-	printf("__%s_%d:%08x\r\n", __FUNCTION__, __LINE__, nvram_h);
-	return _do_set(nvram_h, pair);
+	return stat;
 }
 
 int _do_info(nvram_handle_t *nvram)
@@ -148,14 +151,31 @@ int _do_info(nvram_handle_t *nvram)
 
 int do_info()
 {
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_rdonly();
-		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
-		}
-	}
-	printf("__%s_%d:%08x\r\n", __FUNCTION__, __LINE__, nvram_h);
-	return _do_info(nvram_h);
+	nvram_header_t *hdr = nvram_header();
+
+	/* CRC8 over the last 11 bytes of the header and data bytes */
+	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
+		hdr->len - NVRAM_CRC_START_POSITION, 0xff);
+
+	/* Show info */
+	printf("Magic:         0x%08X\n",   hdr->magic);
+	printf("Length:        0x%08X\n",   hdr->len);
+	printf("Offset:        0x%08X\n",   get_nvram_handle()->offset);
+
+	printf("CRC8:          0x%02X (calculated: 0x%02X)\n",
+		hdr->crc_ver_init & 0xFF, crc);
+
+	printf("Version:       0x%02X\n",   (hdr->crc_ver_init >> 8) & 0xFF);
+	printf("SDRAM init:    0x%04X\n",   (hdr->crc_ver_init >> 16) & 0xFFFF);
+	printf("SDRAM config:  0x%04X\n",   hdr->config_refresh & 0xFFFF);
+	printf("SDRAM refresh: 0x%04X\n",   (hdr->config_refresh >> 16) & 0xFFFF);
+	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
+
+	printf("%i bytes used / %i bytes available (%.2f%%)\n",
+		hdr->len, NVRAM_SPACE - hdr->len,
+		(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
+
+	return 0;
 }
 
 //TODO

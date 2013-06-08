@@ -2,19 +2,36 @@
 #include "nvram_fw.h"
 #include "nvram_factory.h"
 /* Global */
-nvram_handle_t *nvram_h = -1;
+nvram_handle_t *nvram_h = NULL;
 
 /* **************** public functions **************** */
-char * nvram_get(const char *name)
+nvram_handle_t* get_nvram_handle() 
 {
-	char *ret = NULL;
-	if(nvram_h<0) {
+	return nvram_h;
+}
+
+nvram_header_t * nvram_header()
+{
+	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_rdonly();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
 		}
 	}
+	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
+	return _nvram_header(nvram_h);
+}
 
+char * nvram_get(const char *name)
+{
+	char *ret = NULL;
+	if(NULL == nvram_h) {
+		nvram_h = _nvram_open_rdonly();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
+	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
 	ret = _nvram_get(nvram_h, name);
 	return ret;
 }
@@ -34,12 +51,13 @@ int nvram_get_option(const char *name)
 int nvram_set(const char *name, const char *value)
 {
 	int ret;
-	if (nvram_h<0) {
+	if (NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
 		}
 	}
+	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
 
 	ret = _nvram_set(nvram_h, name, value);
 	return ret;
@@ -55,18 +73,28 @@ int nvram_unset(const char *name)
 	return nvram_set(name, "");
 }
 
-int nvram_getall(char *buf, int count)
+nvram_tuple_t * nvram_getall()
 {
-	return 0;
+	char *ret = NULL;
+	if(NULL == nvram_h) {
+		nvram_h = _nvram_open_rdonly();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
+	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
+	
+	return _nvram_getall(nvram_h);
 }
 
 int nvram_commit(void)
 {
 	int stat = 1;
 
-	if(nvram_h<0) {
-		nvram_h = _nvram_open_rdonly();
+	if(NULL == nvram_h) {
+		nvram_h = _nvram_open_staging();
 	}
+	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
 
 	stat = _nvram_commit(nvram_h);
 

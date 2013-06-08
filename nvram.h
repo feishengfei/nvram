@@ -129,13 +129,16 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 int _nvram_commit(nvram_handle_t *h);
 
 /* **************** public functions **************** */
+nvram_handle_t * get_nvram_handle();
+
+nvram_header_t * nvram_header();
 char * nvram_get(const char *name);
 #define nvram_safe_get(name) (nvram_get(name) ? : "")
 int nvram_get_option(const char *name);
 int nvram_set(const char *name, const char *value);
 //int nvram_fset(const char *name, const char *value);
 int nvram_unset(const char *name);
-int nvram_getall(char *buf, int count);
+nvram_tuple_t * nvram_getall();
 int nvram_commit(void);
 
 void nvram_default(void);
