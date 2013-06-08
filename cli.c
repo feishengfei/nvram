@@ -345,14 +345,14 @@ int main( int argc, const char *argv[] )
 				stat = do_show();
 				done++;
 			}
-			else if (argc == 0) {
+			else if (argc == 2) {
 				/* nvram show <rule-set> <nth> */
 				ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
 				puts_trim_cr(res);
 				/* TODO: fix the return value. */
 				done++;
 				return 0;
-			} else if (argc == 1) {
+			} else if (argc == 3) {
 				/* nvram show <rule-set> <nth> <attr-type> */
 				ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
 						EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
@@ -360,7 +360,7 @@ int main( int argc, const char *argv[] )
 				/* TODO: fix the return value. */
 				done++;
 				return 0;
-			} else if (argc == 3 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
+			} else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
 				/* nvram show <rule-set> <nth> subrule <start> <end> */
 				ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
 						atoi(argv[4]), res, EZPLIB_BUF_LEN);
@@ -399,7 +399,7 @@ int main( int argc, const char *argv[] )
 		else if (!strncmp(*argv, "fset", 4)) {
 			if (*++argv) {
 				stat = do_fset(*argv);
-				nvram_commit();
+				stat = nvram_commit();
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -410,7 +410,7 @@ int main( int argc, const char *argv[] )
 		else if (!strncmp(*argv, "unset", 5)) {
 			if (*++argv) {
 				stat = do_unset(*argv);
-				nvram_commit();
+				stat = nvram_commit();
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -472,6 +472,7 @@ int main( int argc, const char *argv[] )
 					ret =
 						ezplib_replace_rule(argv[0], atoi(argv[1]),
 								argv[2]);
+					stat = nvram_commit();
 					if (ret < 0) {
 						printf("NVRAM replace rule failed: %s\n", ret);
 						return 1;
@@ -490,6 +491,7 @@ int main( int argc, const char *argv[] )
 					ret =
 						ezplib_replace_attr(argv[0], atoi(argv[1]), argv[2],
 								argv[3]);
+					stat = nvram_commit();
 					if (ret < 0) {
 						printf("NVRAM replace attribute failed: %d\n", ret);
 						return 1;
@@ -508,6 +510,7 @@ int main( int argc, const char *argv[] )
 				int ret;
 
 				ret = ezplib_append_rule(argv[0], argv[1]);
+				stat = nvram_commit();
 				if (ret < 0) {
 					printf("NVRAM append rule failed: %s\n", ret);
 					return 1;
@@ -525,6 +528,7 @@ int main( int argc, const char *argv[] )
 				int ret;
 
 				ret = ezplib_prepend_rule(argv[0], argv[1]);
+				stat = nvram_commit();
 				if (ret < 0) {
 					printf("NVRAM prepend rule failed: %s\n", ret);
 					return 1;
@@ -542,6 +546,7 @@ int main( int argc, const char *argv[] )
 				int ret;
 
 				ret = ezplib_add_rule(argv[0], atoi(argv[1]), argv[2]);
+				stat = nvram_commit();
 				if (ret < 0) {
 					printf("NVRAM add rule failed: %s\n", ret);
 					return 1;
@@ -559,6 +564,7 @@ int main( int argc, const char *argv[] )
 				int ret;
 
 				ret = ezplib_delete_rule(argv[0], atoi(argv[1]));
+				stat = nvram_commit();
 				if (ret < 0) {
 					printf("NVRAM delete rule failed: %s\n", ret);
 					return 1;
@@ -576,6 +582,7 @@ int main( int argc, const char *argv[] )
 				int ret;
 
 				ret = ezplib_get_rule_num(argv[0]);
+				stat = nvram_commit();
 				if (ret < 0) {
 					printf("NVRAM delete rule failed: %s\n", ret);
 					return ret;
