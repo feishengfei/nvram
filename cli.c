@@ -120,13 +120,29 @@ int do_set(const char *pair)
 	return stat;
 }
 
+int do_fset(const char *pair)
+{
+	char *val = strstr(pair, "=");
+	char var[strlen(pair)];
+	int stat = 1;
+
+	if( val != NULL )
+	{
+		memset(var, 0, sizeof(var));
+		strncpy(var, pair, (int)(val-pair));
+		stat = nvram_fset(var, (char *)(val + 1));
+	}
+
+	return stat;
+}
+
 int _do_info(nvram_handle_t *nvram)
 {
 	nvram_header_t *hdr = _nvram_header(nvram);
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
 	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
-		hdr->len - NVRAM_CRC_START_POSITION, 0xff);
+			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -134,7 +150,7 @@ int _do_info(nvram_handle_t *nvram)
 	printf("Offset:        0x%08X\n",   nvram->offset);
 
 	printf("CRC8:          0x%02X (calculated: 0x%02X)\n",
-		hdr->crc_ver_init & 0xFF, crc);
+			hdr->crc_ver_init & 0xFF, crc);
 
 	printf("Version:       0x%02X\n",   (hdr->crc_ver_init >> 8) & 0xFF);
 	printf("SDRAM init:    0x%04X\n",   (hdr->crc_ver_init >> 16) & 0xFFFF);
@@ -143,8 +159,8 @@ int _do_info(nvram_handle_t *nvram)
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-		hdr->len, NVRAM_SPACE - hdr->len,
-		(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
+			hdr->len, NVRAM_SPACE - hdr->len,
+			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
 
 	return 0;
 }
@@ -155,7 +171,7 @@ int do_info()
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
 	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
-		hdr->len - NVRAM_CRC_START_POSITION, 0xff);
+			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -163,7 +179,7 @@ int do_info()
 	printf("Offset:        0x%08X\n",   get_nvram_handle()->offset);
 
 	printf("CRC8:          0x%02X (calculated: 0x%02X)\n",
-		hdr->crc_ver_init & 0xFF, crc);
+			hdr->crc_ver_init & 0xFF, crc);
 
 	printf("Version:       0x%02X\n",   (hdr->crc_ver_init >> 8) & 0xFF);
 	printf("SDRAM init:    0x%04X\n",   (hdr->crc_ver_init >> 16) & 0xFFFF);
@@ -172,25 +188,15 @@ int do_info()
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-		hdr->len, NVRAM_SPACE - hdr->len,
-		(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
+			hdr->len, NVRAM_SPACE - hdr->len,
+			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
 
 	return 0;
 }
 
-//TODO
-int do_export(const char *to_file)
-{
-	return nvram_export(to_file);
-}
-
-//TODO
-int do_import(const char *from_file)
-{
-	return nvram_import(from_file);
-}
 
 #if 0
+//original version
 int main( int argc, const char *argv[] )
 {
 	nvram_handle_t *nvram;
@@ -203,8 +209,8 @@ int main( int argc, const char *argv[] )
 	/* Ugly... iterate over arguments to see whether we can expect a write */
 	for( i = 1; i < argc; i++ )
 		if( ( !strcmp(argv[i], "set")   && ++i < argc ) ||
-			( !strcmp(argv[i], "unset") && ++i < argc ) ||
-			!strcmp(argv[i], "commit") )
+				( !strcmp(argv[i], "unset") && ++i < argc ) ||
+				!strcmp(argv[i], "commit") )
 		{
 			write = 1;
 			break;
@@ -228,11 +234,11 @@ int main( int argc, const char *argv[] )
 				done++;
 			}
 			else if( !strcmp(argv[i], "get") 
-				|| !strcmp(argv[i], "unset") 
-				|| !strcmp(argv[i], "set") 
-				|| !strcmp(argv[i], "export") 
-				|| !strcmp(argv[i], "import") 
-				)
+					|| !strcmp(argv[i], "unset") 
+					|| !strcmp(argv[i], "set") 
+					|| !strcmp(argv[i], "export") 
+					|| !strcmp(argv[i], "import") 
+				   )
 			{
 				if( (i+1) < argc )
 				{
@@ -292,27 +298,27 @@ int main( int argc, const char *argv[] )
 	if( !nvram )
 	{
 		fprintf(stderr,
-			"Could not open nvram! Possible reasons are:\n"
-			"	- No device found (/proc not mounted or no nvram present)\n"
-			"	- Insufficient permissions to open mtd device\n"
-			"	- Insufficient memory to complete operation\n"
-			"	- Memory mapping failed or not supported\n"
-		);
+				"Could not open nvram! Possible reasons are:\n"
+				"	- No device found (/proc not mounted or no nvram present)\n"
+				"	- Insufficient permissions to open mtd device\n"
+				"	- Insufficient memory to complete operation\n"
+				"	- Memory mapping failed or not supported\n"
+			   );
 
 		stat = 1;
 	}
 	else if( !done )
 	{
 		fprintf(stderr,
-			"Usage:\n"
-			"	nvram show\n"
-			"	nvram info\n"
-			"	nvram get variable\n"
-			"	nvram set variable=value [set ...]\n"
-			"	nvram unset variable [unset ...]\n"
-			"	nvram commit\n"
-			"	nvram export/import backup_file\n"
-		);
+				"Usage:\n"
+				"	nvram show\n"
+				"	nvram info\n"
+				"	nvram get variable\n"
+				"	nvram set variable=value [set ...]\n"
+				"	nvram unset variable [unset ...]\n"
+				"	nvram commit\n"
+				"	nvram export/import backup_file\n"
+			   );
 
 		stat = 1;
 	}
@@ -323,150 +329,308 @@ int main( int argc, const char *argv[] )
 int main( int argc, const char *argv[] )
 {
 	int commit = 0;
-	int write = 0;
 	int stat = 1;
 	int done = 0;
-	int i;
 	char res[EZPLIB_BUF_LEN];
-
-	/* Ugly... iterate over arguments to see whether we can expect a write */
-	for( i = 1; i < argc; i++ ) {
-		if( ( !strcmp(argv[i], "set")   && ++i < argc ) ||
-			( !strcmp(argv[i], "unset") && ++i < argc ) ||
-			!strcmp(argv[i], "commit") )
-		{
-			write = 1;
-			break;
-		}
-	}
-
+	int i;
 
 	if( argc > 1 )
 	{
-		for( i = 1; i < argc; i++ )
-		{
-			if( !strcmp(argv[i], "show") )
-			{
-				argc -= 2;
-				argv += 2;
-				if( 0==argc ) {
-					stat = do_show();
-					done++;
-				}
-				else if (argc == 2) {
-					/* nvram show <rule-set> <nth> */
-					ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
-					puts_trim_cr(res);
-					/* TODO: fix the return value. */
-					done++;
-					return 0;
-				} else if (argc == 3) {
-					/* nvram show <rule-set> <nth> <attr-type> */
-					ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
-							EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
-					puts_trim_cr(res);
-					/* TODO: fix the return value. */
-					done++;
-					return 0;
-				} else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
-					/* nvram show <rule-set> <nth> subrule <start> <end> */
-					ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
-							atoi(argv[4]), res, EZPLIB_BUF_LEN);
-					puts_trim_cr(res);
-					/* TODO: fix the return value. */
-					done++;
-					return 0;
-				}
-
-			}
-			else if( !strcmp(argv[i], "info") )
-			{
-				stat = do_info();
+		--argc;
+		++argv;
+		if( !strncmp(*argv, "show", 4) ) {
+			--argc;
+			++argv;
+			if( 0==argc ) {
+				stat = do_show();
 				done++;
 			}
-			else if( !strcmp(argv[i], "get") 
-				|| !strcmp(argv[i], "unset") 
-				|| !strcmp(argv[i], "set") 
-				|| !strcmp(argv[i], "export") 
-				|| !strcmp(argv[i], "import") 
-				)
-			{
-				if( (i+1) < argc )
-				{
-					switch(argv[i++][0])
-					{
-						case 'g':
-							stat = do_get(argv[i]);
-							break;
-
-						case 'u':
-							stat = do_unset(argv[i]);
-							break;
-
-						case 's':
-							stat = do_set(argv[i]);
-							break;
-
-						case 'e':
-							stat = do_export(argv[i]);
-							break;
-
-						case 'i':
-							stat = do_import(argv[i]);
-							break;
-					}
-					done++;
-				}
-				else
-				{
-					fprintf(stderr, 
-						"Command '%s' requires an argument!\n", 
-						argv[i]);
-					done = 0;
-					break;
-				}
-			}
-			else if( !strcmp(argv[i], "commit") )
-			{
-				commit = 1;
+			else if (argc == 0) {
+				/* nvram show <rule-set> <nth> */
+				ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
+				puts_trim_cr(res);
+				/* TODO: fix the return value. */
 				done++;
+				return 0;
+			} else if (argc == 1) {
+				/* nvram show <rule-set> <nth> <attr-type> */
+				ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
+						EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
+				puts_trim_cr(res);
+				/* TODO: fix the return value. */
+				done++;
+				return 0;
+			} else if (argc == 3 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
+				/* nvram show <rule-set> <nth> subrule <start> <end> */
+				ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
+						atoi(argv[4]), res, EZPLIB_BUF_LEN);
+				puts_trim_cr(res);
+				/* TODO: fix the return value. */
+				done++;
+				return 0;
 			}
-			else
-			{
-				fprintf(stderr, 
-					"Unknown option '%s' !\n", 
-					argv[i]);
+
+		}
+		else if( !strncmp(*argv, "info", 4) ) {
+			stat = do_info();
+			done++;
+		}
+		else if (!strncmp(*argv, "get", 3)) {
+			if (*++argv) {
+				stat = do_get(*argv);
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
 				done = 0;
-				break;
 			}
 		}
+		else if (!strncmp(*argv, "set", 3)) {
+			if (*++argv) {
+				stat = do_set(*argv);
+				nvram_commit();
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		else if (!strncmp(*argv, "fset", 4)) {
+			if (*++argv) {
+				stat = do_fset(*argv);
+				nvram_commit();
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		else if (!strncmp(*argv, "unset", 5)) {
+			if (*++argv) {
+				stat = do_unset(*argv);
+				nvram_commit();
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		else if (!strncmp(*argv, "export", 6)) {
+			if (*++argv) {
+				stat = nvram_export(*argv);
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		else if (!strncmp(*argv, "import", 6)) {
+			if (*++argv) {
+				stat = nvram_import(*argv);
+				stat = nvram_commit();
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		/* EZP: Upgrade NVRAM settings to newer version. */
+		else if (!strncmp(*argv, "upgrade", 7)) {
+			if (*++argv) {
+				stat = nvram_upgrade(*argv);
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		/* EZP: Upgrade NVRAM settings to older version. */
+		else if (!strncmp(*argv, "downgrade", 9)) {
+			if (*++argv) {
+				stat = nvram_downgrade(*argv);
+				done++;
+			} else {
+				fprintf(stderr, "Command '%s' requires an argument!\n", 
+						*--argv);
+				done = 0;
+			}
+		}
+		else if (!strncmp(argv[0], "replace", strlen(argv[0]))) {
+			/* nvram replace rule <rule-set> <nth> <new-rule> */
+			if (!strncmp(argv[1], "rule", strlen(argv[1]))) {
+				argc -= 2;
+				argv += 2;
+				if (argc == 3) {
+					int ret;
 
-		if( write )
+					ret =
+						ezplib_replace_rule(argv[0], atoi(argv[1]),
+								argv[2]);
+					if (ret < 0) {
+						printf("NVRAM replace rule failed: %s\n", ret);
+						return 1;
+					} else  {
+						return 0;
+					}
+				}
+			} 
+			/* nvram replace attr <rule-set> <nth> <attr> <new-rule> */
+			else if (!strncmp(argv[1], "attribute", strlen(argv[1]))) {
+				argc -= 2;
+				argv += 2;
+				if (argc == 4) {
+					int ret;
+
+					ret =
+						ezplib_replace_attr(argv[0], atoi(argv[1]), argv[2],
+								argv[3]);
+					if (ret < 0) {
+						printf("NVRAM replace attribute failed: %d\n", ret);
+						return 1;
+					} else  {
+						return 0;
+					}
+				}
+			}
+		}
+		/* nvram append rule <rule-set> <new-rule> */
+		else if (!strncmp(argv[0], "append", strlen(argv[0])) &&
+				!strncmp(argv[1], "rule", strlen(argv[1]))) {
+			argc -= 2;
+			argv += 2;
+			if (argc == 2) {
+				int ret;
+
+				ret = ezplib_append_rule(argv[0], argv[1]);
+				if (ret < 0) {
+					printf("NVRAM append rule failed: %s\n", ret);
+					return 1;
+				} else  {
+					return 0;
+				}
+			}
+		} 
+		/* nvram prepend rule <rule-set> <new-rule> */
+		else if (!strncmp(argv[0], "prepend", strlen(argv[0])) &&
+				!strncmp(argv[1], "rule", strlen(argv[1]))) {
+			argc -= 2;
+			argv += 2;
+			if (argc == 2) {
+				int ret;
+
+				ret = ezplib_prepend_rule(argv[0], argv[1]);
+				if (ret < 0) {
+					printf("NVRAM prepend rule failed: %s\n", ret);
+					return 1;
+				} else  {
+					return 0;
+				}
+			}
+		}
+		/* nvram add rule <rule-set> <nth> <new-rule> */
+		else if (!strncmp(argv[0], "add", strlen(argv[0])) &&
+				!strncmp(argv[1], "rule", strlen(argv[1]))) {
+			argc -= 2;
+			argv += 2;
+			if (argc == 3) {
+				int ret;
+
+				ret = ezplib_add_rule(argv[0], atoi(argv[1]), argv[2]);
+				if (ret < 0) {
+					printf("NVRAM add rule failed: %s\n", ret);
+					return 1;
+				} else  {
+					return 0;
+				}
+			}
+		} 
+		/* nvram delete rule <rule-set> <nth> */
+		else if (!strncmp(argv[0], "delete", strlen(argv[0])) &&
+				!strncmp(argv[1], "rule", strlen(argv[1]))) {
+			argc -= 2;
+			argv += 2;
+			if (argc == 2) {
+				int ret;
+
+				ret = ezplib_delete_rule(argv[0], atoi(argv[1]));
+				if (ret < 0) {
+					printf("NVRAM delete rule failed: %s\n", ret);
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		}
+		/* nvram rule num <rule-set> */
+		else if (!strncmp(argv[0], "rule", strlen(argv[0])) &&
+				!strncmp(argv[1], "num", strlen(argv[1]))) {
+			argc -= 2;
+			argv += 2;
+			if (argc == 1) {
+				int ret;
+
+				ret = ezplib_get_rule_num(argv[0]);
+				if (ret < 0) {
+					printf("NVRAM delete rule failed: %s\n", ret);
+					return ret;
+				} else  {
+					return 0;
+				}
+			}
+		}
+		/* EZP: Set default values for EZ Packet Products. */
+		/*
+		   else if (!strncmp(*argv, "boot", 4)) {
+		   return 0;
+		   }
+		 */
+
+
+		else if( !strncmp(*argv, "commit", 6) )
+		{
 			stat = nvram_commit();
-
-		if( commit )
-			stat = staging_to_nvram();
+			done++;
+		}
+		else
+		{
+			fprintf(stderr, "Unknown option '%s' !\n", *argv);
+			done = 0;
+		}
 	}
-
 	else if( !done )
 	{
 		fprintf(stderr,
-			"Usage:\n"
-			"	nvram show\n"
-			"	nvram show <rule-set> <nth>\n"
-			"	nvram show <rule-set> <nth> <attr-type>\n"
-			"	nvram show <rule-set> <nth> subrule <start> <end>\n"
-			"	nvram info\n"
-			"	nvram get variable\n"
-			"	nvram set variable=value [set ...]\n"
-			"	nvram unset variable [unset ...]\n"
-			"	nvram commit\n"
-			"	nvram export/import backup_file\n"
-		);
+				"Usage:\n"
+				"	nvram show\n"
+				"	nvram show <rule-set> <nth>\n"
+				"	nvram show <rule-set> <nth> <attr-type>\n"
+				"	nvram show <rule-set> <nth> subrule <start> <end>\n"
+				"	nvram info\n"
+				"	nvram get variable\n"
+				"	nvram set variable=value \n"
+				"	nvram fset variable=value \n"
+				"	nvram unset variable [unset ...]\n"
+				"	nvram export/import backup_file\n"
+				"	nvram downgrade/upgrade version\n"
 
-		stat = 1;
+				"	nvram replace rule <rule-set> <nth> <new-rule>\n"
+				"	nvram replace attr <rule-set> <nth> <attr>\n"
+				"	nvram append rule <rule-set> <new-rule>\n"
+				"	nvram prepend rule <rule-set> <new-rule>\n"
+				"	nvram add rule <rule-set> <nth> <new-rule>\n"
+				"	nvram delete rule <rule-set> <nth>\n"
+				"	nvram rule num <rule-set>\n"
+
+
+				"	nvram commit\n"
+			   );
 	}
-
 	return stat;
 }
 #endif

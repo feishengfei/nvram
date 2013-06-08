@@ -14,6 +14,17 @@
 
 #include "sdinitvals.h"
 
+#define xstr(x)  #x
+#define EZP_PROD_VERSION "2.0.4_PLUS"
+
+/* TRACE */
+#define TRACE(msg) \
+	printf("%s(%i) in %s(): %s\n", \
+		__FILE__, __LINE__, __FUNCTION__, msg ? msg : "?")
+
+/* rule buf len for NVRAM */
+#define NVRAM_TMP_LEN 256
+
 /* Staging file for NVRAM */
 #define NVRAM_MTD_NAME		"nvram"
 #define NVRAM_STAGING		"/tmp/.nvram"
@@ -69,6 +80,7 @@ struct nvram_tuple {
 struct nvram_handle {
 	int fd;
 	char *mmap;
+	int access;
 	unsigned int length;
 	unsigned int offset;
 	struct nvram_tuple *nvram_hash[257];
@@ -107,7 +119,7 @@ char * nvram_find_mtd(void);
 /* Check NVRAM staging file. */
 char * nvram_find_staging(void);
 /* Open NVRAM and obtain a handle. */
-nvram_handle_t * _nvram_open(const char *file, int rdonly);
+nvram_handle_t * _nvram_open(const char *file, int access);
 /* Invoke a NVRAM handle for get, getall. */
 nvram_handle_t * _nvram_open_rdonly(void);
 /* Invoke a NVRAM handle for set, unset & commit. */
@@ -136,7 +148,7 @@ char * nvram_get(const char *name);
 #define nvram_safe_get(name) (nvram_get(name) ? : "")
 int nvram_get_option(const char *name);
 int nvram_set(const char *name, const char *value);
-//int nvram_fset(const char *name, const char *value);
+int nvram_fset(const char *name, const char *value);
 int nvram_unset(const char *name);
 nvram_tuple_t * nvram_getall();
 int nvram_commit(void);

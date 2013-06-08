@@ -18,7 +18,6 @@ nvram_header_t * nvram_header()
 			_nvram_close(nvram_h);
 		}
 	}
-	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
 	return _nvram_header(nvram_h);
 }
 
@@ -31,7 +30,7 @@ char * nvram_get(const char *name)
 			_nvram_close(nvram_h);
 		}
 	}
-	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
+
 	ret = _nvram_get(nvram_h, name);
 	return ret;
 }
@@ -50,14 +49,30 @@ int nvram_get_option(const char *name)
 
 int nvram_set(const char *name, const char *value)
 {
-	int ret;
+	int ret = 0;
 	if (NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
 		}
 	}
-	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
+	else if(NVRAM_RO == nvram_h->access) {
+		_nvram_close(nvram_h);
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
+
+	uint32_t opt = nvram_get_option(name);
+
+	/* If anything exists, return permission denied. */
+	if (opt & NVRAM_PROTECTED) {
+		char *exist = nvram_get(name);
+		if (exist && *exist) {
+			return EACCES; 
+		}
+	}
 
 	ret = _nvram_set(nvram_h, name, value);
 	return ret;
@@ -65,7 +80,23 @@ int nvram_set(const char *name, const char *value)
 
 int nvram_fset(const char *name, const char *value)
 {
-	return nvram_set(name, value);
+	int ret;
+	if (NULL == nvram_h) {
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
+	else if(NVRAM_RO == nvram_h->access) {
+		_nvram_close(nvram_h);
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
+
+	ret = _nvram_set(nvram_h, name, value);
+	return ret;
 }
 
 int nvram_unset(const char *name)
@@ -82,7 +113,6 @@ nvram_tuple_t * nvram_getall()
 			_nvram_close(nvram_h);
 		}
 	}
-	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
 	
 	return _nvram_getall(nvram_h);
 }
@@ -94,7 +124,13 @@ int nvram_commit(void)
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 	}
-	printf("__%s_%d:nvram_h=0x%08X\r\n", __FUNCTION__, __LINE__, nvram_h);
+	else if(NVRAM_RO == nvram_h->access) {
+		_nvram_close(nvram_h);
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			_nvram_close(nvram_h);
+		}
+	}
 
 	stat = _nvram_commit(nvram_h);
 
@@ -120,10 +156,6 @@ void nvram_factory(void)
 
 }
 
-#define xstr(x) #x
-#define EZP_PROD_VERSION "UNSTABLE_VERSION"
-#define NVRAM_TMP_LEN 256
-//TODO
 int nvram_export(char *filename)
 {   
 	FILE *fp;
@@ -132,12 +164,12 @@ int nvram_export(char *filename)
 
 	if ( !(fp = fopen(filename, "wb") ))
 		return EACCES;
-/*
+
 	//HEADER of export
-	fprintf(fp, "[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
-			nvram_safe_get("brand"), nvram_safe_get("model"),
-			nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat"));
-*/
+	fprintf(fp, 
+		"[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
+		nvram_safe_get("brand"), nvram_safe_get("model"),
+		nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat"));
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		if ((v->option & NVRAM_PROTECTED) ||
@@ -152,7 +184,6 @@ int nvram_export(char *filename)
 	return 0;
 }
 
-//TODO
 int nvram_import(char *filename)
 {   
 	FILE *fp;
@@ -182,13 +213,13 @@ int nvram_import(char *filename)
 	/* prod_cat */
 	q = nvram_safe_get("prod_cat");
 	if (p[0] != q[0]) {
-		printf("log file format error: category\n");
+		printf("log file format error: prod_cat\n");
 		return 1;
 	}
 	/* prod_subcat */
 	q = nvram_safe_get("prod_subcat");
 	if (p[1] != q[0]) {
-		printf("log file format error: subcategory\n");
+		printf("log file format error: prod_subcat\n");
 		return 1;
 	}
 	p = strchr(p, ']');
@@ -222,12 +253,12 @@ int nvram_import(char *filename)
 			new = w->fw_version;
 		}
 	}
-*/
 
 	if (old > new) {
 		printf("log file format error: newer version configuration format\n");
 		return 1;
 	}
+*/
 	while (fgets(buf, sizeof(buf), fp)) {
 		if ((p = strchr(buf, '=')) == NULL)
 			continue;

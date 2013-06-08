@@ -1,8 +1,5 @@
 #include "nvram.h"
 
-#define TRACE(msg) \
-	printf("%s(%i) in %s(): %s\n", \
-		__FILE__, __LINE__, __FUNCTION__, msg ? msg : "?")
 
 size_t nvram_erase_size = 0;
 
@@ -255,7 +252,7 @@ char * nvram_find_staging(void)
 }
 
 /* Open NVRAM and obtain a handle. */
-nvram_handle_t * _nvram_open(const char *file, int rdonly)
+nvram_handle_t * _nvram_open(const char *file, int access)
 {
 	int i;
 	int fd;
@@ -279,7 +276,7 @@ nvram_handle_t * _nvram_open(const char *file, int rdonly)
 	{
 		char *mmap_area = (char *) mmap(
 			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
-			(( rdonly == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
+			(( access == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
 
 		if( mmap_area != MAP_FAILED )
 		{
@@ -305,6 +302,7 @@ nvram_handle_t * _nvram_open(const char *file, int rdonly)
 				h->mmap   = mmap_area;
 				h->length = nvram_erase_size;
 				h->offset = offset;
+				h->access = access;
 
 				header = _nvram_header(h);
 
@@ -327,30 +325,22 @@ nvram_handle_t * _nvram_open(const char *file, int rdonly)
 	return NULL;
 }
 
-/* Invoke a nvram handle for get, getall. */
+/* Invoke a nvram handle for read. */
 nvram_handle_t * _nvram_open_rdonly(void)
 {
 	const char *file = nvram_find_staging();
-printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
 
 	file = nvram_find_mtd();
-printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
-	if( file == NULL ) {
+	if( file == NULL )
 		file = nvram_find_mtd();
-printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
-	}
 
-	if( file != NULL ) {
-		printf("__%s_%d:file=%s\r\n", __FUNCTION__, __LINE__, file);
+	if( file != NULL )
 		return _nvram_open(file, NVRAM_RO);
-	}
-
-	printf("__%s_%d:\r\n", __FUNCTION__, __LINE__);
 
 	return NULL;
 }
 
-/* Invoke a nvram handle for set, unset & commit. */
+/* Invoke a nvram handle for read & write. */
 nvram_handle_t * _nvram_open_staging(void)
 {
 	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )

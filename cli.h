@@ -13,13 +13,10 @@ int _do_info(nvram_handle_t *nvram);
 
 /*public function*/
 int do_show();
+int do_info();
 int do_get(const char *var);
 int do_set(const char *pair);
+int do_fset(const char *pair);
 int do_unset(const char *var);
-int do_info();
-
-//TODO
-int do_export(const char *to_file);
-int do_import(const char *from_file);
 
 #endif
