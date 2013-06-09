@@ -1,0 +1,19 @@
+/* None of specific NVRAM options. */
+#define NVRAM_NONE 0x00
+/* NOT allowed to be disclosed (e.g. a config file). */
+#define NVRAM_PRIVATE 0x01
+/* 
+ * NOT allowed to be overwritten (e.g. a license key). If the value is
+ * empty, it could be written for once.
+ */
+#define NVRAM_PROTECTED 0x02
+/* For temporary use. */
+#define NVRAM_TEMP 0x04
+/* Customized by the authorized program. */
+#define NVRAM_CUSTOMIZED 0x08
+/* NVRAM could be empty. */
+#define NVRAM_EMPTY 0x10
+/* NVRAM value should be set by *_default if this value is empty . */
+#define NVRAM_DEFAULT 0x20
+/* NVRAM is undefined. */
+#define NVRAM_UNDEFINED 0x80000000

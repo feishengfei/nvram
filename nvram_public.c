@@ -75,6 +75,7 @@ int nvram_set(const char *name, const char *value)
 	}
 
 	ret = _nvram_set(nvram_h, name, value);
+	ret = _nvram_commit(nvram_h);
 	return ret;
 }
 
@@ -96,6 +97,7 @@ int nvram_fset(const char *name, const char *value)
 	}
 
 	ret = _nvram_set(nvram_h, name, value);
+	ret = _nvram_commit(nvram_h);
 	return ret;
 }
 

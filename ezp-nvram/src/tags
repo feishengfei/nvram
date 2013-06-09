@@ -1740,7 +1740,7 @@ nvram_downgrade	nvram_linux.c	/^int nvram_downgrade(char *target)$/;"	f
 nvram_export	nvram_linux.c	/^void nvram_export(char *filename)$/;"	f
 nvram_ezpacket_default	nvram_ezpacket.h	/^static struct nvram_tuple nvram_ezpacket_default[] = {$/;"	v	typeref:struct:nvram_tuple
 nvram_ezpacket_default	nvram_ezpacket6239.h	/^static struct nvram_tuple nvram_ezpacket_default[] = {$/;"	v	typeref:struct:nvram_tuple
-nvram_fd	nvram_linux.c	/^static int nvram_fd = -1;\/\/this means the global variable can only be used at this file ,commented by daniel$/;"	v	file:
+nvram_fd	nvram_linux.c	/^static int nvram_fd = -1;$/;"	v	file:
 nvram_fset	nvram_linux.c	/^int nvram_fset(const char *name, const char *value)$/;"	f
 nvram_fw_table	nvram_linux.c	/^struct nvram_fw_tuple nvram_fw_table[] = {$/;"	v	typeref:struct:nvram_fw_tuple
 nvram_fw_tuple	nvram_fw.h	/^struct nvram_fw_tuple {$/;"	s
