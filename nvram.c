@@ -245,11 +245,9 @@ char * nvram_find_staging(void)
 
 	if( (stat(NVRAM_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
 	{
-		printf("%s_%d\r\n", __FUNCTION__, __LINE__);
 		return NVRAM_STAGING;
 	}
 
-	printf("%s_%d\r\n", __FUNCTION__, __LINE__);
 	return NULL;
 }
 
@@ -257,7 +255,6 @@ char * nvram_find_staging(void)
 nvram_handle_t * _nvram_open(const char *file, int access)
 {
 
-	printf("%s_%d:file:%s\r\n", __FUNCTION__, __LINE__, file);
 	int i;
 	int fd;
 	char *mtd = NULL;
@@ -268,16 +265,13 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 	/* If erase size or file are undefined then try to define them */
 	if( (nvram_erase_size == 0) || (file == NULL) )
 	{
-	printf("%s_%d:file:%s\r\n", __FUNCTION__, __LINE__, file);
 		/* Finding the mtd will set the appropriate erase size */
 		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
 		{
-	printf("%s_%d:file:%s\r\n", __FUNCTION__, __LINE__, file);
 			free(mtd);
 			return NULL;
 		}
 	}
-	printf("%s_%d:file:%s\r\n", __FUNCTION__, __LINE__, file);
 
 	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
 	{
@@ -335,14 +329,11 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 /* Invoke a nvram handle for read. */
 nvram_handle_t * _nvram_open_rdonly(void)
 {
-	printf("%s_%d\r\n", __FUNCTION__, __LINE__);
 	const char *file = nvram_find_staging();
-	printf("%s_%d file:%s\r\n", __FUNCTION__, __LINE__, file);
 
 	if( file == NULL )
 		file = nvram_find_mtd();
 
-	printf("%s_%d file:%s\r\n", __FUNCTION__, __LINE__, file);
 
 	if( file != NULL )
 		return _nvram_open(file, NVRAM_RO);
@@ -353,7 +344,6 @@ nvram_handle_t * _nvram_open_rdonly(void)
 /* Invoke a nvram handle for read & write. */
 nvram_handle_t * _nvram_open_staging(void)
 {
-	printf("%s_%d\r\n", __FUNCTION__, __LINE__);
 	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
 		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
 
