@@ -588,6 +588,25 @@ int main( int argc, const char *argv[] )
 		 */
 
 
+		else if( !strncmp(*argv, "default", 7) )
+		{
+			if(argc == 1) {
+				stat = nvram_default();
+			}
+			else {
+				/* Added for single rule default */
+				argv++;
+				stat = nvram_default_rule(*argv);
+			}
+			done++;
+		}
+		else if( !strncmp(*argv, "factory", 7) )
+		{
+			stat = nvram_factory();
+			/* send SIGTERM to init for reboot */
+			kill(1, 15);
+			done++;
+		}
 		else if( !strncmp(*argv, "commit", 6) )
 		{
 			stat = nvram_commit();
@@ -622,6 +641,7 @@ int main( int argc, const char *argv[] )
 				"	nvram add rule <rule-set> <nth> <new-rule>\n"
 				"	nvram delete rule <rule-set> <nth>\n"
 				"	nvram rule num <rule-set>\n"
+				"	nvram factory\n"
 
 
 				"	nvram commit\n"

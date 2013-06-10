@@ -43,7 +43,6 @@
 /* magic, len, crc8 to be skipped */
 #define NVRAM_CRC_START_POSITION	9 
 
-
 /* None of specific NVRAM options. */
 #define NVRAM_NONE 0x00
 /* NOT allowed to be disclosed (e.g. a config file). */
@@ -141,9 +140,10 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 int _nvram_commit(nvram_handle_t *h);
 
 /* **************** public functions **************** */
-nvram_handle_t * get_nvram_handle();
-
+const nvram_handle_t * get_nvram_handle();
 nvram_header_t * nvram_header();
+
+/* wrapper of above common functions */
 char * nvram_get(const char *name);
 #define nvram_safe_get(name) (nvram_get(name) ? : "")
 int nvram_get_option(const char *name);
@@ -153,10 +153,12 @@ int nvram_unset(const char *name);
 nvram_tuple_t * nvram_getall();
 int nvram_commit(void);
 
-void nvram_default(void);
-void nvram_default_rule(char *rulename);
-
-void nvram_factory(void);
+/* restore from the whole factory default */
+int nvram_default(void);
+/* restore one specific rule from factory default */
+int nvram_default_rule(char *rulename);
+/* commit  after restore the whole factory default */
+int nvram_factory(void);
 
 int nvram_export(char *filename);
 int nvram_import(char *filename);

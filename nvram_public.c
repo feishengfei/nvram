@@ -5,7 +5,7 @@
 nvram_handle_t *nvram_h = NULL;
 
 /* **************** public functions **************** */
-nvram_handle_t* get_nvram_handle() 
+const nvram_handle_t* get_nvram_handle() 
 {
 	return nvram_h;
 }
@@ -137,25 +137,41 @@ int nvram_commit(void)
 	stat = _nvram_commit(nvram_h);
 
 	_nvram_close(nvram_h);
-
+	nvram_h = NULL;	
 	stat = staging_to_nvram();
 
 	return stat;
 }
 
-void nvram_default(void)
+int nvram_default(void)
 {
-
+	int stat = 0;
+	struct nvram_tuple *v;
+	for (v = &nvram_factory_default[0]; v->name ; v++) {
+		stat += nvram_set(v->name, v->value);
+	}
+	return stat;
 }
 
-void nvram_default_rule(char *rulename)
-{
-
+int nvram_default_rule(char *rulename)
+{       
+	int stat = 1;
+	struct nvram_tuple *v;
+	for (v = &nvram_factory_default[0]; v->name ; v++) {
+		if(!strcmp(v->name, rulename)) {
+			stat = nvram_set(v->name, v->value);
+			return stat;	
+		}
+	}   
+	return stat;
 }
 
-void nvram_factory(void)
+int nvram_factory(void)
 {
-
+	int stat = 1;
+	stat = nvram_default();
+	stat = nvram_commit();
+	return stat;
 }
 
 int nvram_export(char *filename)
