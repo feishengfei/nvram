@@ -121,7 +121,7 @@ nvram_tuple_t * nvram_getall()
 
 int nvram_commit(void)
 {
-	int stat = 1;
+	int stat = 0;
 
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
@@ -134,11 +134,11 @@ int nvram_commit(void)
 		}
 	}
 
-	stat = _nvram_commit(nvram_h);
+	stat |= _nvram_commit(nvram_h);
 
-	_nvram_close(nvram_h);
+	stat |= _nvram_close(nvram_h);
 	nvram_h = NULL;	
-	stat = staging_to_nvram();
+	stat |= staging_to_nvram();
 
 	return stat;
 }

@@ -16,6 +16,12 @@
 #define RULE_SEP "|"
 #define ATTR_SEP "^"
 
+struct attr {
+    char *name;
+    int (*func_orig)(char *, char *, char *, int);
+    int (*func_wrap)(char *, char *, char *, int);
+};
+
 /******************************************/
 int show_enable_value(char *type, char *val, char *buf, int bsize);
 int show_value(char *type, char *val, char *buf, int bsize);

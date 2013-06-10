@@ -15,11 +15,6 @@ char *mask[] = {
     "255.255.255.254"
 };
 
-struct attr {
-    char *name;
-    int (*func_orig)(char *, char *, char *, int);
-    int (*func_wrap)(char *, char *, char *, int);
-};
 
 int show_enable_value(char *type, char *val, char *buf, int bsize)
 {
