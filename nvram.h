@@ -163,6 +163,7 @@ int nvram_factory(void);
 int nvram_export(char *filename);
 int nvram_import(char *filename);
 
+//TODO
 int nvram_upgrade(char *source);
 int nvram_downgrade(char *target);
 /********************************************************/

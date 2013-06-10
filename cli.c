@@ -340,27 +340,30 @@ int main( int argc, const char *argv[] )
 		if( !strncmp(*argv, "show", 4) ) {
 			--argc;
 			++argv;
+			/* nvram show */
 			if( 0==argc ) {
 				stat = do_show();
 				done++;
 			}
+			/* nvram show <rule-set> <nth> */
 			else if (argc == 2) {
-				/* nvram show <rule-set> <nth> */
 				ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
 				puts_trim_cr(res);
 				/* TODO: fix the return value. */
 				done++;
 				return 0;
-			} else if (argc == 3) {
-				/* nvram show <rule-set> <nth> <attr-type> */
+			} 
+			/* nvram show <rule-set> <nth> <attr-type> */
+			else if (argc == 3) {
 				ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
 						EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
 				puts_trim_cr(res);
 				/* TODO: fix the return value. */
 				done++;
 				return 0;
-			} else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
-				/* nvram show <rule-set> <nth> subrule <start> <end> */
+			} 
+			/* nvram show <rule-set> <nth> subrule <start> <end> */
+			else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
 				ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
 						atoi(argv[4]), res, EZPLIB_BUF_LEN);
 				puts_trim_cr(res);
@@ -370,10 +373,12 @@ int main( int argc, const char *argv[] )
 			}
 
 		}
+		/* nvram info */
 		else if( !strncmp(*argv, "info", 4) ) {
 			stat = do_info();
 			done++;
 		}
+		/* nvram get <rule>*/
 		else if (!strncmp(*argv, "get", 3)) {
 			if (*++argv) {
 				stat = do_get(*argv);
@@ -384,6 +389,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
+		/* nvram set <rule=value>*/
 		else if (!strncmp(*argv, "set", 3)) {
 			if (*++argv) {
 				stat = do_set(*argv);
@@ -394,6 +400,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
+		/* nvram fset <rule=value>*/
 		else if (!strncmp(*argv, "fset", 4)) {
 			if (*++argv) {
 				stat = do_fset(*argv);
@@ -404,6 +411,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
+		/* nvram unset <rule>*/
 		else if (!strncmp(*argv, "unset", 5)) {
 			if (*++argv) {
 				stat = do_unset(*argv);
@@ -414,6 +422,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
+		/* nvram export <backup_file>*/
 		else if (!strncmp(*argv, "export", 6)) {
 			if (*++argv) {
 				stat = nvram_export(*argv);
@@ -424,10 +433,10 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
+		/* nvram import <backup_file>*/
 		else if (!strncmp(*argv, "import", 6)) {
 			if (*++argv) {
 				stat = nvram_import(*argv);
-				//stat = nvram_commit();//TODO
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -435,7 +444,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
-		/* EZP: Upgrade NVRAM settings to newer version. */
+		/*nvram upgrade <version> */
 		else if (!strncmp(*argv, "upgrade", 7)) {
 			if (*++argv) {
 				stat = nvram_upgrade(*argv);
@@ -446,7 +455,7 @@ int main( int argc, const char *argv[] )
 				done = 0;
 			}
 		}
-		/* EZP: Upgrade NVRAM settings to older version. */
+		/*nvram downgrade <version> */
 		else if (!strncmp(*argv, "downgrade", 9)) {
 			if (*++argv) {
 				stat = nvram_downgrade(*argv);
@@ -580,14 +589,12 @@ int main( int argc, const char *argv[] )
 				}
 			}
 		}
-		/* EZP: Set default values for EZ Packet Products. */
-		/*
-		   else if (!strncmp(*argv, "boot", 4)) {
+/* TODO nvram boot
+	   else if (!strncmp(*argv, "boot", 4)) {
 		   return 0;
-		   }
-		 */
-
-
+	   }
+*/
+		/* nvram default */
 		else if( !strncmp(*argv, "default", 7) )
 		{
 			if(argc == 1) {
@@ -600,6 +607,7 @@ int main( int argc, const char *argv[] )
 			}
 			done++;
 		}
+		/* nvram factory */
 		else if( !strncmp(*argv, "factory", 7) )
 		{
 			stat = nvram_factory();
@@ -607,6 +615,7 @@ int main( int argc, const char *argv[] )
 			kill(1, 15);
 			done++;
 		}
+		/* nvram commit */
 		else if( !strncmp(*argv, "commit", 6) )
 		{
 			stat = nvram_commit();
@@ -627,12 +636,11 @@ int main( int argc, const char *argv[] )
 				"	nvram show <rule-set> <nth> <attr-type>\n"
 				"	nvram show <rule-set> <nth> subrule <start> <end>\n"
 				"	nvram info\n"
-				"	nvram get variable\n"
-				"	nvram set variable=value \n"
-				"	nvram fset variable=value \n"
-				"	nvram unset variable [unset ...]\n"
-				"	nvram export/import backup_file\n"
-				"	nvram downgrade/upgrade version\n"
+				"	nvram get <rule>\n"
+				"	nvram set/fset <rule=value> \n"
+				"	nvram unset <rule> \n"
+				"	nvram export/import <backup_file>\n"
+				"	nvram downgrade/upgrade <version>\n"
 
 				"	nvram replace rule <rule-set> <nth> <new-rule>\n"
 				"	nvram replace attr <rule-set> <nth> <attr>\n"
@@ -641,8 +649,10 @@ int main( int argc, const char *argv[] )
 				"	nvram add rule <rule-set> <nth> <new-rule>\n"
 				"	nvram delete rule <rule-set> <nth>\n"
 				"	nvram rule num <rule-set>\n"
-				"	nvram factory\n"
 
+//TODO			"	nvram boot\n"
+				"	nvram default\n"
+				"	nvram factory\n"
 
 				"	nvram commit\n"
 			   );
