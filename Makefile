@@ -34,3 +34,7 @@ libnvram:
 
 clean:
 	rm -f $(CLI_FILENAME) $(LIB_FILENAME)* *.o
+
+install:
+    $(call install_program,$(CLI_PATH)/$(CLI_FILENAME),$(APP_INSTALL_ROOT))
+	$(call install_library,$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR))
