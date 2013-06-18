@@ -485,7 +485,7 @@ int main( int argc, const char *argv[] )
 					}
 				}
 			} 
-			/* nvram replace attr <rule-set> <nth> <attr> <new-rule> */
+			/* nvram replace attribute <rule-set> <nth> <attr> <new-rule> */
 			else if (!strncmp(argv[1], "attribute", strlen(argv[1]))) {
 				argc -= 2;
 				argv += 2;
