@@ -1,10 +1,12 @@
 CLI_FILENAME = nvram
 
+CLI_PATH=$(LITEON_APP_PATH)/$(CLI_FILENAME)
+
+include $(LITEON_APP_PATH)/rules.gcc
+
 LIB_VERMAJOR = 0
 LIB_VERMINOR = 1
 LIB_FILENAME = libnvram.so
-
-include $(LITEON_APP_PATH)/rules.gcc
 
 LIB_CFLAGS  = $(CFLAGS) -shared -fPIC
 
