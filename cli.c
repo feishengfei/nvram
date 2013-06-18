@@ -330,7 +330,7 @@ int main( int argc, const char *argv[] )
 {
 	int stat = 1;
 	int done = 0;
-	char res[EZPLIB_BUF_LEN];
+	char res[NVRAM_BUF_LEN];
 	int i;
 
 	if( argc > 1 )
@@ -347,29 +347,27 @@ int main( int argc, const char *argv[] )
 			}
 			/* nvram show <rule-set> <nth> */
 			else if (argc == 2) {
-				ezplib_get_rule(argv[0], atoi(argv[1]), res, EZPLIB_BUF_LEN);
+				stat = nvram_get_rule(argv[0], atoi(argv[1]), 
+						res, NVRAM_BUF_LEN);
 				puts_trim_cr(res);
-				/* TODO: fix the return value. */
 				done++;
-				return 0;
 			} 
 			/* nvram show <rule-set> <nth> <attr-type> */
 			else if (argc == 3) {
-				ezplib_get_attr_val(argv[0], atoi(argv[1]), argv[2], res,
-						EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
+				stat = nvram_get_attr_val(argv[0], atoi(argv[1]), 
+					argv[2], res, NVRAM_BUF_LEN, NVRAM_USE_CLI);
 				puts_trim_cr(res);
-				/* TODO: fix the return value. */
 				done++;
-				return 0;
 			} 
 			/* nvram show <rule-set> <nth> subrule <start> <end> */
 			else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
-				ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
-						atoi(argv[4]), res, EZPLIB_BUF_LEN);
+				stat = nvram_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
+						atoi(argv[4]), res, NVRAM_BUF_LEN);
 				puts_trim_cr(res);
-				/* TODO: fix the return value. */
 				done++;
-				return 0;
+			}
+			else {
+				done = 0;
 			}
 
 		}
@@ -475,7 +473,7 @@ int main( int argc, const char *argv[] )
 					int ret;
 
 					ret =
-						ezplib_replace_rule(argv[0], atoi(argv[1]),
+						nvram_replace_rule(argv[0], atoi(argv[1]),
 								argv[2]);
 					if (ret < 0) {
 						printf("NVRAM replace rule failed: %s\n", ret);
@@ -485,15 +483,15 @@ int main( int argc, const char *argv[] )
 					}
 				}
 			} 
-			/* nvram replace attribute <rule-set> <nth> <attr> <new-rule> */
-			else if (!strncmp(argv[1], "attribute", strlen(argv[1]))) {
+			/* nvram replace attr <rule-set> <nth> <attr> <new-rule> */
+			else if (!strncmp(argv[1], "attr", strlen(argv[1]))) {
 				argc -= 2;
 				argv += 2;
 				if (argc == 4) {
 					int ret;
 
 					ret =
-						ezplib_replace_attr(argv[0], atoi(argv[1]), argv[2],
+						nvram_replace_attr(argv[0], atoi(argv[1]), argv[2],
 								argv[3]);
 					if (ret < 0) {
 						printf("NVRAM replace attribute failed: %d\n", ret);
@@ -512,7 +510,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = ezplib_append_rule(argv[0], argv[1]);
+				ret = nvram_append_rule(argv[0], argv[1]);
 				if (ret < 0) {
 					printf("NVRAM append rule failed: %s\n", ret);
 					return 1;
@@ -529,7 +527,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = ezplib_prepend_rule(argv[0], argv[1]);
+				ret = nvram_prepend_rule(argv[0], argv[1]);
 				if (ret < 0) {
 					printf("NVRAM prepend rule failed: %s\n", ret);
 					return 1;
@@ -546,7 +544,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 3) {
 				int ret;
 
-				ret = ezplib_add_rule(argv[0], atoi(argv[1]), argv[2]);
+				ret = nvram_add_rule(argv[0], atoi(argv[1]), argv[2]);
 				if (ret < 0) {
 					printf("NVRAM add rule failed: %s\n", ret);
 					return 1;
@@ -563,7 +561,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = ezplib_delete_rule(argv[0], atoi(argv[1]));
+				ret = nvram_delete_rule(argv[0], atoi(argv[1]));
 				if (ret < 0) {
 					printf("NVRAM delete rule failed: %s\n", ret);
 					return 1;
@@ -580,11 +578,12 @@ int main( int argc, const char *argv[] )
 			if (argc == 1) {
 				int ret;
 
-				ret = ezplib_get_rule_num(argv[0]);
+				ret = nvram_get_rule_num(argv[0]);
 				if (ret < 0) {
-					printf("NVRAM delete rule failed: %s\n", ret);
+					printf("NVRAM rule num failed: %s\n", ret);
 					return ret;
 				} else  {
+					printf("%d\n", ret);
 					return 0;
 				}
 			}
@@ -643,7 +642,7 @@ int main( int argc, const char *argv[] )
 				"	nvram downgrade/upgrade <version>\n"
 
 				"	nvram replace rule <rule-set> <nth> <new-rule>\n"
-				"	nvram replace attr <rule-set> <nth> <attr>\n"
+				"	nvram replace attr <rule-set> <nth> <attr> <new-attr> \n"
 				"	nvram append rule <rule-set> <new-rule>\n"
 				"	nvram prepend rule <rule-set> <new-rule>\n"
 				"	nvram add rule <rule-set> <nth> <new-rule>\n"

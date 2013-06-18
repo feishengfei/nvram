@@ -3,6 +3,7 @@
 #include "nvram_factory.h"
 /* Global */
 nvram_handle_t *nvram_h = NULL;
+extern struct nvram_fw_tuple nvram_fw_table[];
 
 /* **************** public functions **************** */
 const nvram_handle_t* get_nvram_handle() 
@@ -108,7 +109,6 @@ int nvram_unset(const char *name)
 
 nvram_tuple_t * nvram_getall()
 {
-	char *ret = NULL;
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_rdonly();
 		if(NULL == nvram_h) {
@@ -209,7 +209,7 @@ int nvram_import(char *filename)
 	char buf[NVRAM_TMP_LEN];
 	char old_str[32], new_str[32];
 	int old, new = 0;
-	int i;
+//	int i;
 
 	struct nvram_tuple *v;
 	struct nvram_fw_tuple *w;
@@ -262,7 +262,7 @@ int nvram_import(char *filename)
 	/* Very likely we cannot find the matched version since our firmware might
 	 * be older than the config file. */
 	old = 0x0FFFFFFF;
-/*
+
 	for (w = &nvram_fw_table[0]; w->fw_str ; w++) {
 		if (!strcmp(w->fw_str, old_str)) {
 			old = w->fw_version;
@@ -276,7 +276,7 @@ int nvram_import(char *filename)
 		printf("log file format error: newer version configuration format\n");
 		return 1;
 	}
-*/
+
 	while (fgets(buf, sizeof(buf), fp)) {
 		if ((p = strchr(buf, '=')) == NULL)
 			continue;
