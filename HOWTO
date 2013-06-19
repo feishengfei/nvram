@@ -118,8 +118,8 @@ After doing this you can use attribute related functions as followings:
 
 	@(none):/tmp# nvram show lan_main_rule 0 name
 	LAN1
-	@(none):/tmp# nvram replace attribute lan_main_rule 0 name HELLO_WORLD
-	@(none):/tmp# nvram show lan_main_rule 0 name HELLO_WORLD
+	@(none):/tmp# nvram replace attr lan_main_rule 0 name HELLO_WORLD
+	@(none):/tmp# nvram show lan_main_rule 0 name 
 	HELLO_WORLD	
 	@(none):/tmp# nvram get lan_main_rule
 	HELLO_WORLD^1^1500^1^1^0|GuestLAN^0^1500^1^1^0

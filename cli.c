@@ -1,3 +1,5 @@
+#include <sys/types.h>
+#include <signal.h>
 #include "cli.h"
 #include "nvram_rule.h"
 
@@ -331,7 +333,6 @@ int main( int argc, const char *argv[] )
 	int stat = 1;
 	int done = 0;
 	char res[NVRAM_BUF_LEN];
-	int i;
 
 	if( argc > 1 )
 	{
@@ -620,6 +621,12 @@ int main( int argc, const char *argv[] )
 			stat = nvram_commit();
 			done++;
 		}
+		/* nvram commit */
+		else if( !strncmp(*argv, "dump", 4) )
+		{
+			stat = nvram_dump();
+			done++;
+		}
 		else
 		{
 			fprintf(stderr, "Unknown option '%s' !\n", *argv);
@@ -654,6 +661,7 @@ int main( int argc, const char *argv[] )
 				"	nvram factory\n"
 
 				"	nvram commit\n"
+				"	nvram dump\n"
 			   );
 	}
 	return stat;

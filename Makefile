@@ -1,5 +1,9 @@
 CLI_FILENAME = nvram
 
+CLI_PATH=$(LITEON_APP_PATH)/$(CLI_FILENAME)
+
+include $(LITEON_APP_PATH)/rules.gcc
+
 LIB_VERMAJOR = 0
 LIB_VERMINOR = 1
 LIB_FILENAME = libnvram.so
@@ -34,3 +38,7 @@ libnvram:
 
 clean:
 	rm -f $(CLI_FILENAME) $(LIB_FILENAME)* *.o
+
+install:
+	$(call install_program,$(CLI_PATH)/$(CLI_FILENAME),$(APP_INSTALL_ROOT))
+	$(call install_library,$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR))

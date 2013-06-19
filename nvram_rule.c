@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include "nvram.h"
 #include "nvram_rule.h"
 
 char *mask[] = {
@@ -16,7 +17,7 @@ char *mask[] = {
 };
 
 
-int show_enable_value(char *type, char *val, char *buf, int bsize)
+int show_enable_value(char *val, char *buf, int bsize)
 {
     if (!val) {
         return NVRAM_NO_ATTRIBUTE;
@@ -30,7 +31,7 @@ int show_enable_value(char *type, char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
-int show_value(char *type, char *val, char *buf, int bsize)
+int show_value(char *val, char *buf, int bsize)
 {
     if (!val) {
         return NVRAM_NO_ATTRIBUTE;
@@ -44,7 +45,7 @@ int show_value(char *type, char *val, char *buf, int bsize)
 
 char *iftype[] = { "wan", "lan", NULL };
 
-int show_if_value(char *type, char *val, char *buf, int bsize)
+int show_if_value(char *val, char *buf, int bsize)
 {
     char *ptr;
     int i, len, idx;
@@ -76,7 +77,7 @@ int show_if_value(char *type, char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
-int show_proto_value(char *type, char *val, char *buf, int bsize)
+int show_proto_value(char *val, char *buf, int bsize)
 {
     if (!val) {
         return NVRAM_NO_ATTRIBUTE;
@@ -102,7 +103,7 @@ int show_proto_value(char *type, char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
-int show_mask_value(char *type, char *val, char *buf, int bsize)
+int show_mask_value(char *val, char *buf, int bsize)
 {
     if (!val) {
         return NVRAM_NO_ATTRIBUTE;
@@ -1955,11 +1956,10 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok)
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
  */
-int nvram_get_rule(char *rule_set, int nth, 
+int nvram_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize)
 {
     char tmp[NVRAM_BUF_LEN];
-    char *next;
     char *wordlist;
     char *str, *ptr;
     int ret;
@@ -2031,7 +2031,7 @@ int nvram_get_rule(char *rule_set, int nth,
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
  */
-int nvram_get_subrule(char *rule_set, int nth, 
+int nvram_get_subrule(const char *rule_set, int nth, 
 	int start, int end, char *buf, int bsize)
 {
     char *ptr_array[MAX_ATTR_NUM];
@@ -2088,8 +2088,8 @@ int nvram_get_subrule(char *rule_set, int nth,
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
  */
-int nvram_get_attr_val(char *rule_set, int nth, 
-		char *type, char *buf, int bsize, int use)
+int nvram_get_attr_val(const char *rule_set, int nth, 
+		const char *type, char *buf, int bsize, int use)
 {
     char *ptr_array[MAX_ATTR_NUM];
     char word[NVRAM_BUF_LEN];
@@ -2124,13 +2124,13 @@ int nvram_get_attr_val(char *rule_set, int nth,
             if (strcmp(attr[j].name, type) == 0) {
                 if (use == NVRAM_USE_CLI && attr[j].func_orig) {
                     /* Don't wrap. Just get the value stored in nvram. */
-                    return attr[j].func_orig(type, ptr_array[j], 
+                    return attr[j].func_orig( ptr_array[j], 
                                              buf, bsize);
                 } else if (use == NVRAM_USE_WEB && attr[j].func_wrap) {
                     /* Wrap the value from nvram. Eg., the attribute
                      * <enable> is 1 will be wrapped to 'checked'.
                      */
-                    return attr[j].func_wrap(type, ptr_array[j], buf, 
+                    return attr[j].func_wrap( ptr_array[j], buf, 
                                              bsize);
                 }
             }
@@ -2140,17 +2140,10 @@ int nvram_get_attr_val(char *rule_set, int nth,
     return NVRAM_NO_ATTRIBUTE;
 }
 
-enum opcode {
-    ADD_RULE = 0,
-    DELETE_RULE = 1,
-    REPLACE_RULE = 2
-};
-
-int nvram_op_rule(char *rule_set, enum opcode op, int nth, char *new_rule)
+int nvram_op_rule(const char *rule_set, enum opcode op, int nth, char *new_rule)
 {
     char buf[NVRAM_BUF_LEN];
     char word[NVRAM_BUF_LEN];
-    char *wordlist;
     char *ptr;
     int len, ret, i, rule_num;
     char *rule_sep = RULE_SEP;
@@ -2164,7 +2157,6 @@ int nvram_op_rule(char *rule_set, enum opcode op, int nth, char *new_rule)
     len = NVRAM_BUF_LEN;
     ptr = buf;
     for (i = 0; i < rule_num; i++) {
-        char *rule;
         ret = nvram_get_rule(rule_set, i, word, NVRAM_BUF_LEN);
         if (ret < 0) {
             return ret;
@@ -2233,7 +2225,7 @@ int nvram_op_rule(char *rule_set, enum opcode op, int nth, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_replace_rule(char *rule_set, int nth, char *new_rule)
+int nvram_replace_rule(const char *rule_set, int nth, char *new_rule)
 {
     int rule_num;
 
@@ -2262,7 +2254,7 @@ int nvram_replace_rule(char *rule_set, int nth, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_replace_attr(char *rule_set, int nth, 
+int nvram_replace_attr(const char *rule_set, int nth, 
 	char *attr_name, char *new_attr)
 {
     char *ptr_array[MAX_ATTR_NUM];
@@ -2329,7 +2321,7 @@ int nvram_replace_attr(char *rule_set, int nth,
  * \param[in] rule_set: to specify the rule_set.
  * \param[in] nth: to specify the nth rule in the rule set.
  */
-int nvram_delete_rule(char *rule_set, int nth)
+int nvram_delete_rule(const char *rule_set, int nth)
 {
     if (!rule_set || !*rule_set) {
         return NVRAM_INVALID;
@@ -2347,7 +2339,7 @@ int nvram_delete_rule(char *rule_set, int nth)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_add_rule(char *rule_set, int nth, char *new_rule)
+int nvram_add_rule(const char *rule_set, int nth, char *new_rule)
 {
     int rule_num;
 
@@ -2380,7 +2372,7 @@ int nvram_add_rule(char *rule_set, int nth, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_prepend_rule(char *rule_set, char *new_rule)
+int nvram_prepend_rule(const char *rule_set, char *new_rule)
 {
     if (!rule_set || !*rule_set || !new_rule) {
         return NVRAM_INVALID;
@@ -2397,7 +2389,7 @@ int nvram_prepend_rule(char *rule_set, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_append_rule(char *rule_set, char *new_rule)
+int nvram_append_rule(const char *rule_set, char *new_rule)
 {
     char buf[NVRAM_BUF_LEN];
     int len;
@@ -2433,9 +2425,8 @@ int nvram_append_rule(char *rule_set, char *new_rule)
  * \return The number of subrule in the rule set.
  * \param[in] rule_set: to specify the rule_set.
  */
-int nvram_get_rule_num(char *rule_set)
+int nvram_get_rule_num(const char *rule_set)
 {
-    char *delim;
     char *sep = RULE_SEP;
     int i;
     int count;

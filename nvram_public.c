@@ -1,6 +1,7 @@
 #include "nvram.h"
 #include "nvram_fw.h"
 #include "nvram_factory.h"
+
 /* Global */
 nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
@@ -329,5 +330,17 @@ int nvram_downgrade(char *target)
 {
 	int change = 0;
 	return change;
+}
+
+int nvram_dump(void)
+{
+	int ret = -1;
+	nvram_tuple_t * t = nvram_getall();
+	while (NULL != t ){
+		ret = 0;	
+		printf("nvram set \"%s=%s\"\n", t->name, t->value);
+		t = t->next;
+	}
+	return ret;
 }
 

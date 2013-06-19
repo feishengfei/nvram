@@ -18,16 +18,22 @@
 
 struct attr {
     char *name;
-    int (*func_orig)(char *, char *, char *, int);
-    int (*func_wrap)(char *, char *, char *, int);
+    int (*func_orig)(char *, char *, int);
+    int (*func_wrap)(char *, char *, int);
+};
+
+enum opcode {
+    ADD_RULE = 0,
+    DELETE_RULE = 1,
+    REPLACE_RULE = 2
 };
 
 /******************************************/
-int show_enable_value(char *type, char *val, char *buf, int bsize);
-int show_value(char *type, char *val, char *buf, int bsize);
-int show_if_value(char *type, char *val, char *buf, int bsize);
-int show_proto_value(char *type, char *val, char *buf, int bsize);
-int show_mask_value(char *type, char *val, char *buf, int bsize);
+int show_enable_value(char *val, char *buf, int bsize);
+int show_value(char *val, char *buf, int bsize);
+int show_if_value(char *val, char *buf, int bsize);
+int show_proto_value(char *val, char *buf, int bsize);
+int show_mask_value(char *val, char *buf, int bsize);
 
 int sep_string(char *word, const char *delim, char **idx_arr, int max_tok);
 
@@ -35,7 +41,7 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok);
  * \brief Get a specified rule set from nvram, parse it by the RULE_SEP 
  * character, and return the nth rule.
  */
-int nvram_get_rule(char *rule_set, int nth, 
+int nvram_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize);
 
 /**
@@ -43,7 +49,7 @@ int nvram_get_rule(char *rule_set, int nth,
  * RULE_SEP character, and return the subrule with the attribute position in
  * between start and end.
  */
-int nvram_get_subrule(char *rule_set, int nth, 
+int nvram_get_subrule(const char *rule_set, int nth, 
 	int start, int end, char *buf, int bsize);
 
 /**
@@ -51,45 +57,46 @@ int nvram_get_subrule(char *rule_set, int nth,
  * from nvram. The rules are separated by blank character and the attributes
  * in a rule are separated by '-' character.
  */
-int nvram_get_attr_val(char *rule_set, int nth, 
-	char *type, char *buf, int bsize, int use);
+int nvram_get_attr_val(const char *rule_set, int nth, 
+	const char *type, char *buf, int bsize, int use);
 
-//int nvram_op_rule(char *rule_set, enum opcode op, int nth, char *new_rule);
+int nvram_op_rule(const char *rule_set, enum opcode op, 
+	int nth, char *new_rule);
 
 /**
  * \brief Replace the nth rule in the given rule-name as the specific rule.
  */
-int nvram_replace_rule(char *rule_set, int nth, char *new_rule);
+int nvram_replace_rule(const char *rule_set, int nth, char *new_rule);
 
 /**
  * \brief Replace the mth attribute of the nth rule in the given rule-name as 
  * the specific rule.
  */
-int nvram_replace_attr(char *rule_set, int nth, 
+int nvram_replace_attr(const char *rule_set, int nth, 
 	char *attr, char *new_attr);
 
 /**
  * \brief Append a new rule into the given rule-name.
  */
-int nvram_append_rule(char *rule_set, char *new_rule);
+int nvram_append_rule(const char *rule_set, char *new_rule);
 
 /**
  * \brief Prepend a new rule into the given rule-name.
  */
-int nvram_prepend_rule(char *rule_set, char *new_rule);
+int nvram_prepend_rule(const char *rule_set, char *new_rule);
 
 /**
  * \brief Add a new rule in the given rule-name as the specific rule.
  */
-int nvram_add_rule(char *rule_set, int nth, char *new_rule);
+int nvram_add_rule(const char *rule_set, int nth, char *new_rule);
 
 /**
  * \brief Delete nth rule in the given rule-name.
  */
-int nvram_delete_rule(char *rule_set, int nth);
+int nvram_delete_rule(const char *rule_set, int nth);
 
 /**
  * \brief Get the number of rules in the given rule-name.
  */
-int nvram_get_rule_num(char *rule_set);
+int nvram_get_rule_num(const char *rule_set);
 #endif
