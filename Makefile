@@ -1,7 +1,7 @@
 CLI_FILENAME = nvram
 
 ifeq ($(LITEON_APP_PATH), )
-	CLI_PATH=$(LITEON_APP_PATH)/$(CLI_FILENAME)
+
 else 
  	CLI_PATH=$(LITEON_APP_PATH)/$(CLI_FILENAME)
 	include $(LITEON_APP_PATH)/rules.gcc
@@ -42,6 +42,10 @@ libnvram:
 clean:
 	rm -f $(CLI_FILENAME) $(LIB_FILENAME)* *.o
 
+ifeq ($(LITEON_APP_PATH), )
+
+else 
 install:
 	$(call install_program,$(CLI_PATH)/$(CLI_FILENAME),$(APP_INSTALL_ROOT))
 	$(call install_library,$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR))
+endif
