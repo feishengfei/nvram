@@ -166,5 +166,8 @@ int nvram_import(char *filename);
 //TODO
 int nvram_upgrade(char *source);
 int nvram_downgrade(char *target);
+
+//helper function
+int nvram_dump(void);
 /********************************************************/
 #endif /* _nvram_h_ */
