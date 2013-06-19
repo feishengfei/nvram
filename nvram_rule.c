@@ -2140,7 +2140,7 @@ int nvram_get_attr_val(const char *rule_set, int nth,
     return NVRAM_NO_ATTRIBUTE;
 }
 
-int nvram_op_rule(const char *rule_set, enum opcode op, int nth, char *new_rule)
+int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new_rule)
 {
     char buf[NVRAM_BUF_LEN];
     char word[NVRAM_BUF_LEN];
@@ -2225,7 +2225,7 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_replace_rule(const char *rule_set, int nth, char *new_rule)
+int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule)
 {
     int rule_num;
 
@@ -2255,7 +2255,7 @@ int nvram_replace_rule(const char *rule_set, int nth, char *new_rule)
  * \param[in] new_rule: the replacing rule.
  */
 int nvram_replace_attr(const char *rule_set, int nth, 
-	char *attr_name, char *new_attr)
+	const char *attr_name, const char *new_attr)
 {
     char *ptr_array[MAX_ATTR_NUM];
     char word[NVRAM_BUF_LEN];
@@ -2339,7 +2339,7 @@ int nvram_delete_rule(const char *rule_set, int nth)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_add_rule(const char *rule_set, int nth, char *new_rule)
+int nvram_add_rule(const char *rule_set, int nth, const char *new_rule)
 {
     int rule_num;
 
@@ -2372,7 +2372,7 @@ int nvram_add_rule(const char *rule_set, int nth, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_prepend_rule(const char *rule_set, char *new_rule)
+int nvram_prepend_rule(const char *rule_set, const char *new_rule)
 {
     if (!rule_set || !*rule_set || !new_rule) {
         return NVRAM_INVALID;
@@ -2389,7 +2389,7 @@ int nvram_prepend_rule(const char *rule_set, char *new_rule)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
  */
-int nvram_append_rule(const char *rule_set, char *new_rule)
+int nvram_append_rule(const char *rule_set, const char *new_rule)
 {
     char buf[NVRAM_BUF_LEN];
     int len;

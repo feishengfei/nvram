@@ -156,16 +156,16 @@ int nvram_commit(void);
 /* restore from the whole factory default */
 int nvram_default(void);
 /* restore one specific rule from factory default */
-int nvram_default_rule(char *rulename);
+int nvram_default_rule(const char *rulename);
 /* commit  after restore the whole factory default */
 int nvram_factory(void);
 
-int nvram_export(char *filename);
-int nvram_import(char *filename);
+int nvram_export(const char *filename);
+int nvram_import(const char *filename);
 
 //TODO
-int nvram_upgrade(char *source);
-int nvram_downgrade(char *target);
+int nvram_upgrade(const char *source);
+int nvram_downgrade(const char *target);
 
 //helper function
 int nvram_dump(void);

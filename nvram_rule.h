@@ -61,34 +61,34 @@ int nvram_get_attr_val(const char *rule_set, int nth,
 	const char *type, char *buf, int bsize, int use);
 
 int nvram_op_rule(const char *rule_set, enum opcode op, 
-	int nth, char *new_rule);
+	int nth, const char *new_rule);
 
 /**
  * \brief Replace the nth rule in the given rule-name as the specific rule.
  */
-int nvram_replace_rule(const char *rule_set, int nth, char *new_rule);
+int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule);
 
 /**
  * \brief Replace the mth attribute of the nth rule in the given rule-name as 
  * the specific rule.
  */
 int nvram_replace_attr(const char *rule_set, int nth, 
-	char *attr, char *new_attr);
+	const char *attr, const char *new_attr);
 
 /**
  * \brief Append a new rule into the given rule-name.
  */
-int nvram_append_rule(const char *rule_set, char *new_rule);
+int nvram_append_rule(const char *rule_set, const char *new_rule);
 
 /**
  * \brief Prepend a new rule into the given rule-name.
  */
-int nvram_prepend_rule(const char *rule_set, char *new_rule);
+int nvram_prepend_rule(const char *rule_set, const char *new_rule);
 
 /**
  * \brief Add a new rule in the given rule-name as the specific rule.
  */
-int nvram_add_rule(const char *rule_set, int nth, char *new_rule);
+int nvram_add_rule(const char *rule_set, int nth, const char *new_rule);
 
 /**
  * \brief Delete nth rule in the given rule-name.

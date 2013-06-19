@@ -154,7 +154,7 @@ int nvram_default(void)
 	return stat;
 }
 
-int nvram_default_rule(char *rulename)
+int nvram_default_rule(const char *rulename)
 {       
 	int stat = 1;
 	struct nvram_tuple *v;
@@ -175,7 +175,7 @@ int nvram_factory(void)
 	return stat;
 }
 
-int nvram_export(char *filename)
+int nvram_export(const char *filename)
 {   
 	FILE *fp;
 	struct nvram_tuple *v;
@@ -203,7 +203,7 @@ int nvram_export(char *filename)
 	return 0;
 }
 
-int nvram_import(char *filename)
+int nvram_import(const char *filename)
 {   
 	FILE *fp;
 	char *p, *q;
@@ -319,14 +319,14 @@ int nvram_import(char *filename)
 }
 
 //TODO
-int nvram_upgrade(char *source)
+int nvram_upgrade(const char *source)
 {
 	int change = 0;
 	return change;
 }
 
 //TODO
-int nvram_downgrade(char *target)
+int nvram_downgrade(const char *target)
 {
 	int change = 0;
 	return change;
