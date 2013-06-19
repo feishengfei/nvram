@@ -40,6 +40,8 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok);
 /**
  * \brief Get a specified rule set from nvram, parse it by the RULE_SEP 
  * character, and return the nth rule.
+
+   nvram show <rule-set> <nth> 
  */
 int nvram_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize);
@@ -56,6 +58,8 @@ int nvram_get_subrule(const char *rule_set, int nth,
  * \brief Get a specified attribute of the given rule from the rule set queried 
  * from nvram. The rules are separated by blank character and the attributes
  * in a rule are separated by '-' character.
+ *
+ * nvram show <rule-set> <nth> <attr-type> 
  */
 int nvram_get_attr_val(const char *rule_set, int nth, 
 	const char *type, char *buf, int bsize, int use);
@@ -65,38 +69,52 @@ int nvram_op_rule(const char *rule_set, enum opcode op,
 
 /**
  * \brief Replace the nth rule in the given rule-name as the specific rule.
+ *
+ * nvram replace rule <rule-set> <nth> <new-rule>
  */
 int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule);
 
 /**
  * \brief Replace the mth attribute of the nth rule in the given rule-name as 
  * the specific rule.
+ *
+ * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
  */
 int nvram_replace_attr(const char *rule_set, int nth, 
-	const char *attr, const char *new_attr);
+	const char *attr, const char *new_rule);
 
 /**
  * \brief Append a new rule into the given rule-name.
+ *
+ * nvram append rule <rule-set> <new-rule> 
  */
 int nvram_append_rule(const char *rule_set, const char *new_rule);
 
 /**
  * \brief Prepend a new rule into the given rule-name.
+ *
+ * nvram prepend rule <rule-set> <new-rule>
  */
 int nvram_prepend_rule(const char *rule_set, const char *new_rule);
 
 /**
  * \brief Add a new rule in the given rule-name as the specific rule.
+ *
+ * nvram add rule <rule-set> <nth> <new-rule>
  */
 int nvram_add_rule(const char *rule_set, int nth, const char *new_rule);
 
 /**
  * \brief Delete nth rule in the given rule-name.
+ *
+ * nvram delete rule <rule-set> <nth>
  */
 int nvram_delete_rule(const char *rule_set, int nth);
 
 /**
  * \brief Get the number of rules in the given rule-name.
+ *
+ * nvram rule num <rule-set> 
  */
 int nvram_get_rule_num(const char *rule_set);
 #endif

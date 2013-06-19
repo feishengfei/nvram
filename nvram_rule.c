@@ -1955,6 +1955,8 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok)
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
+ *
+ *  nvram show <rule-set> <nth> 
  */
 int nvram_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize)
@@ -2087,6 +2089,7 @@ int nvram_get_subrule(const char *rule_set, int nth,
  * \param[in] type: a pointer to the specified type of attribute.
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
+ * \param[in] use: NVRAM_USE_CLI or NVRAM_USE_WEB
  */
 int nvram_get_attr_val(const char *rule_set, int nth, 
 		const char *type, char *buf, int bsize, int use)
@@ -2224,6 +2227,8 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new
  * \param[in] rule_set: to specify the rule_set.
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
+ *
+ * nvram replace rule <rule-set> <nth> <new-rule>
  */
 int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule)
 {
@@ -2252,10 +2257,13 @@ int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule)
  * \return The total length of the rule set.
  * \param[in] rule_set: to specify the rule_set.
  * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] attr: the attr to be replaced.
  * \param[in] new_rule: the replacing rule.
+ *
+ * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
  */
 int nvram_replace_attr(const char *rule_set, int nth, 
-	const char *attr_name, const char *new_attr)
+	const char *attr, const char *new_rule)
 {
     char *ptr_array[MAX_ATTR_NUM];
     char word[NVRAM_BUF_LEN];
@@ -2263,7 +2271,7 @@ int nvram_replace_attr(const char *rule_set, int nth,
     int ret, i, bytes, attr_len;
     char *val, *str, *sep = ATTR_SEP;
 
-    if (!rule_set || !*rule_set || !attr_name || !*attr_name || !new_attr) {
+    if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
         return NVRAM_INVALID;
     }
 
@@ -2284,8 +2292,8 @@ int nvram_replace_attr(const char *rule_set, int nth,
         bytes = NVRAM_BUF_LEN;
         str = tmp;
         for (j = 0; attr[j].name && ptr_array[j]; j++) {
-            if (strcmp(attr[j].name, attr_name) == 0) {
-                val = new_attr;  
+            if (strcmp(attr[j].name, (char *)attr) == 0) {
+                val = (char *)new_rule;  
             } else {
                 val = ptr_array[j];
             }
@@ -2320,6 +2328,8 @@ int nvram_replace_attr(const char *rule_set, int nth,
  * \return 0 for success; otherwise a negtive value would be returned.
  * \param[in] rule_set: to specify the rule_set.
  * \param[in] nth: to specify the nth rule in the rule set.
+ *
+ * nvram delete rule <rule-set> <nth>
  */
 int nvram_delete_rule(const char *rule_set, int nth)
 {
@@ -2338,6 +2348,8 @@ int nvram_delete_rule(const char *rule_set, int nth)
  * \param[in] rule_set: to specify the rule_set.
  * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
+ *
+ * nvram add rule <rule-set> <nth> <new-rule>
  */
 int nvram_add_rule(const char *rule_set, int nth, const char *new_rule)
 {
@@ -2369,8 +2381,9 @@ int nvram_add_rule(const char *rule_set, int nth, const char *new_rule)
  * parameter.
  * \return The total length of the rule set.
  * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
+ *
+ * nvram prepend rule <rule-set> <new-rule>
  */
 int nvram_prepend_rule(const char *rule_set, const char *new_rule)
 {
@@ -2386,8 +2399,9 @@ int nvram_prepend_rule(const char *rule_set, const char *new_rule)
  * parameter.
  * \return The total length of the rule set.
  * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
  * \param[in] new_rule: the replacing rule.
+ *
+ * nvram append rule <rule-set> <new-rule> 
  */
 int nvram_append_rule(const char *rule_set, const char *new_rule)
 {
@@ -2424,6 +2438,8 @@ int nvram_append_rule(const char *rule_set, const char *new_rule)
 /**
  * \return The number of subrule in the rule set.
  * \param[in] rule_set: to specify the rule_set.
+ *
+ * nvram rule num <rule-set> 
  */
 int nvram_get_rule_num(const char *rule_set)
 {
