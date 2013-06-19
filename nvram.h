@@ -23,43 +23,43 @@
 		__FILE__, __LINE__, __FUNCTION__, msg ? msg : "?")
 
 /* rule buf len for NVRAM */
-#define NVRAM_TMP_LEN 256
+#define EZPLIB_TMP_LEN 256
 
 /* Staging file for NVRAM */
-#define NVRAM_MTD_NAME		"nvram"
-#define NVRAM_STAGING		"/tmp/.nvram"
-#define NVRAM_RO			1
-#define NVRAM_RW			0
+#define EZPLIB_MTD_NAME		"nvram"
+#define EZPLIB_STAGING		"/tmp/.nvram"
+#define EZPLIB_RO			1
+#define EZPLIB_RW			0
 
 /* Helper macros */
-#define NVRAM_ARRAYSIZE(a)	sizeof(a)/sizeof(a[0])
-#define	NVRAM_ROUNDUP(x, y)	((((x)+((y)-1))/(y))*(y))
+#define EZPLIB_ARRAYSIZE(a)	sizeof(a)/sizeof(a[0])
+#define	EZPLIB_ROUNDUP(x, y)	((((x)+((y)-1))/(y))*(y))
 
 /* NVRAM constants */
-#define NVRAM_SPACE			0x8000
-#define NVRAM_MAGIC			0x48534C46	/* 'FLSH' */
-#define NVRAM_VERSION		1
+#define EZPLIB_SPACE			0x8000
+#define EZPLIB_MAGIC			0x48534C46	/* 'FLSH' */
+#define EZPLIB_VERSION		1
 
 /* magic, len, crc8 to be skipped */
-#define NVRAM_CRC_START_POSITION	9 
+#define EZPLIB_CRC_START_POSITION	9 
 
 /* None of specific NVRAM options. */
-#define NVRAM_NONE 0x00
+#define EZPLIB_NONE 0x00
 /* NOT allowed to be disclosed (e.g. a config file). */
-#define NVRAM_PRIVATE 0x01
+#define EZPLIB_PRIVATE 0x01
 /* NOT allowed to be overwritten (e.g. a license key). If the value is
  * empty, it could be written for once.*/
-#define NVRAM_PROTECTED 0x02
+#define EZPLIB_PROTECTED 0x02
 /* For temporary use. */
-#define NVRAM_TEMP 0x04
+#define EZPLIB_TEMP 0x04
 /* Customized by the authorized program. */
-#define NVRAM_CUSTOMIZED 0x08
+#define EZPLIB_CUSTOMIZED 0x08
 /* NVRAM could be empty. */
-#define NVRAM_EMPTY 0x10
+#define EZPLIB_EMPTY 0x10
 /* NVRAM value should be set by *_default if this value is empty . */
-#define NVRAM_DEFAULT 0x20
+#define EZPLIB_DEFAULT 0x20
 /* NVRAM is undefined. */
-#define NVRAM_UNDEFINED 0x80000000
+#define EZPLIB_UNDEFINED 0x80000000
 
 struct nvram_header {
 	uint32_t magic;

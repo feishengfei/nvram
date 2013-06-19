@@ -1,10 +1,10 @@
-#ifndef _NVRAM_FW_H_
-#define _NVRAM_FW_H_
+#ifndef _EZPLIB_FW_H_
+#define _EZPLIB_FW_H_
 
 typedef enum
 {
-    NVRAM_FW_0_0_0 = 0,
-    NVRAM_FW_1_6_5,
+    EZPLIB_FW_0_0_0 = 0,
+    EZPLIB_FW_1_6_5,
 } nvram_fw_version;
 
 struct nvram_fw_tuple {
@@ -15,5 +15,5 @@ struct nvram_fw_tuple {
 };
 
 
-#endif /* _NVRAM_FW_H_ */
+#endif /* _EZPLIB_FW_H_ */
 

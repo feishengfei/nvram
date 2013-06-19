@@ -100,7 +100,7 @@ doing the belowings in your nvram_factory.h:
 	nvram_tuple_t nvram_factory_default[] = {                        
 		...
 		{ "lan_main_rule", LAN_MAIN_RULE, 
-			NVRAM_NONE,
+			EZPLIB_NONE,
 			0 
 		},  /* name^enable[0|1]^mtu^stp^weight */
 		...

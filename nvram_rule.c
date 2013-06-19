@@ -20,12 +20,12 @@ char *mask[] = {
 int show_enable_value(char *val, char *buf, int bsize)
 {
     if (!val) {
-        return NVRAM_NO_ATTRIBUTE;
+        return EZPLIB_NO_ATTRIBUTE;
     }
 
     if (snprintf(buf, bsize, "%s", 
                 !strcmp(val, "1") ? "enabled" : "disabled") >= bsize) {
-        return NVRAM_VAL_TRUNC;
+        return EZPLIB_VAL_TRUNC;
     }
 
     return strlen(buf);
@@ -34,11 +34,11 @@ int show_enable_value(char *val, char *buf, int bsize)
 int show_value(char *val, char *buf, int bsize)
 {
     if (!val) {
-        return NVRAM_NO_ATTRIBUTE;
+        return EZPLIB_NO_ATTRIBUTE;
     }
 
     if (snprintf(buf, bsize, "%s", val) >= bsize) {
-        return NVRAM_VAL_TRUNC;
+        return EZPLIB_VAL_TRUNC;
     }
     return strlen(buf);
 }
@@ -51,7 +51,7 @@ int show_if_value(char *val, char *buf, int bsize)
     int i, len, idx;
 
     if (!val) {
-        return NVRAM_NO_ATTRIBUTE;
+        return EZPLIB_NO_ATTRIBUTE;
     }
 
     for (i = 0; iftype[i]; i++) {
@@ -63,14 +63,14 @@ int show_if_value(char *val, char *buf, int bsize)
 
     if (!iftype[i]) {
         if (snprintf(buf, bsize, "%s", val) >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     } else {
         ptr = val + len;
         /* 1-based index for GUI display. */
         idx = atoi(ptr) + 1;    
         if (snprintf(buf, bsize, "%s%d", iftype[i], idx) >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     }
 
@@ -80,24 +80,24 @@ int show_if_value(char *val, char *buf, int bsize)
 int show_proto_value(char *val, char *buf, int bsize)
 {
     if (!val) {
-        return NVRAM_NO_ATTRIBUTE;
+        return EZPLIB_NO_ATTRIBUTE;
     }
 
     if (!strcmp(val, "both")) {
         if (snprintf(buf, bsize, "UDP/TCP") >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     } else if (!strcmp(val, "tcp")) {
         if (snprintf(buf, bsize, "TCP") >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     } else if (!strcmp(val, "udp")) {
         if (snprintf(buf, bsize, "UDP") >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     } else {
         if (snprintf(buf, bsize, "%s", val) >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     }
     return strlen(buf);
@@ -106,7 +106,7 @@ int show_proto_value(char *val, char *buf, int bsize)
 int show_mask_value(char *val, char *buf, int bsize)
 {
     if (!val) {
-        return NVRAM_NO_ATTRIBUTE;
+        return EZPLIB_NO_ATTRIBUTE;
     }
 
     int idx = atoi(val);
@@ -114,11 +114,11 @@ int show_mask_value(char *val, char *buf, int bsize)
     if (24 <= idx && idx <= 32) {
         /* 24-based. */
         if (snprintf(buf, bsize, "%s", mask[idx - 24]) >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     } else {
         if (snprintf(buf, bsize, "") >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
     }
 
@@ -1958,10 +1958,10 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok)
  *
  *  nvram show <rule-set> <nth> 
  */
-int nvram_get_rule(const char *rule_set, int nth, 
+int ezplib_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize)
 {
-    char tmp[NVRAM_BUF_LEN];
+    char tmp[EZPLIB_BUF_LEN];
     char *wordlist;
     char *str, *ptr;
     int ret;
@@ -1969,35 +1969,35 @@ int nvram_get_rule(const char *rule_set, int nth,
     assert(strlen(RULE_SEP) == 1);
 
     if (!buf) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     /* Clean up the buffer that carries the retrieved value. */
     memset(buf, '\0', bsize);
 
     if (!rule_set || !*rule_set) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     wordlist = nvram_get(rule_set);
     if (!wordlist) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
 
     if (!*wordlist) {
-        return NVRAM_NO_RULE;
+        return EZPLIB_NO_RULE;
     }
 
-    ret = snprintf(tmp, NVRAM_BUF_LEN, "%s", wordlist);
-    if (ret >= NVRAM_BUF_LEN) {
-        return NVRAM_VAL_TRUNC;
+    ret = snprintf(tmp, EZPLIB_BUF_LEN, "%s", wordlist);
+    if (ret >= EZPLIB_BUF_LEN) {
+        return EZPLIB_VAL_TRUNC;
     }
 
     str = tmp;
     while (str) {
         ptr = strsep(&str, RULE_SEP);
         if (!ptr) {
-            return NVRAM_NO_RULE;
+            return EZPLIB_NO_RULE;
         }
 
         if (nth != 0) {
@@ -2006,13 +2006,13 @@ int nvram_get_rule(const char *rule_set, int nth,
         }
         ret = snprintf(buf, bsize, ptr);
         if (ret >= bsize) {
-            return NVRAM_VAL_TRUNC;
+            return EZPLIB_VAL_TRUNC;
         }
         return ret;
     }
 
     if (nth >= 0) {
-        return NVRAM_NO_RULE;
+        return EZPLIB_NO_RULE;
     }
     return 0;
 }
@@ -2033,19 +2033,19 @@ int nvram_get_rule(const char *rule_set, int nth,
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
  */
-int nvram_get_subrule(const char *rule_set, int nth, 
+int ezplib_get_subrule(const char *rule_set, int nth, 
 	int start, int end, char *buf, int bsize)
 {
     char *ptr_array[MAX_ATTR_NUM];
-    char word[NVRAM_BUF_LEN];
+    char word[EZPLIB_BUF_LEN];
     int ret, i, j, len;
 
     if (!rule_set || !*rule_set || !buf) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     if (start > end) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     /**
@@ -2054,7 +2054,7 @@ int nvram_get_subrule(const char *rule_set, int nth,
      */
     memset(buf, '\0', bsize);
 
-    ret = nvram_get_rule(rule_set, nth, word, NVRAM_BUF_LEN);
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
     if (ret < 0) {
         return ret;
     }
@@ -2089,18 +2089,18 @@ int nvram_get_subrule(const char *rule_set, int nth,
  * \param[in] type: a pointer to the specified type of attribute.
  * \param[out] buf: a pointer to a buffer for copying the parsed data.
  * \param[in] bsize: to specify the size of the imported area.
- * \param[in] use: NVRAM_USE_CLI or NVRAM_USE_WEB
+ * \param[in] use: EZPLIB_USE_CLI or EZPLIB_USE_WEB
  */
-int nvram_get_attr_val(const char *rule_set, int nth, 
+int ezplib_get_attr_val(const char *rule_set, int nth, 
 		const char *type, char *buf, int bsize, int use)
 {
     char *ptr_array[MAX_ATTR_NUM];
-    char word[NVRAM_BUF_LEN];
+    char word[EZPLIB_BUF_LEN];
     int ret, i;
 
 
     if (!rule_set || !*rule_set || !type || !*type || !buf) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     /**
@@ -2109,7 +2109,7 @@ int nvram_get_attr_val(const char *rule_set, int nth,
      */
     memset(buf, '\0', bsize);
 
-    ret = nvram_get_rule(rule_set, nth, word, NVRAM_BUF_LEN);
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
     if (ret < 0) {
         return ret;
     }
@@ -2125,11 +2125,11 @@ int nvram_get_attr_val(const char *rule_set, int nth,
         attr = rules[i].attr;
         for (j = 0; attr[j].name && ptr_array[j]; j++) {
             if (strcmp(attr[j].name, type) == 0) {
-                if (use == NVRAM_USE_CLI && attr[j].func_orig) {
+                if (use == EZPLIB_USE_CLI && attr[j].func_orig) {
                     /* Don't wrap. Just get the value stored in nvram. */
                     return attr[j].func_orig( ptr_array[j], 
                                              buf, bsize);
-                } else if (use == NVRAM_USE_WEB && attr[j].func_wrap) {
+                } else if (use == EZPLIB_USE_WEB && attr[j].func_wrap) {
                     /* Wrap the value from nvram. Eg., the attribute
                      * <enable> is 1 will be wrapped to 'checked'.
                      */
@@ -2140,27 +2140,27 @@ int nvram_get_attr_val(const char *rule_set, int nth,
         }
     }
 
-    return NVRAM_NO_ATTRIBUTE;
+    return EZPLIB_NO_ATTRIBUTE;
 }
 
-int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new_rule)
+int ezplib_op_rule(const char *rule_set, enum opcode op, int nth, const char *new_rule)
 {
-    char buf[NVRAM_BUF_LEN];
-    char word[NVRAM_BUF_LEN];
+    char buf[EZPLIB_BUF_LEN];
+    char word[EZPLIB_BUF_LEN];
     char *ptr;
     int len, ret, i, rule_num;
     char *rule_sep = RULE_SEP;
 
     /* Get the number of rules in the rule set. */
-    rule_num = nvram_get_rule_num(rule_set);
+    rule_num = ezplib_get_rule_num(rule_set);
     if (rule_num < 0) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
     
-    len = NVRAM_BUF_LEN;
+    len = EZPLIB_BUF_LEN;
     ptr = buf;
     for (i = 0; i < rule_num; i++) {
-        ret = nvram_get_rule(rule_set, i, word, NVRAM_BUF_LEN);
+        ret = ezplib_get_rule(rule_set, i, word, EZPLIB_BUF_LEN);
         if (ret < 0) {
             return ret;
         }
@@ -2168,14 +2168,14 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new
         if (i != nth) {
             ret = snprintf(ptr, len, "%s%s", word, RULE_SEP);
             if (ret >= len) {
-                return NVRAM_VAL_TRUNC;
+                return EZPLIB_VAL_TRUNC;
             }
         } else {
             switch (op) {
                 case ADD_RULE:
                     ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
                     if (ret >= len) {
-                        return NVRAM_VAL_TRUNC;
+                        return EZPLIB_VAL_TRUNC;
                     }
 
                     /**
@@ -2194,11 +2194,11 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new
                 case REPLACE_RULE:
                     ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
                     if (ret >= len) {
-                        return NVRAM_VAL_TRUNC;
+                        return EZPLIB_VAL_TRUNC;
                     }
                     break;
                 default:
-                    return NVRAM_INVALID;
+                    return EZPLIB_INVALID;
                     break;
             }
         }
@@ -2208,7 +2208,7 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new
     }
 
     /* Calculate the length of the rule set. */
-    len = NVRAM_BUF_LEN - len;
+    len = EZPLIB_BUF_LEN - len;
 
     /* Remove the last whitespace. */
     assert(strlen(RULE_SEP) == 1);
@@ -2230,24 +2230,24 @@ int nvram_op_rule(const char *rule_set, enum opcode op, int nth, const char *new
  *
  * nvram replace rule <rule-set> <nth> <new-rule>
  */
-int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule)
+int ezplib_replace_rule(const char *rule_set, int nth, const char *new_rule)
 {
     int rule_num;
 
     if (!rule_set || !*rule_set || !new_rule) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
-    rule_num = nvram_get_rule_num(rule_set);
+    rule_num = ezplib_get_rule_num(rule_set);
     if (rule_num < 0) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
 
     if (nth > rule_num || nth < 0) {
-        return NVRAM_IDX_OUT_RANGE;
+        return EZPLIB_IDX_OUT_RANGE;
     }
 
-    nvram_op_rule(rule_set, REPLACE_RULE, nth, new_rule);
+    ezplib_op_rule(rule_set, REPLACE_RULE, nth, new_rule);
     return 0;
 }
 
@@ -2262,20 +2262,20 @@ int nvram_replace_rule(const char *rule_set, int nth, const char *new_rule)
  *
  * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
  */
-int nvram_replace_attr(const char *rule_set, int nth, 
+int ezplib_replace_attr(const char *rule_set, int nth, 
 	const char *attr, const char *new_rule)
 {
     char *ptr_array[MAX_ATTR_NUM];
-    char word[NVRAM_BUF_LEN];
-    char tmp[NVRAM_BUF_LEN];
+    char word[EZPLIB_BUF_LEN];
+    char tmp[EZPLIB_BUF_LEN];
     int ret, i, bytes, attr_len;
     char *val, *str, *sep = ATTR_SEP;
 
     if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
-    ret = nvram_get_rule(rule_set, nth, word, NVRAM_BUF_LEN);
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
     if (ret < 0) {
         return ret;
     }
@@ -2289,7 +2289,7 @@ int nvram_replace_attr(const char *rule_set, int nth,
         }
     
         attr = rules[i].attr;
-        bytes = NVRAM_BUF_LEN;
+        bytes = EZPLIB_BUF_LEN;
         str = tmp;
         for (j = 0; attr[j].name && ptr_array[j]; j++) {
             if (strcmp(attr[j].name, (char *)attr) == 0) {
@@ -2302,7 +2302,7 @@ int nvram_replace_attr(const char *rule_set, int nth,
             attr_len = strlen(val) + 1;
             ret = snprintf(str, bytes, "%s%s", val, sep);
             if (ret >= bytes) {
-                return NVRAM_VAL_TRUNC;
+                return EZPLIB_VAL_TRUNC;
             }
 
             assert(ret == attr_len);
@@ -2316,10 +2316,10 @@ int nvram_replace_attr(const char *rule_set, int nth,
             *str = '\0';
         }
 
-        return nvram_replace_rule(rule_set, nth, tmp);
+        return ezplib_replace_rule(rule_set, nth, tmp);
     }
 
-    return NVRAM_NO_ATTRIBUTE;
+    return EZPLIB_NO_ATTRIBUTE;
 }
 
 /**
@@ -2331,13 +2331,13 @@ int nvram_replace_attr(const char *rule_set, int nth,
  *
  * nvram delete rule <rule-set> <nth>
  */
-int nvram_delete_rule(const char *rule_set, int nth)
+int ezplib_delete_rule(const char *rule_set, int nth)
 {
     if (!rule_set || !*rule_set) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
-    nvram_op_rule(rule_set, DELETE_RULE, nth, NULL);
+    ezplib_op_rule(rule_set, DELETE_RULE, nth, NULL);
     return 0;
 }
 
@@ -2351,27 +2351,27 @@ int nvram_delete_rule(const char *rule_set, int nth)
  *
  * nvram add rule <rule-set> <nth> <new-rule>
  */
-int nvram_add_rule(const char *rule_set, int nth, const char *new_rule)
+int ezplib_add_rule(const char *rule_set, int nth, const char *new_rule)
 {
     int rule_num;
 
     if (!rule_set || !*rule_set || !new_rule) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
-    rule_num = nvram_get_rule_num(rule_set);
+    rule_num = ezplib_get_rule_num(rule_set);
     if (rule_num < 0) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
 
     if (nth > rule_num || nth < 0) {
-        return NVRAM_IDX_OUT_RANGE;
+        return EZPLIB_IDX_OUT_RANGE;
     }
 
     if (nth == rule_num) {
-        nvram_append_rule(rule_set, new_rule);
+        ezplib_append_rule(rule_set, new_rule);
     } else {
-        nvram_op_rule(rule_set, ADD_RULE, nth, new_rule);
+        ezplib_op_rule(rule_set, ADD_RULE, nth, new_rule);
     }
     return 0;
 }
@@ -2385,13 +2385,13 @@ int nvram_add_rule(const char *rule_set, int nth, const char *new_rule)
  *
  * nvram prepend rule <rule-set> <new-rule>
  */
-int nvram_prepend_rule(const char *rule_set, const char *new_rule)
+int ezplib_prepend_rule(const char *rule_set, const char *new_rule)
 {
     if (!rule_set || !*rule_set || !new_rule) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
-    return nvram_op_rule(rule_set, ADD_RULE, 0, new_rule);
+    return ezplib_op_rule(rule_set, ADD_RULE, 0, new_rule);
 }
 
 /**
@@ -2403,32 +2403,32 @@ int nvram_prepend_rule(const char *rule_set, const char *new_rule)
  *
  * nvram append rule <rule-set> <new-rule> 
  */
-int nvram_append_rule(const char *rule_set, const char *new_rule)
+int ezplib_append_rule(const char *rule_set, const char *new_rule)
 {
-    char buf[NVRAM_BUF_LEN];
+    char buf[EZPLIB_BUF_LEN];
     int len;
     char *old_rules;
 
     if (!rule_set || !*rule_set || !new_rule) {
-        return NVRAM_INVALID;
+        return EZPLIB_INVALID;
     }
 
     old_rules = nvram_get(rule_set);
     if (!old_rules) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
 
     if (!*old_rules) {
         /* Empty rule set. */
-        len = snprintf(buf, NVRAM_BUF_LEN, "%s", new_rule);
+        len = snprintf(buf, EZPLIB_BUF_LEN, "%s", new_rule);
     } else {
         /* Existing rule(s). */
-        len = snprintf(buf, NVRAM_BUF_LEN, "%s%s%s", old_rules, 
+        len = snprintf(buf, EZPLIB_BUF_LEN, "%s%s%s", old_rules, 
                        RULE_SEP, new_rule);
     }
 
-    if (len >= NVRAM_BUF_LEN) {
-        return NVRAM_VAL_TRUNC;
+    if (len >= EZPLIB_BUF_LEN) {
+        return EZPLIB_VAL_TRUNC;
     }
     nvram_set(rule_set, buf);
 
@@ -2441,7 +2441,7 @@ int nvram_append_rule(const char *rule_set, const char *new_rule)
  *
  * nvram rule num <rule-set> 
  */
-int nvram_get_rule_num(const char *rule_set)
+int ezplib_get_rule_num(const char *rule_set)
 {
     char *sep = RULE_SEP;
     int i;
@@ -2451,7 +2451,7 @@ int nvram_get_rule_num(const char *rule_set)
 
     rule_set = nvram_get(rule_set);
     if (!rule_set) {
-        return NVRAM_NO_RULE_SET;
+        return EZPLIB_NO_RULE_SET;
     }
 
     /* Empty */

@@ -33,7 +33,7 @@
 
 
 /* Globals */
-#if defined(NVRAM_MMAP) && NVRAM_MMAP > 0
+#if defined(EZPLIB_MMAP) && EZPLIB_MMAP > 0
 static char *nvram_buf = NULL;
 #endif
 int check_action(void);
@@ -44,8 +44,8 @@ int fw_func_1_6_5_to_0_0_0(void);
 int fw_func_0_0_0_to_1_6_5(void);
 
 struct nvram_fw_tuple nvram_fw_table[] = {
-    { "0.0.0", NVRAM_FW_0_0_0, NULL, NULL },   
-    { "1.6.5", NVRAM_FW_1_6_5, fw_func_0_0_0_to_1_6_5, fw_func_1_6_5_to_0_0_0 },
+    { "0.0.0", EZPLIB_FW_0_0_0, NULL, NULL },   
+    { "1.6.5", EZPLIB_FW_1_6_5, fw_func_0_0_0_to_1_6_5, fw_func_1_6_5_to_0_0_0 },
     { NULL, 0, NULL, NULL }
 };
 
@@ -75,20 +75,20 @@ int fw_func_0_0_0_to_1_6_5(void)
          */
 		for (i = 0, j = 0, len = 0; i < WAN_NUM; i++) {
             /* Removed expert_dl/expert_ul. */
-            nvram_get_attr_val(rule_set, i, "type", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "type", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dl", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dl", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "ul", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "ul", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
@@ -102,50 +102,50 @@ int fw_func_0_0_0_to_1_6_5(void)
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "expert_dl", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "expert_dl", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "expert_ul", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "expert_ul", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "link_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "link_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "global_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "global_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "user_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "user_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dbm_upmax", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_upmax", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
             /* No ending "^". */ 
-            nvram_get_attr_val(rule_set, i, "dbm_upmin", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_upmin", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s", tmp);
             j += len;
             str += len;
 
-            nvram_replace_rule(rule_set, i, new);
+            ezplib_replace_rule(rule_set, i, new);
         }
     }
     return 0;
@@ -170,68 +170,68 @@ int fw_func_1_6_5_to_0_0_0(void)
     if (value && *value) {
         for (i = 0, j = 0, len = 0; i < WAN_NUM; i++) {
             /* Removed expert_dl/expert_ul. */
-            nvram_get_attr_val(rule_set, i, "type", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "type", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dl", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dl", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "ul", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "ul", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "link_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "link_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "global_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "global_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "user_percent", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "user_percent", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dbm_upmax", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_upmax", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dbm_upmin", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_upmin", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
-            nvram_get_attr_val(rule_set, i, "dbm_downmax", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_downmax", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s^", tmp);
             j += len;
             str += len;
 
             /* No ending "^". */ 
-            nvram_get_attr_val(rule_set, i, "dbm_downmin", tmp, sizeof(tmp),
-                    NVRAM_USE_CLI);
+            ezplib_get_attr_val(rule_set, i, "dbm_downmin", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
             len = snprintf(str, 1024 - j, "%s", tmp);
             j += len;
             str += len;
 
-            nvram_replace_rule(rule_set, i, new);
+            ezplib_replace_rule(rule_set, i, new);
         }
     }
     return 0;

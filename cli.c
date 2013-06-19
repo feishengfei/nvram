@@ -143,8 +143,8 @@ int _do_info(nvram_handle_t *nvram)
 	nvram_header_t *hdr = _nvram_header(nvram);
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
-	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
-			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
+	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + EZPLIB_CRC_START_POSITION,
+			hdr->len - EZPLIB_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -161,8 +161,8 @@ int _do_info(nvram_handle_t *nvram)
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-			hdr->len, NVRAM_SPACE - hdr->len,
-			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
+			hdr->len, EZPLIB_SPACE - hdr->len,
+			(100.00 / (double)EZPLIB_SPACE) * (double)hdr->len);
 
 	return 0;
 }
@@ -172,8 +172,8 @@ int do_info()
 	nvram_header_t *hdr = nvram_header();
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
-	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
-			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
+	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + EZPLIB_CRC_START_POSITION,
+			hdr->len - EZPLIB_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -190,8 +190,8 @@ int do_info()
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-			hdr->len, NVRAM_SPACE - hdr->len,
-			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
+			hdr->len, EZPLIB_SPACE - hdr->len,
+			(100.00 / (double)EZPLIB_SPACE) * (double)hdr->len);
 
 	return 0;
 }
@@ -332,7 +332,7 @@ int main( int argc, const char *argv[] )
 {
 	int stat = 1;
 	int done = 0;
-	char res[NVRAM_BUF_LEN];
+	char res[EZPLIB_BUF_LEN];
 
 	if( argc > 1 )
 	{
@@ -348,22 +348,22 @@ int main( int argc, const char *argv[] )
 			}
 			/* nvram show <rule-set> <nth> */
 			else if (argc == 2) {
-				stat = nvram_get_rule(argv[0], atoi(argv[1]), 
-						res, NVRAM_BUF_LEN);
+				stat = ezplib_get_rule(argv[0], atoi(argv[1]), 
+						res, EZPLIB_BUF_LEN);
 				puts_trim_cr(res);
 				done++;
 			} 
 			/* nvram show <rule-set> <nth> <attr-type> */
 			else if (argc == 3) {
-				stat = nvram_get_attr_val(argv[0], atoi(argv[1]), 
-					argv[2], res, NVRAM_BUF_LEN, NVRAM_USE_CLI);
+				stat = ezplib_get_attr_val(argv[0], atoi(argv[1]), 
+					argv[2], res, EZPLIB_BUF_LEN, EZPLIB_USE_CLI);
 				puts_trim_cr(res);
 				done++;
 			} 
 			/* nvram show <rule-set> <nth> subrule <start> <end> */
 			else if (argc == 5 && !strncmp(argv[2], "subrule", strlen(argv[1]))) {
-				stat = nvram_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
-						atoi(argv[4]), res, NVRAM_BUF_LEN);
+				stat = ezplib_get_subrule(argv[0], atoi(argv[1]), atoi(argv[3]),
+						atoi(argv[4]), res, EZPLIB_BUF_LEN);
 				puts_trim_cr(res);
 				done++;
 			}
@@ -474,7 +474,7 @@ int main( int argc, const char *argv[] )
 					int ret;
 
 					ret =
-						nvram_replace_rule(argv[0], atoi(argv[1]),
+						ezplib_replace_rule(argv[0], atoi(argv[1]),
 								argv[2]);
 					if (ret < 0) {
 						printf("NVRAM replace rule failed: %s\n", ret);
@@ -492,7 +492,7 @@ int main( int argc, const char *argv[] )
 					int ret;
 
 					ret =
-						nvram_replace_attr(argv[0], atoi(argv[1]), argv[2],
+						ezplib_replace_attr(argv[0], atoi(argv[1]), argv[2],
 								argv[3]);
 					if (ret < 0) {
 						printf("NVRAM replace attribute failed: %d\n", ret);
@@ -511,7 +511,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = nvram_append_rule(argv[0], argv[1]);
+				ret = ezplib_append_rule(argv[0], argv[1]);
 				if (ret < 0) {
 					printf("NVRAM append rule failed: %s\n", ret);
 					return 1;
@@ -528,7 +528,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = nvram_prepend_rule(argv[0], argv[1]);
+				ret = ezplib_prepend_rule(argv[0], argv[1]);
 				if (ret < 0) {
 					printf("NVRAM prepend rule failed: %s\n", ret);
 					return 1;
@@ -545,7 +545,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 3) {
 				int ret;
 
-				ret = nvram_add_rule(argv[0], atoi(argv[1]), argv[2]);
+				ret = ezplib_add_rule(argv[0], atoi(argv[1]), argv[2]);
 				if (ret < 0) {
 					printf("NVRAM add rule failed: %s\n", ret);
 					return 1;
@@ -562,7 +562,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 2) {
 				int ret;
 
-				ret = nvram_delete_rule(argv[0], atoi(argv[1]));
+				ret = ezplib_delete_rule(argv[0], atoi(argv[1]));
 				if (ret < 0) {
 					printf("NVRAM delete rule failed: %s\n", ret);
 					return 1;
@@ -579,7 +579,7 @@ int main( int argc, const char *argv[] )
 			if (argc == 1) {
 				int ret;
 
-				ret = nvram_get_rule_num(argv[0]);
+				ret = ezplib_get_rule_num(argv[0]);
 				if (ret < 0) {
 					printf("NVRAM rule num failed: %s\n", ret);
 					return ret;
