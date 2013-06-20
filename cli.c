@@ -143,8 +143,8 @@ int _do_info(nvram_handle_t *nvram)
 	nvram_header_t *hdr = _nvram_header(nvram);
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
-	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + EZPLIB_CRC_START_POSITION,
-			hdr->len - EZPLIB_CRC_START_POSITION, 0xff);
+	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
+			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -161,8 +161,8 @@ int _do_info(nvram_handle_t *nvram)
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-			hdr->len, EZPLIB_SPACE - hdr->len,
-			(100.00 / (double)EZPLIB_SPACE) * (double)hdr->len);
+			hdr->len, NVRAM_SPACE - hdr->len,
+			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
 
 	return 0;
 }
@@ -172,8 +172,8 @@ int do_info()
 	nvram_header_t *hdr = nvram_header();
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
-	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + EZPLIB_CRC_START_POSITION,
-			hdr->len - EZPLIB_CRC_START_POSITION, 0xff);
+	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
+			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
 
 	/* Show info */
 	printf("Magic:         0x%08X\n",   hdr->magic);
@@ -190,8 +190,8 @@ int do_info()
 	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
 
 	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-			hdr->len, EZPLIB_SPACE - hdr->len,
-			(100.00 / (double)EZPLIB_SPACE) * (double)hdr->len);
+			hdr->len, NVRAM_SPACE - hdr->len,
+			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
 
 	return 0;
 }

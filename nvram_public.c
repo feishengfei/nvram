@@ -46,7 +46,7 @@ int nvram_get_option(const char *name)
 	}
 
 	/* No option is found. */
-	return EZPLIB_UNDEFINED;
+	return NVRAM_UNDEFINED;
 }
 
 int nvram_set(const char *name, const char *value)
@@ -58,7 +58,7 @@ int nvram_set(const char *name, const char *value)
 			_nvram_close(nvram_h);
 		}
 	}
-	else if(EZPLIB_RO == nvram_h->access) {
+	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
@@ -69,7 +69,7 @@ int nvram_set(const char *name, const char *value)
 	uint32_t opt = nvram_get_option(name);
 
 	/* If anything exists, return permission denied. */
-	if (opt & EZPLIB_PROTECTED) {
+	if (opt & NVRAM_PROTECTED) {
 		char *exist = nvram_get(name);
 		if (exist && *exist) {
 			return EACCES; 
@@ -90,7 +90,7 @@ int nvram_fset(const char *name, const char *value)
 			_nvram_close(nvram_h);
 		}
 	}
-	else if(EZPLIB_RO == nvram_h->access) {
+	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
@@ -127,7 +127,7 @@ int nvram_commit(void)
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 	}
-	else if(EZPLIB_RO == nvram_h->access) {
+	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
@@ -191,8 +191,8 @@ int nvram_export(const char *filename)
 		nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat"));
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
-		if ((v->option & EZPLIB_PROTECTED) ||
-				(v->option & EZPLIB_TEMP)) {
+		if ((v->option & NVRAM_PROTECTED) ||
+				(v->option & NVRAM_TEMP)) {
 			continue;
 		}
 		value = nvram_safe_get(v->name);
@@ -207,7 +207,7 @@ int nvram_import(const char *filename)
 {   
 	FILE *fp;
 	char *p, *q;
-	char buf[EZPLIB_TMP_LEN];
+	char buf[NVRAM_TMP_LEN];
 	char old_str[32], new_str[32];
 	int old, new = 0;
 //	int i;
@@ -291,9 +291,9 @@ int nvram_import(const char *filename)
 			}
 		}
 
-		if (!v->name || (v->option & EZPLIB_PROTECTED) ||
-				(v->option & EZPLIB_TEMP)) {
-			/* No match or EZPLIB_PROTECTED or EZPLIB_TEMP. */
+		if (!v->name || (v->option & NVRAM_PROTECTED) ||
+				(v->option & NVRAM_TEMP)) {
+			/* No match or NVRAM_PROTECTED or NVRAM_TEMP. */
 			printf("invalid: %s=%s\n", buf, p + 1);
 			continue;
 		}

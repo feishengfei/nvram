@@ -23,7 +23,7 @@ void _nvram_free(nvram_handle_t *h)
 	nvram_tuple_t *t, *next;
 
 	/* Free hash table */
-	for (i = 0; i < EZPLIB_ARRAYSIZE(h->nvram_hash); i++) {
+	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
 		for (t = h->nvram_hash[i]; t; t = next) {
 			next = t->next;
 			free(t);
@@ -44,7 +44,7 @@ void _nvram_free(nvram_handle_t *h)
 nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value )
 {
-	if ((strlen(value) + 1) > EZPLIB_SPACE)
+	if ((strlen(value) + 1) > NVRAM_SPACE)
 		return NULL;
 
 	if (!t) {
@@ -129,7 +129,7 @@ int nvram_to_staging(void)
 		{
 			if( read(fdmtd, buf, sizeof(buf)) == sizeof(buf) )
 			{
-				if((fdstg = open(EZPLIB_STAGING, O_WRONLY | O_CREAT, 0600)) > -1)
+				if((fdstg = open(NVRAM_STAGING, O_WRONLY | O_CREAT, 0600)) > -1)
 				{
 					write(fdstg, buf, sizeof(buf));
 					fsync(fdstg);
@@ -158,7 +158,7 @@ int staging_to_nvram(void)
 
 	if( (mtd != NULL) && (nvram_erase_size > 0) )
 	{
-		if( (fdstg = open(EZPLIB_STAGING, O_RDONLY)) > -1 )
+		if( (fdstg = open(NVRAM_STAGING, O_RDONLY)) > -1 )
 		{
 			if( read(fdstg, buf, sizeof(buf)) == sizeof(buf) )
 			{
@@ -174,7 +174,7 @@ int staging_to_nvram(void)
 			close(fdstg);
 
 			if( !stat )
-				stat = unlink(EZPLIB_STAGING) ? 1 : 0;
+				stat = unlink(NVRAM_STAGING) ? 1 : 0;
 		}
 	}
 
@@ -205,7 +205,7 @@ char * nvram_find_mtd(void)
 	{
 		while( fgets(dev, sizeof(dev), fp) )
 		{
-			if( strstr(dev, EZPLIB_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
+			if( strstr(dev, NVRAM_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
 			{
 				nvram_erase_size = esz;
 
@@ -243,9 +243,9 @@ char * nvram_find_staging(void)
 {
 	struct stat s;
 
-	if( (stat(EZPLIB_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
+	if( (stat(NVRAM_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
 	{
-		return EZPLIB_STAGING;
+		return NVRAM_STAGING;
 	}
 
 	return NULL;
@@ -277,13 +277,13 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 	{
 		char *mmap_area = (char *) mmap(
 			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
-			(( access == EZPLIB_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
+			(( access == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
 
 		if( mmap_area != MAP_FAILED )
 		{
-			for( i = 0; i <= ((nvram_erase_size - EZPLIB_SPACE) / sizeof(uint32_t)); i++ )
+			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
 			{
-				if( ((uint32_t *)mmap_area)[i] == EZPLIB_MAGIC )
+				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
 				{
 					offset = i * sizeof(uint32_t);
 					break;
@@ -307,7 +307,7 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 
 				header = _nvram_header(h);
 
-				if( header->magic == EZPLIB_MAGIC )
+				if( header->magic == NVRAM_MAGIC )
 				{
 					_nvram_rehash(h);
 					free(mtd);
@@ -336,7 +336,7 @@ nvram_handle_t * _nvram_open_rdonly(void)
 
 
 	if( file != NULL )
-		return _nvram_open(file, EZPLIB_RO);
+		return _nvram_open(file, NVRAM_RO);
 
 	return NULL;
 }
@@ -345,7 +345,7 @@ nvram_handle_t * _nvram_open_rdonly(void)
 nvram_handle_t * _nvram_open_staging(void)
 {
 	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
-		return _nvram_open(EZPLIB_STAGING, EZPLIB_RW);
+		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
 
 	return NULL;
 }
@@ -372,7 +372,7 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
 		return NULL;
 
 	/* Hash the name */
-	i = hash(name) % EZPLIB_ARRAYSIZE(h->nvram_hash);
+	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
 
 	/* Find the associated tuple in the hash table */
 	for (t = h->nvram_hash[i]; t && strcmp(t->name, name); t = t->next);
@@ -390,7 +390,7 @@ nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 
 	l = NULL;
 
-	for (i = 0; i < EZPLIB_ARRAYSIZE(h->nvram_hash); i++) {
+	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
 		for (t = h->nvram_hash[i]; t; t = t->next) {
 			if( (x = (nvram_tuple_t *) malloc(sizeof(nvram_tuple_t))) != NULL )
 			{
@@ -417,7 +417,7 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 	nvram_tuple_t *t, *u, **prev;
 
 	/* Hash the name */
-	i = hash(name) % EZPLIB_ARRAYSIZE(h->nvram_hash);
+	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
 
 	/* Find the associated tuple in the hash table */
 	for (prev = &h->nvram_hash[i], t = *prev;
@@ -456,7 +456,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name)
 		return 0;
 
 	/* Hash the name */
-	i = hash(name) % EZPLIB_ARRAYSIZE(h->nvram_hash);
+	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
 
 	/* Find the associated tuple in the hash table */
 	for (prev = &h->nvram_hash[i], t = *prev;
@@ -485,8 +485,8 @@ int _nvram_commit(nvram_handle_t *h)
 	uint8_t crc;
 
 	/* Regenerate header */
-	header->magic = EZPLIB_MAGIC;
-	header->crc_ver_init = (EZPLIB_VERSION << 8);
+	header->magic = NVRAM_MAGIC;
+	header->crc_ver_init = (NVRAM_VERSION << 8);
 	if (!(init = _nvram_get(h, "sdram_init")) ||
 		!(config = _nvram_get(h, "sdram_config")) ||
 		!(refresh = _nvram_get(h, "sdram_refresh")) ||
@@ -504,14 +504,14 @@ int _nvram_commit(nvram_handle_t *h)
 
 	/* Clear data area */
 	ptr = (char *) header + sizeof(nvram_header_t);
-	memset(ptr, 0xFF, EZPLIB_SPACE - sizeof(nvram_header_t));
+	memset(ptr, 0xFF, NVRAM_SPACE - sizeof(nvram_header_t));
 	memset(&tmp, 0, sizeof(nvram_header_t));
 
 	/* Leave space for a double NUL at the end */
-	end = (char *) header + EZPLIB_SPACE - 2;
+	end = (char *) header + NVRAM_SPACE - 2;
 
 	/* Write out all tuples */
-	for (i = 0; i < EZPLIB_ARRAYSIZE(h->nvram_hash); i++) {
+	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
 		for (t = h->nvram_hash[i]; t; t = t->next) {
 			if ((ptr + strlen(t->name) + 1 + strlen(t->value) + 1) > end)
 				break;
@@ -529,14 +529,14 @@ int _nvram_commit(nvram_handle_t *h)
 	ptr++;
 
 	/* Set new length */
-	header->len = EZPLIB_ROUNDUP(ptr - (char *) header, 4);
+	header->len = NVRAM_ROUNDUP(ptr - (char *) header, 4);
 
 	/* Little-endian CRC8 over the last 11 bytes of the header */
 	tmp.crc_ver_init   = header->crc_ver_init;
 	tmp.config_refresh = header->config_refresh;
 	tmp.config_ncdl    = header->config_ncdl;
-	crc = hndcrc8((unsigned char *) &tmp + EZPLIB_CRC_START_POSITION,
-		sizeof(nvram_header_t) - EZPLIB_CRC_START_POSITION, 0xff);
+	crc = hndcrc8((unsigned char *) &tmp + NVRAM_CRC_START_POSITION,
+		sizeof(nvram_header_t) - NVRAM_CRC_START_POSITION, 0xff);
 
 	/* Continue CRC8 over data bytes */
 	crc = hndcrc8((unsigned char *) &header[0] + sizeof(nvram_header_t),

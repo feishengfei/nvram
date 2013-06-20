@@ -24,7 +24,7 @@ all: cli libnvram
 cli: libnvram
 	$(CC) $(CLI_CFLAGS) -c -o cli.o cli.c
 	$(CC)  $(CLI_LDFLAGS) $(CLI_OBJ) \
-	$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR) \
+	$(LIB_FILENAME) \
 		-o $(CLI_FILENAME)
 
 cli.o: cli.c
@@ -37,7 +37,7 @@ libnvram:
 	$(CC) $(LIB_CFLAGS) -c -o nvram_fw.o nvram_fw.c
 	$(CC) $(LIB_CFLAGS) -c -o nvram_rule.o nvram_rule.c
 	$(CC) $(LIB_CFLAGS)  \
-		-o $(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR) $(LIB_OBJ)
+		-o $(LIB_FILENAME) $(LIB_OBJ)
 
 clean:
 	rm -f $(CLI_FILENAME) $(LIB_FILENAME)* *.o
@@ -47,5 +47,5 @@ ifeq ($(LITEON_APP_PATH), )
 else 
 install:
 	$(call install_program,$(CLI_PATH)/$(CLI_FILENAME),$(APP_INSTALL_ROOT))
-	$(call install_library,$(LIB_FILENAME).$(LIB_VERMAJOR).$(LIB_VERMINOR))
+	$(call install_library,$(LIB_FILENAME))
 endif
