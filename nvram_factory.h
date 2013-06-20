@@ -14,6 +14,9 @@ nvram_tuple_t nvram_factory_default[] = {
 	{ "lan_static_rule", "192.168.1.20^255.255.255.0^192.168.1.1^^^^^^^^^^",
 		NVRAM_NONE, 0
 	},
+	{ "http_rule", "¡°^1^0^admin^1234^guest^1234^admin^80^^5¡±",
+		NVRAM_NONE, 0
+	},
 
 	{0,0,0,0}
 };
