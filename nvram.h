@@ -36,6 +36,7 @@
 #define	NVRAM_ROUNDUP(x, y)	((((x)+((y)-1))/(y))*(y))
 
 /* NVRAM constants */
+#define NVRAM_OFFSET		64
 #define NVRAM_SPACE			0x8000
 #define NVRAM_MAGIC			0x48534C46	/* 'FLSH' */
 #define NVRAM_VERSION		1
@@ -139,6 +140,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 /* Regenerate NVRAM. */
 int _nvram_commit(nvram_handle_t *h);
 
+int nvram_init();
 /* **************** public functions **************** */
 const nvram_handle_t * get_nvram_handle();
 nvram_header_t * nvram_header();
