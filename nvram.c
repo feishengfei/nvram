@@ -5,7 +5,11 @@ size_t nvram_erase_size = 0;
 
 /* -- Helper functions -- */
 
-/* String hash */
+/**
+ * \brief Caculate the hash value of specified string
+ * \return The hash value
+ * \param[in] s The specified string.
+ */
 uint32_t hash(const char *s)
 {
 	uint32_t hash = 0;
@@ -16,7 +20,10 @@ uint32_t hash(const char *s)
 	return hash;
 }
 
-/* Free all tuples. */
+/**
+ * \brief Free all tuples of NVRAM handler. 
+ * \param[in] h The specified NVRAM handler.
+ */
 void _nvram_free(nvram_handle_t *h)
 {
 	uint32_t i;
@@ -40,10 +47,20 @@ void _nvram_free(nvram_handle_t *h)
 	h->nvram_dead = NULL;
 }
 
-/* (Re)allocate NVRAM tuples. */
+/**
+ *\brief (Re)allocate NVRAM tuples. 
+ *\return The (Re)allocated tuple.
+ *\param[in] h The NVRAM handler//FIXME USELESS
+ *\param[in] t The tuples need to be (re)allocated
+ *\param[in] name The current name
+ *\param[in] value The current value
+ *\remark If t is NULL, we allocate t with t's curr name. \
+  If t is not NULL, we compare the curr value with its original, reallocate and copy curr value if diff exists.
+ */
 nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value )
 {
+	//FIXME
 	if ((strlen(value) + 1) > NVRAM_SPACE)
 		return NULL;
 
@@ -71,7 +88,10 @@ nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	return t;
 }
 
-/* (Re)initialize the hash table. */
+/**
+ * \brief (Re)initialize the hash table. 
+ * \return Return 0 on success
+ * \param[in] h The NVRAM handler*/
 int _nvram_rehash(nvram_handle_t *h)
 {
 	nvram_header_t *header = _nvram_header(h);
@@ -115,7 +135,10 @@ int _nvram_rehash(nvram_handle_t *h)
 	return 0;
 }
 
-/* Copy NVRAM contents to staging file. */
+/**
+ *\brief Copy NVRAM flash block data to staging file.
+ *\return Return zero on success.
+ */
 int nvram_to_staging(void)
 {
 	int fdmtd, fdstg, stat;
@@ -148,7 +171,10 @@ int nvram_to_staging(void)
 	return stat;
 }
 
-/* Copy staging file to NVRAM device. */
+/**
+ *\brief Copy staging file to NVRAM flash bock. 
+ *\return Return zero on success.
+ */
 int staging_to_nvram(void)
 {
 	int fdmtd, fdstg, stat;
@@ -186,13 +212,20 @@ int staging_to_nvram(void)
 
 /* -- inner functions -- */
 
-/* Get nvram header. */
+/** 
+ *\brief Get NVRAM header from its handler. 
+ *\return The request NVRAM header
+ *\param[in] h The specified NVRAM handler
+ */
 nvram_header_t * _nvram_header(nvram_handle_t *h)
 {
 	return (nvram_header_t *) &h->mmap[h->offset];
 }
 
-/* Determine NVRAM device node. */
+/**
+ *\brief Determine NVRAM device node. 
+ *\return the path-to-file of flash block
+ */
 char * nvram_find_mtd(void)
 {
 	FILE *fp;
@@ -239,7 +272,11 @@ char * nvram_find_mtd(void)
 	return path;
 }
 
-/* Check NVRAM staging file. */
+/**
+ *\brief Check NVRAM staging file. 
+ *\return Return the path-to-file of staging file 
+  or NULL if staging file does not exist
+ */
 char * nvram_find_staging(void)
 {
 	struct stat s;
@@ -252,7 +289,12 @@ char * nvram_find_staging(void)
 	return NULL;
 }
 
-/* Open NVRAM and obtain a handle. */
+/**
+ *\brief Open NVRAM and obtain a handle. 
+ *\return The NVRAM handler
+ *\param[in] file File to be opened. Either staging file or flash block device name. 
+ *\param[in] access Either NVRAM_RO or NVRAM_RW
+ */
 nvram_handle_t * _nvram_open(const char *file, int access)
 {
 
@@ -327,7 +369,10 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 	return NULL;
 }
 
-/* Invoke a nvram handle for read. */
+/**
+ *\brief Invoke NVRAM handle for read. 
+ *\return The NVRAM handler
+ */
 nvram_handle_t * _nvram_open_rdonly(void)
 {
 	const char *file = nvram_find_staging();
@@ -342,7 +387,10 @@ nvram_handle_t * _nvram_open_rdonly(void)
 	return NULL;
 }
 
-/* Invoke a nvram handle for read & write. */
+/**
+ *\brief Invoke NVRAM handle for read & write. 
+ *\return The NVRAM handler
+ **/
 nvram_handle_t * _nvram_open_staging(void)
 {
 	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
@@ -351,18 +399,26 @@ nvram_handle_t * _nvram_open_staging(void)
 	return NULL;
 }
 
-/* Close NVRAM and free memory. */
+/**
+ *\brief Close NVRAM and free memory. 
+ *\return Always return 0
+ **/
 int _nvram_close(nvram_handle_t *h)
 {
 	_nvram_free(h);
 	munmap(h->mmap, h->length);
 	close(h->fd);
 	free(h);
-
+	
 	return 0;
 }
 
-/* Get the value of an NVRAM variable. */
+/**
+ *\brief Get the value of an NVRAM variable. 
+ *\return Return the value of the name, or NULL if name does not exist
+ *\param[in] h NVRAM handler
+ *\param[in] name The specified name
+ **/
 char * _nvram_get(nvram_handle_t *h, const char *name)
 {
 	uint32_t i;
@@ -383,7 +439,11 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
 	return value;
 }
 
-/* Get all NVRAM variables. */
+/**
+ *\brief Get all NVRAM variables. 
+ *\return The iterator of all NVRAM settings.
+ *\param[in] h The NVRAM handler
+ **/
 nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 {
 	int i;
@@ -411,7 +471,13 @@ nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 }
 
 
-/* Set the value of an NVRAM variable. */
+/**
+ * \brief Set the value of an NVRAM variable. 
+ * \return Return 0 on success, errno on fail
+ * \param[in] h The NVRAM handler
+ * \param[in] name The specified name 
+ * \param[in] value The specified value 
+ **/
 int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 {
 	uint32_t i;
@@ -447,14 +513,20 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 	return 0;
 }
 
-/* Unset the value of an NVRAM variable. */
+/**
+ *\brief Unset the value of an NVRAM variable.
+ *\return Return 0 on success //FIXME
+ *\param[in] h The NVRAM handler
+ *\param[in] name The specifed name
+ */
 int _nvram_unset(nvram_handle_t *h, const char *name)
 {
 	uint32_t i;
 	nvram_tuple_t *t, **prev;
 
+	//FIXME
 	if (!name)
-		return 0;
+		return EACCES;
 
 	/* Hash the name */
 	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
@@ -474,7 +546,11 @@ int _nvram_unset(nvram_handle_t *h, const char *name)
 }
 
 
-/* Regenerate NVRAM. */
+/**
+ * \brief Regenerate NVRAM. 
+ * \return Return 0 on success
+ * \param[in] h The NVRAM handler
+ **/
 int _nvram_commit(nvram_handle_t *h)
 {
 	nvram_header_t *header = _nvram_header(h);
@@ -557,6 +633,10 @@ int _nvram_commit(nvram_handle_t *h)
 }
 
 
+/**
+ * \brief init NVRAM flash block 
+ * \return Return 0 on success
+ **/
 int nvram_init()
 {
 	nvram_to_staging();

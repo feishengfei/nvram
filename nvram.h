@@ -140,6 +140,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 /* Regenerate NVRAM. */
 int _nvram_commit(nvram_handle_t *h);
 
+/* init NVRAM flash block */
 int nvram_init();
 /* **************** public functions **************** */
 const nvram_handle_t * get_nvram_handle();

@@ -16,6 +16,8 @@
 #define RULE_SEP "|"
 #define ATTR_SEP "^"
 
+#define MAX_ATTR_NUM    34
+
 struct attr {
     char *name;
     int (*func_orig)(char *, char *, int);
@@ -37,84 +39,23 @@ int show_mask_value(char *val, char *buf, int bsize);
 
 int sep_string(char *word, const char *delim, char **idx_arr, int max_tok);
 
-/**
- * \brief Get a specified rule set from nvram, parse it by the RULE_SEP 
- * character, and return the nth rule.
-
-   nvram show <rule-set> <nth> 
- */
 int ezplib_get_rule(const char *rule_set, int nth, 
 	char *buf, int bsize);
-
-/**
- * \brief Get a specified specified rule set from nvram, parse it by 
- * RULE_SEP character, and return the subrule with the attribute position in
- * between start and end.
- */
 int ezplib_get_subrule(const char *rule_set, int nth, 
 	int start, int end, char *buf, int bsize);
-
-/**
- * \brief Get a specified attribute of the given rule from the rule set queried 
- * from nvram. The rules are separated by blank character and the attributes
- * in a rule are separated by '-' character.
- *
- * nvram show <rule-set> <nth> <attr-type> 
- */
 int ezplib_get_attr_val(const char *rule_set, int nth, 
 	const char *type, char *buf, int bsize, int use);
 
 int ezplib_op_rule(const char *rule_set, enum opcode op, 
 	int nth, const char *new_rule);
 
-/**
- * \brief Replace the nth rule in the given rule-name as the specific rule.
- *
- * nvram replace rule <rule-set> <nth> <new-rule>
- */
 int ezplib_replace_rule(const char *rule_set, int nth, const char *new_rule);
-
-/**
- * \brief Replace the mth attribute of the nth rule in the given rule-name as 
- * the specific rule.
- *
- * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
- */
 int ezplib_replace_attr(const char *rule_set, int nth, 
 	const char *attr, const char *new_rule);
-
-/**
- * \brief Append a new rule into the given rule-name.
- *
- * nvram append rule <rule-set> <new-rule> 
- */
 int ezplib_append_rule(const char *rule_set, const char *new_rule);
-
-/**
- * \brief Prepend a new rule into the given rule-name.
- *
- * nvram prepend rule <rule-set> <new-rule>
- */
 int ezplib_prepend_rule(const char *rule_set, const char *new_rule);
-
-/**
- * \brief Add a new rule in the given rule-name as the specific rule.
- *
- * nvram add rule <rule-set> <nth> <new-rule>
- */
 int ezplib_add_rule(const char *rule_set, int nth, const char *new_rule);
-
-/**
- * \brief Delete nth rule in the given rule-name.
- *
- * nvram delete rule <rule-set> <nth>
- */
 int ezplib_delete_rule(const char *rule_set, int nth);
 
-/**
- * \brief Get the number of rules in the given rule-name.
- *
- * nvram rule num <rule-set> 
- */
 int ezplib_get_rule_num(const char *rule_set);
 #endif

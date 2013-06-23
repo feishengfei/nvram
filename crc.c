@@ -57,13 +57,13 @@ static const uint8_t crc8_table[256] = {
 	0xF4, 0x03, 0x4D, 0xBA, 0xD1, 0x26, 0x68, 0x9F
 };
 
-/* 
- Calculate the CRC8 result of target buf
- @param	paperspdata,  		pointer to array of data to process 
- @param uint32_t nbytes,  	number of input data bytes to 
- @param uint8_t crc       	either CRC8_INIT_VALUE or previous return value
- @return 					crc result 
-*/
+/**
+ * \brief Calculate the CRC8 result of target buf
+ * \return crc result 
+ * \param[in] pdata Pointer to array of data to process 
+ * \param[in] nbytes Number of input data bytes to 
+ * \param[in] crc Either CRC8_INIT_VALUE or previous return value
+ */
 uint8_t hndcrc8 ( uint8_t * pdata, uint32_t nbytes, uint8_t crc)
 {
 	while (nbytes-- > 0)

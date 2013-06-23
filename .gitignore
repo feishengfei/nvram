@@ -3,3 +3,5 @@ libnvram.so*
 nvram
 .*.swp
 *tags
+html
+rtf
