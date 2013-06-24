@@ -12,8 +12,6 @@
 #include <sys/stat.h>
 #include <linux/limits.h>
 
-#include "sdinitvals.h"
-
 #define xstr(x)  #x
 #define EZP_PROD_VERSION "2.0.4_PLUS"
 
