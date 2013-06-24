@@ -116,27 +116,6 @@ int _nvram_rehash(nvram_handle_t *h)
 		_nvram_set(h, name, value);
 		*eq = '=';
 	}
-	/* Set special SDRAM parameters */
-	/*
-	if (!_nvram_get(h, "sdram_init")) {
-		sprintf(buf, "0x%04X", (uint16_t)(header->crc_ver_init >> 16));
-		_nvram_set(h, "sdram_init", buf);
-	}
-	if (!_nvram_get(h, "sdram_config")) {
-		sprintf(buf, "0x%04X", (uint16_t)(header->config_refresh & 0xffff));
-		_nvram_set(h, "sdram_config", buf);
-	}
-	if (!_nvram_get(h, "sdram_refresh")) {
-		sprintf(buf, "0x%04X",
-			(uint16_t)((header->config_refresh >> 16) & 0xffff));
-		_nvram_set(h, "sdram_refresh", buf);
-	}
-	if (!_nvram_get(h, "sdram_ncdl")) {
-		sprintf(buf, "0x%08X", header->config_ncdl);
-		_nvram_set(h, "sdram_ncdl", buf);
-	}
-	*/
-
 	return 0;
 }
 
@@ -587,22 +566,6 @@ int _nvram_commit(nvram_handle_t *h)
 	/* Regenerate header */
 	header->magic = NVRAM_MAGIC;
 	header->crc_ver_init = (NVRAM_VERSION << 8);
-	/*
-	if (!(init = _nvram_get(h, "sdram_init")) ||
-		!(config = _nvram_get(h, "sdram_config")) ||
-		!(refresh = _nvram_get(h, "sdram_refresh")) ||
-		!(ncdl = _nvram_get(h, "sdram_ncdl"))) {
-		header->crc_ver_init |= SDRAM_INIT << 16;
-		header->config_refresh = SDRAM_CONFIG;
-		header->config_refresh |= SDRAM_REFRESH << 16;
-		header->config_ncdl = 0;
-	} else {
-		header->crc_ver_init |= (strtoul(init, NULL, 0) & 0xffff) << 16;
-		header->config_refresh = strtoul(config, NULL, 0) & 0xffff;
-		header->config_refresh |= (strtoul(refresh, NULL, 0) & 0xffff) << 16;
-		header->config_ncdl = strtoul(ncdl, NULL, 0);
-	}
-	*/
 
 	/* Clear data area */
 	ptr = (char *) header + sizeof(nvram_header_t);

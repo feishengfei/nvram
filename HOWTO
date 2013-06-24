@@ -13,7 +13,6 @@ HOW TO USE
 	nvram_public.c		(9)
 	nvram_rule.c		(10)
 	nvram_rule.h		(11)
-	sdinitvals.h		(12)
 
 (1)Command line of nvram, a demo on how to call nvram_XXX functions from libnvram.so
 I use #if/#else/#endif to disable the original version MAIN function and enable the 
@@ -44,9 +43,6 @@ are copyed from EZP-NVRAM.
 
 (10)(11)Rule/SubRule/Attribute related function are defined/implemented here. You can refer to
 ezp-lib.c/ezp-lib.h in EZP-NVRAM. Which we will explain it later.
-
-(12)some MACROS which may be used in 'nvram info'
-
 
 2.Rule/SubRule/Attribute
 The Rule/SubRule/Attribute is defined in EZP-NVRAM. You can treat them as:
