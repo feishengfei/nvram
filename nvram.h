@@ -160,7 +160,7 @@ int nvram_commit(void);
 /* restore from the whole factory default */
 int nvram_default(void);
 /* restore one specific rule from factory default */
-int nvram_default_rule(const char *rulename);
+int nvram_default_rule(const char *name);
 /* commit  after restore the whole factory default */
 int nvram_factory(void);
 

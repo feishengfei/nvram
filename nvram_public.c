@@ -7,12 +7,20 @@ nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
 extern size_t nvram_erase_size;
 
-/* **************** public functions **************** */
+/****************** public functions **************** */
+/**
+ *\brief Getter of NVRAM handler
+ *\return Pointer to NVRAM handler 
+ **/
 const nvram_handle_t* get_nvram_handle() 
 {
 	return nvram_h;
 }
 
+/**
+ *\brief Get header from NVRAM handler, open the ReadOnly NVRAM handler if necessary
+ *\return Pointer to NVRAM header
+ **/
 nvram_header_t * nvram_header()
 {
 	if(NULL == nvram_h) {
@@ -25,6 +33,12 @@ nvram_header_t * nvram_header()
 	return _nvram_header(nvram_h);
 }
 
+/**
+ *\brief Get the Value of an NVRAM variable. 
+ *\return	Return the value of the name. 
+			Retrun NULL if name does not exist or flash non-initialized
+ *\param[in] name The specified name
+ **/
 char * nvram_get(const char *name)
 {
 	char *ret = NULL;
@@ -40,6 +54,11 @@ char * nvram_get(const char *name)
 	return ret;
 }
 
+/**
+ *\brief Get the Option of an NVRAM variable. 
+ *\return Return the option of the name accroding to Factory Default, NVRAM_UNDEFINED if the name doesn't exist.
+ *\param[in] name The specified name
+ **/
 int nvram_get_option(const char *name)
 {   
 	struct nvram_tuple *v;
@@ -52,6 +71,13 @@ int nvram_get_option(const char *name)
 	return NVRAM_UNDEFINED;
 }
 
+/**
+ * \brief Set the value of an NVRAM variable. 
+ * \return Return 0 on success, errno on fail
+ * \param[in] name The specified name 
+ * \param[in] value The specified value 
+ * \note This won't set setting which is NVRAM_PROTECTED.
+ **/
 int nvram_set(const char *name, const char *value)
 {
 	int ret = 0;
@@ -84,6 +110,12 @@ int nvram_set(const char *name, const char *value)
 	return ret;
 }
 
+/**
+ * \brief Force to set the value of an NVRAM variable. 
+ * \return Return 0 on success, errno on fail
+ * \param[in] name The specified name 
+ * \param[in] value The specified value 
+ **/
 int nvram_fset(const char *name, const char *value)
 {
 	int ret = -1;
@@ -106,11 +138,21 @@ int nvram_fset(const char *name, const char *value)
 	return ret;
 }
 
+/**
+ *\brief Unset the value of an NVRAM variable.
+ *\return Return 0 on success //FIXME
+ *\param[in] name The specifed name
+ */
 int nvram_unset(const char *name)
 {
 	return nvram_set(name, "");
 }
 
+/**
+ *\brief Reset the value of an NVRAM variable.
+ *\return Return 0 on success //FIXME
+ *\param[in] name The specifed name
+ */
 int nvram_reset(const char *name)
 {
 	int ret = -1;
@@ -132,6 +174,10 @@ int nvram_reset(const char *name)
 	return ret;
 }
 
+/**
+ *\brief Get all NVRAM variables. 
+ *\return The iterator of all NVRAM settings.
+ **/
 nvram_tuple_t * nvram_getall()
 {
 	if(NULL == nvram_h) {
@@ -145,6 +191,11 @@ nvram_tuple_t * nvram_getall()
 	return _nvram_getall(nvram_h);
 }
 
+/**
+ * \brief Regenerate NVRAM. 
+ * \return Return 0 on success
+ * \note This will clear staging file and all data will be saved into flash block
+ **/
 int nvram_commit(void)
 {
 	int stat = 0;
@@ -172,6 +223,10 @@ int nvram_commit(void)
 	return stat;
 }
 
+/**
+ * \brief Restore settings to Factory Default if it belongs to.
+ * \return Return 0 on success
+ **/
 int nvram_default(void)
 {
 	int stat = 0;
@@ -190,12 +245,17 @@ int nvram_default(void)
 	return stat;
 }
 
-int nvram_default_rule(const char *rulename)
+/**
+ * \brief Restore a specified setting to Factory Default.
+ * \return Return 0 on success
+ * \param[in] rule
+ **/
+int nvram_default_rule(const char *name)
 {       
 	int stat = 1;
 	struct nvram_tuple *v;
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
-		if(!strcmp(v->name, rulename)) {
+		if(!strcmp(v->name, name)) {
 			stat = nvram_set(v->name, v->value);
 			return stat;	
 		}
@@ -203,6 +263,10 @@ int nvram_default_rule(const char *rulename)
 	return stat;
 }
 
+/**
+ * \brief Restore settings to Factory Default if it belongs to, followed by commit process.
+ * \return Return 0 on success
+ **/
 int nvram_factory(void)
 {
 	int stat = 1;
@@ -211,6 +275,12 @@ int nvram_factory(void)
 	return stat;
 }
 
+/**
+ * \brief Export settings with their current values to a specified file.
+ * \return Return 0 on success
+ * \param[in] filename The file to export settings.
+ * \note Only NON NVRAM_PROTECTED and NON NVRAM_TEMP settings are allowed to be exported.
+ **/
 int nvram_export(const char *filename)
 {   
 	FILE *fp;
@@ -249,6 +319,13 @@ int nvram_export(const char *filename)
 	return 0;
 }
 
+/**
+ * \brief Import settings from specified file.
+ * \return Return 0 on success
+ * \param[in] filename The file to import settings.
+ * \note	Only NON NVRAM_PROTECTED and NON NVRAM_TEMP settings are allowed to be imported. 
+			The header line of the file will be checked.
+ **/
 int nvram_import(const char *filename)
 {   
 	FILE *fp;
@@ -378,6 +455,10 @@ int nvram_downgrade(const char *target)
 	return change;
 }
 
+/**
+ * \brief Dump whole settings to standard output
+ * \return Return 0 on success
+ **/
 int nvram_dump(void)
 {
 	int ret = -1;
@@ -392,7 +473,7 @@ int nvram_dump(void)
 
 
 /**
- * \brief init NVRAM flash block 
+ * \brief Init NVRAM flash block 
  * \return Return 0 on success
  **/
 int nvram_init()
