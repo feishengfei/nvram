@@ -153,6 +153,7 @@ int nvram_get_option(const char *name);
 int nvram_set(const char *name, const char *value);
 int nvram_fset(const char *name, const char *value);
 int nvram_unset(const char *name);
+int nvram_reset(const char *name);
 nvram_tuple_t * nvram_getall();
 int nvram_commit(void);
 

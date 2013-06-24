@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "nvram.h"
 
 
@@ -12,6 +13,7 @@ size_t nvram_erase_size = 0;
  */
 uint32_t hash(const char *s)
 {
+	assert(s!=NULL);
 	uint32_t hash = 0;
 
 	while (*s)
@@ -26,6 +28,7 @@ uint32_t hash(const char *s)
  */
 void _nvram_free(nvram_handle_t *h)
 {
+	assert(h != NULL);
 	uint32_t i;
 	nvram_tuple_t *t, *next;
 
@@ -60,6 +63,7 @@ void _nvram_free(nvram_handle_t *h)
 nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 	const char *name, const char *value )
 {
+	assert(h != NULL);
 	//FIXME
 	if ((strlen(value) + 1) > NVRAM_SPACE)
 		return NULL;
@@ -94,6 +98,7 @@ nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
  * \param[in] h The NVRAM handler*/
 int _nvram_rehash(nvram_handle_t *h)
 {
+	assert(h != NULL);
 	nvram_header_t *header = _nvram_header(h);
 	char buf[] = "0xXXXXXXXX", *name, *value, *eq;
 
@@ -405,6 +410,16 @@ nvram_handle_t * _nvram_open_staging(void)
  **/
 int _nvram_close(nvram_handle_t *h)
 {
+	if (NULL == h) {
+		fprintf(stderr,
+				"Could not open nvram! Possible reasons are:\n"
+				"	- No device found (/proc not mounted or no nvram present)\n"
+				"	- Insufficient permissions to open mtd device\n"
+				"	- Insufficient memory to complete operation\n"
+				"	- Memory mapping failed or not supported\n"
+			   );
+		return -1;
+	}
 	_nvram_free(h);
 	munmap(h->mmap, h->length);
 	close(h->fd);
@@ -421,6 +436,7 @@ int _nvram_close(nvram_handle_t *h)
  **/
 char * _nvram_get(nvram_handle_t *h, const char *name)
 {
+	assert(h != NULL);
 	uint32_t i;
 	nvram_tuple_t *t;
 	char *value;
@@ -428,11 +444,14 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
 	if (!name)
 		return NULL;
 
+
 	/* Hash the name */
 	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
 
 	/* Find the associated tuple in the hash table */
-	for (t = h->nvram_hash[i]; t && strcmp(t->name, name); t = t->next);
+	for (t = h->nvram_hash[i]; t && strcmp(t->name, name); t = t->next)
+	{
+	}
 
 	value = t ? t->value : NULL;
 
@@ -446,6 +465,7 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
  **/
 nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 {
+	assert(h != NULL);
 	int i;
 	nvram_tuple_t *t, *l, *x;
 
@@ -480,6 +500,7 @@ nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
  **/
 int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 {
+	assert(h != NULL);
 	uint32_t i;
 	nvram_tuple_t *t, *u, **prev;
 
@@ -521,6 +542,7 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
  */
 int _nvram_unset(nvram_handle_t *h, const char *name)
 {
+	assert(h != NULL);
 	uint32_t i;
 	nvram_tuple_t *t, **prev;
 
@@ -553,6 +575,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name)
  **/
 int _nvram_commit(nvram_handle_t *h)
 {
+	assert(h != NULL);
 	nvram_header_t *header = _nvram_header(h);
 	char *init, *config, *refresh, *ncdl;
 	char *ptr, *end;
@@ -631,78 +654,4 @@ int _nvram_commit(nvram_handle_t *h)
 	/* Reinitialize hash table */
 	return _nvram_rehash(h);
 }
-
-
-/**
- * \brief init NVRAM flash block 
- * \return Return 0 on success
- **/
-int nvram_init()
-{
-	nvram_to_staging();
-	char *file = NVRAM_STAGING;
-	int i;
-	int fd;
-	char *mtd = NULL;
-	nvram_handle_t *h;
-	int offset = -1;
-	/* If erase size or file are undefined then try to define them */
-	if( (nvram_erase_size == 0) || (file == NULL) )
-	{
-		/* Finding the mtd will set the appropriate erase size */
-		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
-		{
-			free(mtd);
-			return NULL;
-		}
-	}
-
-	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
-	{
-		char *mmap_area = (char *) mmap(
-			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
-			 MAP_SHARED | MAP_LOCKED, fd, 0);
-
-		if( mmap_area != MAP_FAILED )
-		{
-			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
-			{
-				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
-				{
-					offset = i * sizeof(uint32_t);
-					break;
-				}
-			}
-			if( offset >= 0 )
-			{
-				free(mtd);
-				return NULL;
-			}
-
-			if( (h = malloc(sizeof(nvram_handle_t))) != NULL )
-			{
-				memset(h, 0, sizeof(nvram_handle_t));
-
-				h->fd     = fd;
-				h->mmap   = mmap_area;
-				h->length = nvram_erase_size;
-				h->offset = NVRAM_OFFSET;
-				h->access = NVRAM_RW;
-
-
-				_nvram_rehash(h);
-				_nvram_commit(h);
-				_nvram_close(h);
-				staging_to_nvram();
-				free(mtd);
-				return h;
-			}
-		}
-	}
-
-	free(mtd);
-	return NULL;
-}
-
-
 

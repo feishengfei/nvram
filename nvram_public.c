@@ -5,6 +5,7 @@
 /* Global */
 nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
+extern size_t nvram_erase_size;
 
 /* **************** public functions **************** */
 const nvram_handle_t* get_nvram_handle() 
@@ -18,6 +19,7 @@ nvram_header_t * nvram_header()
 		nvram_h = _nvram_open_rdonly();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
+			return NULL;
 		}
 	}
 	return _nvram_header(nvram_h);
@@ -30,6 +32,7 @@ char * nvram_get(const char *name)
 		nvram_h = _nvram_open_rdonly();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
+			return NULL;
 		}
 	}
 
@@ -55,14 +58,14 @@ int nvram_set(const char *name, const char *value)
 	if (NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
+			return _nvram_close(nvram_h);
 		}
 	}
 	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
+			return _nvram_close(nvram_h);
 		}
 	}
 
@@ -83,18 +86,18 @@ int nvram_set(const char *name, const char *value)
 
 int nvram_fset(const char *name, const char *value)
 {
-	int ret;
+	int ret = -1;
 	if (NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
+			return _nvram_close(nvram_h);
 		}
 	}
 	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
+			return _nvram_close(nvram_h);
 		}
 	}
 
@@ -108,15 +111,37 @@ int nvram_unset(const char *name)
 	return nvram_set(name, "");
 }
 
+int nvram_reset(const char *name)
+{
+	int ret = -1;
+	if (NULL == nvram_h) {
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			return _nvram_close(nvram_h);
+		}
+	}
+	else if(NVRAM_RO == nvram_h->access) {
+		_nvram_close(nvram_h);
+		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			return _nvram_close(nvram_h);
+		}
+	}
+
+	ret = _nvram_unset(nvram_h, name);
+	return ret;
+}
+
 nvram_tuple_t * nvram_getall()
 {
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_rdonly();
 		if(NULL == nvram_h) {
 			_nvram_close(nvram_h);
+			return NULL;
 		}
 	}
-	
+
 	return _nvram_getall(nvram_h);
 }
 
@@ -126,12 +151,15 @@ int nvram_commit(void)
 
 	if(NULL == nvram_h) {
 		nvram_h = _nvram_open_staging();
+		if(NULL == nvram_h) {
+			return _nvram_close(nvram_h);
+		}
 	}
 	else if(NVRAM_RO == nvram_h->access) {
 		_nvram_close(nvram_h);
 		nvram_h = _nvram_open_staging();
 		if(NULL == nvram_h) {
-			_nvram_close(nvram_h);
+			return _nvram_close(nvram_h);
 		}
 	}
 
@@ -148,6 +176,14 @@ int nvram_default(void)
 {
 	int stat = 0;
 	struct nvram_tuple *v;
+
+	if(NULL == nvram_h) {
+		nvram_h = _nvram_open_rdonly();
+		if(NULL == nvram_h) {
+			return _nvram_close(nvram_h);
+		}
+	}
+
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		stat += nvram_set(v->name, v->value);
 	}
@@ -181,14 +217,24 @@ int nvram_export(const char *filename)
 	struct nvram_tuple *v;
 	char *value;
 
+	if(NULL == nvram_h) {
+		nvram_h = _nvram_open_rdonly();
+		if(NULL == nvram_h) {
+			return _nvram_close(nvram_h);
+		}
+	}
+
 	if ( !(fp = fopen(filename, "wb") ))
 		return EACCES;
 
 	//HEADER of export
 	fprintf(fp, 
 		"[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
-		nvram_safe_get("brand"), nvram_safe_get("model"),
-		nvram_safe_get("prod_cat"), nvram_safe_get("prod_subcat"));
+		nvram_safe_get("brand"), 
+		nvram_safe_get("model"),
+		nvram_safe_get("prod_cat"), 
+		nvram_safe_get("prod_subcat")
+	);
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		if ((v->option & NVRAM_PROTECTED) ||
@@ -344,3 +390,74 @@ int nvram_dump(void)
 	return ret;
 }
 
+
+/**
+ * \brief init NVRAM flash block 
+ * \return Return 0 on success
+ **/
+int nvram_init()
+{
+	nvram_to_staging();
+	char *file = NVRAM_STAGING;
+	int i;
+	int fd;
+	char *mtd = NULL;
+	nvram_handle_t *h;
+	int offset = -1;
+	/* If erase size or file are undefined then try to define them */
+	if( (nvram_erase_size == 0) || (file == NULL) )
+	{
+		/* Finding the mtd will set the appropriate erase size */
+		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
+		{
+			free(mtd);
+			return NULL;
+		}
+	}
+
+	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
+	{
+		char *mmap_area = (char *) mmap(
+			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
+			 MAP_SHARED | MAP_LOCKED, fd, 0);
+
+		if( mmap_area != MAP_FAILED )
+		{
+			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
+			{
+				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
+				{
+					offset = i * sizeof(uint32_t);
+					break;
+				}
+			}
+			if( offset >= 0 )
+			{
+				free(mtd);
+				return NULL;
+			}
+
+			if( (h = malloc(sizeof(nvram_handle_t))) != NULL )
+			{
+				memset(h, 0, sizeof(nvram_handle_t));
+
+				h->fd     = fd;
+				h->mmap   = mmap_area;
+				h->length = nvram_erase_size;
+				h->offset = NVRAM_OFFSET;
+				h->access = NVRAM_RW;
+
+
+				_nvram_rehash(h);
+				_nvram_commit(h);
+				_nvram_close(h);
+				staging_to_nvram();
+				free(mtd);
+				return h;
+			}
+		}
+	}
+
+	free(mtd);
+	return NULL;
+}

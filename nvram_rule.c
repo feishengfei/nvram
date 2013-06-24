@@ -2450,23 +2450,24 @@ int ezplib_append_rule(const char *rule_set, const char *new_rule)
 int ezplib_get_rule_num(const char *rule_set)
 {
     char *sep = RULE_SEP;
+    char *result = NULL;
     int i;
     int count;
 
     assert(strlen(RULE_SEP) == 1);
 
-    rule_set = nvram_get(rule_set);
-    if (!rule_set) {
+    result = nvram_get(rule_set);
+    if (!result) {
         return EZPLIB_NO_RULE_SET;
     }
 
     /* Empty */
-    if (!*rule_set) {
+    if (!*result) {
         return 0;
     }
 
-    for (i =  0, count = 0; rule_set[i] != '\0'; i++) {
-        if (rule_set[i] == sep[0]) {
+    for (i =  0, count = 0; result[i] != '\0'; i++) {
+        if (result[i] == sep[0]) {
            count++;
         }
     }

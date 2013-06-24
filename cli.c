@@ -170,6 +170,9 @@ int _do_info(nvram_handle_t *nvram)
 int do_info()
 {
 	nvram_header_t *hdr = nvram_header();
+	if(NULL == hdr){
+		return -1;
+	}
 
 	/* CRC8 over the last 11 bytes of the header and data bytes */
 	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
@@ -477,7 +480,7 @@ int main( int argc, const char *argv[] )
 						ezplib_replace_rule(argv[0], atoi(argv[1]),
 								argv[2]);
 					if (ret < 0) {
-						printf("NVRAM replace rule failed: %s\n", ret);
+						printf("NVRAM replace rule %s failed:%d!\n", argv[0], ret);
 						return 1;
 					} else  {
 						return 0;
@@ -495,7 +498,7 @@ int main( int argc, const char *argv[] )
 						ezplib_replace_attr(argv[0], atoi(argv[1]), argv[2],
 								argv[3]);
 					if (ret < 0) {
-						printf("NVRAM replace attribute failed: %d\n", ret);
+						printf("NVRAM replace attr %s failed: %d\n", argv[0], ret);
 						return 1;
 					} else  {
 						return 0;
@@ -513,7 +516,7 @@ int main( int argc, const char *argv[] )
 
 				ret = ezplib_append_rule(argv[0], argv[1]);
 				if (ret < 0) {
-					printf("NVRAM append rule failed: %s\n", ret);
+					printf("NVRAM append rule %s failed: %d\n", argv[0], ret);
 					return 1;
 				} else  {
 					return 0;
@@ -530,7 +533,7 @@ int main( int argc, const char *argv[] )
 
 				ret = ezplib_prepend_rule(argv[0], argv[1]);
 				if (ret < 0) {
-					printf("NVRAM prepend rule failed: %s\n", ret);
+					printf("NVRAM prepend rule %s failed: %d\n", argv[0], ret);
 					return 1;
 				} else  {
 					return 0;
@@ -547,7 +550,7 @@ int main( int argc, const char *argv[] )
 
 				ret = ezplib_add_rule(argv[0], atoi(argv[1]), argv[2]);
 				if (ret < 0) {
-					printf("NVRAM add rule failed: %s\n", ret);
+					printf("NVRAM add rule %s failed: %d\n", argv[0], ret);
 					return 1;
 				} else  {
 					return 0;
@@ -564,7 +567,7 @@ int main( int argc, const char *argv[] )
 
 				ret = ezplib_delete_rule(argv[0], atoi(argv[1]));
 				if (ret < 0) {
-					printf("NVRAM delete rule failed: %s\n", ret);
+					printf("NVRAM delete rule %s failed: %d\n", argv[0], ret);
 					return 1;
 				} else {
 					return 0;
@@ -581,9 +584,9 @@ int main( int argc, const char *argv[] )
 
 				ret = ezplib_get_rule_num(argv[0]);
 				if (ret < 0) {
-					printf("NVRAM rule num failed: %s\n", ret);
-					return ret;
-				} else  {
+					printf("Rule %s doesn't exist: %d\n", argv[0], ret);
+				}
+				else {
 					printf("%d\n", ret);
 					return 0;
 				}
@@ -612,7 +615,8 @@ int main( int argc, const char *argv[] )
 		{
 			stat = nvram_factory();
 			/* send SIGTERM to init for reboot */
-			kill(1, 15);
+			if(!stat)
+				kill(1, 15);
 			done++;
 		}
 		/* nvram commit */
@@ -651,8 +655,9 @@ int main( int argc, const char *argv[] )
 				"	nvram get <rule>\n"
 				"	nvram set/fset <rule=value> \n"
 				"	nvram unset <rule> \n"
+//TODO			"	nvram reset <rule> \n"
 				"	nvram export/import <backup_file>\n"
-				"	nvram downgrade/upgrade <version>\n"
+				"	nvram downgrade/upgrade <version>\n"	//TODO
 
 				"	nvram replace rule <rule-set> <nth> <new-rule>\n"
 				"	nvram replace attr <rule-set> <nth> <attr> <new-attr> \n"
@@ -663,8 +668,8 @@ int main( int argc, const char *argv[] )
 				"	nvram rule num <rule-set>\n"
 
 //TODO			"	nvram boot\n"
-				"	nvram default\n"
-				"	nvram factory\n"
+				"	nvram default\n"						//TODO
+				"	nvram factory\n"						//TODO
 
 				"	nvram commit\n"
 				"	nvram dump\n"
