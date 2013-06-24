@@ -5,6 +5,7 @@
 #include "nvram.h"
 #include "nvram_rule.h"
 
+
 char *mask[] = {
     "255.255.255.0",
     "255.255.255.128",
@@ -147,534 +148,6 @@ int sep_string(char *word, const char *delim, char **idx_arr, int max_tok)
     return pos;
 }
 
-/**
- * \brief Get a specified rule set from nvram, parse it by '|' character, 
- * and copy the obtained rule into the given buffer.
- * \return Return the length of the rule if successful. Otherwise, a negative
- * indicates an error.
- * NOTE: If the return value is larger than or equal to bsize, it means the 
- * rule is truncated.
- *
- * \param[in] rule_set: pointer to the specific rule name. Eg., fr_rule
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[out] buf: a pointer to a buffer for copying the parsed data.
- * \param[in] bsize: to specify the size of the imported area.
- *
- *  nvram show <rule-set> <nth> 
- */
-int ezplib_get_rule(const char *rule_set, int nth, 
-	char *buf, int bsize)
-{
-    char tmp[EZPLIB_BUF_LEN];
-    char *wordlist;
-    char *str, *ptr;
-    int ret;
-
-    assert(strlen(RULE_SEP) == 1);
-
-    if (!buf) {
-        return EZPLIB_INVALID;
-    }
-
-    /* Clean up the buffer that carries the retrieved value. */
-    memset(buf, '\0', bsize);
-
-    if (!rule_set || !*rule_set) {
-        return EZPLIB_INVALID;
-    }
-
-    wordlist = nvram_get(rule_set);
-    if (!wordlist) {
-        return EZPLIB_NO_RULE_SET;
-    }
-
-    if (!*wordlist) {
-        return EZPLIB_NO_RULE;
-    }
-
-    ret = snprintf(tmp, EZPLIB_BUF_LEN, "%s", wordlist);
-    if (ret >= EZPLIB_BUF_LEN) {
-        return EZPLIB_VAL_TRUNC;
-    }
-
-    str = tmp;
-    while (str) {
-        ptr = strsep(&str, RULE_SEP);
-        if (!ptr) {
-            return EZPLIB_NO_RULE;
-        }
-
-        if (nth != 0) {
-            nth --;
-            continue;
-        }
-        ret = snprintf(buf, bsize, ptr);
-        if (ret >= bsize) {
-            return EZPLIB_VAL_TRUNC;
-        }
-        return ret;
-    }
-
-    if (nth >= 0) {
-        return EZPLIB_NO_RULE;
-    }
-    return 0;
-}
-
-/**
- * \brief Get a specified rule set from nvram, parse it by '|' character, 
- * and copy the obtained rule into the given buffer.
- * \return Return the length of the rule if successful. Otherwise, a negative
- * indicates an error.
- * NOTE: If the return value is larger than or equal to bsize, it means the 
- * rule is truncated.
- * \param[in] rule_set: a point to the specific rule name. Eg., fr_rule
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[in] start: to specify the position of the start attribute 
- *                   in the rule set.
- * \param[in] end: to specify the position of the end attribute 
- *                 in the rule set.
- * \param[out] buf: a pointer to a buffer for copying the parsed data.
- * \param[in] bsize: to specify the size of the imported area.
- */
-int ezplib_get_subrule(const char *rule_set, int nth, 
-	int start, int end, char *buf, int bsize)
-{
-    char *ptr_array[MAX_ATTR_NUM];
-    char word[EZPLIB_BUF_LEN];
-    int ret, i, j, len;
-
-    if (!rule_set || !*rule_set || !buf) {
-        return EZPLIB_INVALID;
-    }
-
-    if (start > end) {
-        return EZPLIB_INVALID;
-    }
-
-    /**
-     * Clean up the buffer for carrying on the retrieved value, in case errors
-     * happen while processing of attribute.
-     */
-    memset(buf, '\0', bsize);
-
-    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
-    if (ret < 0) {
-        return ret;
-    }
-
-    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
-    for (i = j = 0; i < MAX_ATTR_NUM; i++) {
-        if (!ptr_array[i]) {
-            break;
-        }
-        if (start <= i && i <= end) {
-            len = snprintf(buf + j, bsize - j, "%s%s", ptr_array[i], ATTR_SEP);
-            j += len;
-        }
-    }
-
-    if (j > 0 && buf[j-1]) {
-        /* Remove the last ATTR_SEP. */
-        buf[j-1] = '\0'; 
-    }
-
-    return 0;
-}
-
-/**
- * \brief Get a specified attribute of the given rule from the rule set in 
- * nvram. The rules are separated by RULE_SEP character and the attributes
- * in a rule are separated by ATTR_SEP character.
- * \return Return the length of the attribute if successful. Otherwise, a 
- * negative indicates an error.
- * \param[in] rule_set: a point to the specific rule name. Eg., fr_rule
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[in] type: a pointer to the specified type of attribute.
- * \param[out] buf: a pointer to a buffer for copying the parsed data.
- * \param[in] bsize: to specify the size of the imported area.
- * \param[in] use: EZPLIB_USE_CLI or EZPLIB_USE_WEB
- *
- * nvram show <rule-set> <nth> <attr-type> 
- */
-int ezplib_get_attr_val(const char *rule_set, int nth, 
-		const char *type, char *buf, int bsize, int use)
-{
-    char *ptr_array[MAX_ATTR_NUM];
-    char word[EZPLIB_BUF_LEN];
-    int ret, i;
-
-
-    if (!rule_set || !*rule_set || !type || !*type || !buf) {
-        return EZPLIB_INVALID;
-    }
-
-    /**
-     * Clean up the buffer for carrying on the retrieved value, in case errors
-     * happen while processing of attribute.
-     */
-    memset(buf, '\0', bsize);
-
-    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
-    if (ret < 0) {
-        return ret;
-    }
-
-    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
-    for (i = 0; rules[i].name; i++) {
-        struct attr *attr;
-        int j;
-        if (strcmp(rules[i].name, rule_set) != 0) {
-            continue;
-        }
-    
-        attr = rules[i].attr;
-        for (j = 0; attr[j].name && ptr_array[j]; j++) {
-            if (strcmp(attr[j].name, type) == 0) {
-                if (use == EZPLIB_USE_CLI && attr[j].func_orig) {
-                    /* Don't wrap. Just get the value stored in nvram. */
-                    return attr[j].func_orig( ptr_array[j], 
-                                             buf, bsize);
-                } else if (use == EZPLIB_USE_WEB && attr[j].func_wrap) {
-                    /* Wrap the value from nvram. Eg., the attribute
-                     * <enable> is 1 will be wrapped to 'checked'.
-                     */
-                    return attr[j].func_wrap( ptr_array[j], buf, 
-                                             bsize);
-                }
-            }
-        }
-    }
-
-    return EZPLIB_NO_ATTRIBUTE;
-}
-
-int ezplib_op_rule(const char *rule_set, enum opcode op, int nth, const char *new_rule)
-{
-    char buf[EZPLIB_BUF_LEN];
-    char word[EZPLIB_BUF_LEN];
-    char *ptr;
-    int len, ret, i, rule_num;
-    char *rule_sep = RULE_SEP;
-
-    /* Get the number of rules in the rule set. */
-    rule_num = ezplib_get_rule_num(rule_set);
-    if (rule_num < 0) {
-        return EZPLIB_NO_RULE_SET;
-    }
-    
-    len = EZPLIB_BUF_LEN;
-    ptr = buf;
-    for (i = 0; i < rule_num; i++) {
-        ret = ezplib_get_rule(rule_set, i, word, EZPLIB_BUF_LEN);
-        if (ret < 0) {
-            return ret;
-        }
-
-        if (i != nth) {
-            ret = snprintf(ptr, len, "%s%s", word, RULE_SEP);
-            if (ret >= len) {
-                return EZPLIB_VAL_TRUNC;
-            }
-        } else {
-            switch (op) {
-                case ADD_RULE:
-                    ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
-                    if (ret >= len) {
-                        return EZPLIB_VAL_TRUNC;
-                    }
-
-                    /**
-                     * Disable nth so that the following flow will only go
-                     * through the block of 'if (i != nth)'.
-                     */
-                    nth = -1;
-
-                    /* Re-fetch the ith rule for the next round loop. */
-                    i--;
-                    break;
-                case DELETE_RULE:
-                    /* Do nothing but ignore on the old, fetched rule. */
-                    continue;
-                    break;
-                case REPLACE_RULE:
-                    ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
-                    if (ret >= len) {
-                        return EZPLIB_VAL_TRUNC;
-                    }
-                    break;
-                default:
-                    return EZPLIB_INVALID;
-                    break;
-            }
-        }
-
-        ptr += ret;
-        len -= ret;
-    }
-
-    /* Calculate the length of the rule set. */
-    len = EZPLIB_BUF_LEN - len;
-
-    /* Remove the last whitespace. */
-    assert(strlen(RULE_SEP) == 1);
-    if (buf[len - 1] == rule_sep[0]) {
-        buf[--len] = '\0';
-    }
-
-    nvram_set(rule_set, buf);
-    return len;
-}
-
-/**
- * \brief Replace the nth rule in the rule set.
- * parameter.
- * \return The total length of the rule set.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[in] new_rule: the replacing rule.
- *
- * nvram replace rule <rule-set> <nth> <new-rule>
- */
-int ezplib_replace_rule(const char *rule_set, int nth, const char *new_rule)
-{
-    int rule_num;
-
-    if (!rule_set || !*rule_set || !new_rule) {
-        return EZPLIB_INVALID;
-    }
-
-    rule_num = ezplib_get_rule_num(rule_set);
-    if (rule_num < 0) {
-        return EZPLIB_NO_RULE_SET;
-    }
-
-    if (nth > rule_num || nth < 0) {
-        return EZPLIB_IDX_OUT_RANGE;
-    }
-
-    ezplib_op_rule(rule_set, REPLACE_RULE, nth, new_rule);
-    return 0;
-}
-
-/**
- * \brief Replace the specific attribute in the nth rule in the rule set.
- * parameter.
- * \return The total length of the rule set.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[in] attr: the attr to be replaced.
- * \param[in] new_rule: the replacing rule.
- *
- * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
- */
-int ezplib_replace_attr(const char *rule_set, int nth, 
-	const char *attr, const char *new_rule)
-{
-    char *ptr_array[MAX_ATTR_NUM];
-    char word[EZPLIB_BUF_LEN];
-    char tmp[EZPLIB_BUF_LEN];
-    int ret, i, bytes, attr_len;
-    char *val, *str, *sep = ATTR_SEP;
-
-    if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
-        return EZPLIB_INVALID;
-    }
-
-    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
-    if (ret < 0) {
-        return ret;
-    }
-
-    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
-    for (i = 0; rules[i].name; i++) {
-        struct attr *attr;
-        int j;
-        if (strcmp(rules[i].name, rule_set) != 0) {
-            continue;
-        }
-    
-        attr = rules[i].attr;
-        bytes = EZPLIB_BUF_LEN;
-        str = tmp;
-        for (j = 0; attr[j].name && ptr_array[j]; j++) {
-            if (strcmp(attr[j].name, (char *)attr) == 0) {
-                val = (char *)new_rule;  
-            } else {
-                val = ptr_array[j];
-            }
-
-            /* include the separator */
-            attr_len = strlen(val) + 1;
-            ret = snprintf(str, bytes, "%s%s", val, sep);
-            if (ret >= bytes) {
-                return EZPLIB_VAL_TRUNC;
-            }
-
-            assert(ret == attr_len);
-
-            bytes -= attr_len;
-            str += attr_len;
-        }
-
-        /* remove the last separator */
-        if (*(--str) == sep[0]) {
-            *str = '\0';
-        }
-
-        return ezplib_replace_rule(rule_set, nth, tmp);
-    }
-
-    return EZPLIB_NO_ATTRIBUTE;
-}
-
-/**
- * \brief Delete the nth rule in the rule set.
- * parameter.
- * \return 0 for success; otherwise a negtive value would be returned.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
- *
- * nvram delete rule <rule-set> <nth>
- */
-int ezplib_delete_rule(const char *rule_set, int nth)
-{
-    if (!rule_set || !*rule_set) {
-        return EZPLIB_INVALID;
-    }
-
-    ezplib_op_rule(rule_set, DELETE_RULE, nth, NULL);
-    return 0;
-}
-
-/**
- * \brief Add a new rule into the nth position in the rule set.
- * parameter.
- * \return 0 for success; otherwise a negtive value would be returned.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] nth: to specify the nth rule in the rule set.
- * \param[in] new_rule: the replacing rule.
- *
- * nvram add rule <rule-set> <nth> <new-rule>
- */
-int ezplib_add_rule(const char *rule_set, int nth, const char *new_rule)
-{
-    int rule_num;
-
-    if (!rule_set || !*rule_set || !new_rule) {
-        return EZPLIB_INVALID;
-    }
-
-    rule_num = ezplib_get_rule_num(rule_set);
-    if (rule_num < 0) {
-        return EZPLIB_NO_RULE_SET;
-    }
-
-    if (nth > rule_num || nth < 0) {
-        return EZPLIB_IDX_OUT_RANGE;
-    }
-
-    if (nth == rule_num) {
-        ezplib_append_rule(rule_set, new_rule);
-    } else {
-        ezplib_op_rule(rule_set, ADD_RULE, nth, new_rule);
-    }
-    return 0;
-}
-
-/**
- * \brief Prepend a new rule into the head of the rule set.
- * parameter.
- * \return The total length of the rule set.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] new_rule: the replacing rule.
- *
- * nvram prepend rule <rule-set> <new-rule>
- */
-int ezplib_prepend_rule(const char *rule_set, const char *new_rule)
-{
-    if (!rule_set || !*rule_set || !new_rule) {
-        return EZPLIB_INVALID;
-    }
-
-    return ezplib_op_rule(rule_set, ADD_RULE, 0, new_rule);
-}
-
-/**
- * \brief append a new rule into the tail of the rule set.
- * parameter.
- * \return The total length of the rule set.
- * \param[in] rule_set: to specify the rule_set.
- * \param[in] new_rule: the replacing rule.
- *
- * nvram append rule <rule-set> <new-rule> 
- */
-int ezplib_append_rule(const char *rule_set, const char *new_rule)
-{
-    char buf[EZPLIB_BUF_LEN];
-    int len;
-    char *old_rules;
-
-    if (!rule_set || !*rule_set || !new_rule) {
-        return EZPLIB_INVALID;
-    }
-
-    old_rules = nvram_get(rule_set);
-    if (!old_rules) {
-        return EZPLIB_NO_RULE_SET;
-    }
-
-    if (!*old_rules) {
-        /* Empty rule set. */
-        len = snprintf(buf, EZPLIB_BUF_LEN, "%s", new_rule);
-    } else {
-        /* Existing rule(s). */
-        len = snprintf(buf, EZPLIB_BUF_LEN, "%s%s%s", old_rules, 
-                       RULE_SEP, new_rule);
-    }
-
-    if (len >= EZPLIB_BUF_LEN) {
-        return EZPLIB_VAL_TRUNC;
-    }
-    nvram_set(rule_set, buf);
-
-    return len;
-}
-
-/**
- * \brief Get the number of rules in the given rule-name.
- * \return The number of subrule in the rule set.
- * \param[in] rule_set: to specify the rule_set.
- *
- * nvram rule num <rule-set> 
- */
-int ezplib_get_rule_num(const char *rule_set)
-{
-    char *sep = RULE_SEP;
-    int i;
-    int count;
-
-    assert(strlen(RULE_SEP) == 1);
-
-    rule_set = nvram_get(rule_set);
-    if (!rule_set) {
-        return EZPLIB_NO_RULE_SET;
-    }
-
-    /* Empty */
-    if (!*rule_set) {
-        return 0;
-    }
-
-    for (i =  0, count = 0; rule_set[i] != '\0'; i++) {
-        if (rule_set[i] == sep[0]) {
-           count++;
-        }
-    }
-
-    /* The number of rules will one more than the count of the separators. */
-    return count+1;
-}
 
 /***************Predefined Attr*****************/
 
@@ -2473,4 +1946,532 @@ struct rule rules[] = {
 	{ NULL, NULL }
 };
 
+/**
+ * \brief Get a specified rule set from nvram, parse it by '|' character, 
+ * and copy the obtained rule into the given buffer.
+ * \return Return the length of the rule if successful. Otherwise, a negative
+ * indicates an error.
+ * NOTE: If the return value is larger than or equal to bsize, it means the 
+ * rule is truncated.
+ *
+ * \param[in] rule_set: pointer to the specific rule name. Eg., fr_rule
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[out] buf: a pointer to a buffer for copying the parsed data.
+ * \param[in] bsize: to specify the size of the imported area.
+ *
+ *  nvram show <rule-set> <nth> 
+ */
+int ezplib_get_rule(const char *rule_set, int nth, 
+	char *buf, int bsize)
+{
+    char tmp[EZPLIB_BUF_LEN];
+    char *wordlist;
+    char *str, *ptr;
+    int ret;
+
+    assert(strlen(RULE_SEP) == 1);
+
+    if (!buf) {
+        return EZPLIB_INVALID;
+    }
+
+    /* Clean up the buffer that carries the retrieved value. */
+    memset(buf, '\0', bsize);
+
+    if (!rule_set || !*rule_set) {
+        return EZPLIB_INVALID;
+    }
+
+    wordlist = nvram_get(rule_set);
+    if (!wordlist) {
+        return EZPLIB_NO_RULE_SET;
+    }
+
+    if (!*wordlist) {
+        return EZPLIB_NO_RULE;
+    }
+
+    ret = snprintf(tmp, EZPLIB_BUF_LEN, "%s", wordlist);
+    if (ret >= EZPLIB_BUF_LEN) {
+        return EZPLIB_VAL_TRUNC;
+    }
+
+    str = tmp;
+    while (str) {
+        ptr = strsep(&str, RULE_SEP);
+        if (!ptr) {
+            return EZPLIB_NO_RULE;
+        }
+
+        if (nth != 0) {
+            nth --;
+            continue;
+        }
+        ret = snprintf(buf, bsize, ptr);
+        if (ret >= bsize) {
+            return EZPLIB_VAL_TRUNC;
+        }
+        return ret;
+    }
+
+    if (nth >= 0) {
+        return EZPLIB_NO_RULE;
+    }
+    return 0;
+}
+
+/**
+ * \brief Get a specified rule set from nvram, parse it by '|' character, 
+ * and copy the obtained rule into the given buffer.
+ * \return Return the length of the rule if successful. Otherwise, a negative
+ * indicates an error.
+ * NOTE: If the return value is larger than or equal to bsize, it means the 
+ * rule is truncated.
+ * \param[in] rule_set: a point to the specific rule name. Eg., fr_rule
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] start: to specify the position of the start attribute 
+ *                   in the rule set.
+ * \param[in] end: to specify the position of the end attribute 
+ *                 in the rule set.
+ * \param[out] buf: a pointer to a buffer for copying the parsed data.
+ * \param[in] bsize: to specify the size of the imported area.
+ */
+int ezplib_get_subrule(const char *rule_set, int nth, 
+	int start, int end, char *buf, int bsize)
+{
+    char *ptr_array[MAX_ATTR_NUM];
+    char word[EZPLIB_BUF_LEN];
+    int ret, i, j, len;
+
+    if (!rule_set || !*rule_set || !buf) {
+        return EZPLIB_INVALID;
+    }
+
+    if (start > end) {
+        return EZPLIB_INVALID;
+    }
+
+    /**
+     * Clean up the buffer for carrying on the retrieved value, in case errors
+     * happen while processing of attribute.
+     */
+    memset(buf, '\0', bsize);
+
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
+    if (ret < 0) {
+        return ret;
+    }
+
+    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
+    for (i = j = 0; i < MAX_ATTR_NUM; i++) {
+        if (!ptr_array[i]) {
+            break;
+        }
+        if (start <= i && i <= end) {
+            len = snprintf(buf + j, bsize - j, "%s%s", ptr_array[i], ATTR_SEP);
+            j += len;
+        }
+    }
+
+    if (j > 0 && buf[j-1]) {
+        /* Remove the last ATTR_SEP. */
+        buf[j-1] = '\0'; 
+    }
+
+    return 0;
+}
+
+/**
+ * \brief Get a specified attribute of the given rule from the rule set in 
+ * nvram. The rules are separated by RULE_SEP character and the attributes
+ * in a rule are separated by ATTR_SEP character.
+ * \return Return the length of the attribute if successful. Otherwise, a 
+ * negative indicates an error.
+ * \param[in] rule_set: a point to the specific rule name. Eg., fr_rule
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] type: a pointer to the specified type of attribute.
+ * \param[out] buf: a pointer to a buffer for copying the parsed data.
+ * \param[in] bsize: to specify the size of the imported area.
+ * \param[in] use: EZPLIB_USE_CLI or EZPLIB_USE_WEB
+ *
+ * nvram show <rule-set> <nth> <attr-type> 
+ */
+int ezplib_get_attr_val(const char *rule_set, int nth, 
+		const char *type, char *buf, int bsize, int use)
+{
+    char *ptr_array[MAX_ATTR_NUM];
+    char word[EZPLIB_BUF_LEN];
+    int ret, i;
+
+
+    if (!rule_set || !*rule_set || !type || !*type || !buf) {
+        return EZPLIB_INVALID;
+    }
+
+    /**
+     * Clean up the buffer for carrying on the retrieved value, in case errors
+     * happen while processing of attribute.
+     */
+    memset(buf, '\0', bsize);
+
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
+    if (ret < 0) {
+        return ret;
+    }
+
+    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
+    for (i = 0; rules[i].name; i++) {
+        struct attr *attr;
+        int j;
+        if (strcmp(rules[i].name, rule_set) != 0) {
+            continue;
+        }
+    
+        attr = rules[i].attr;
+        for (j = 0; attr[j].name && ptr_array[j]; j++) {
+            if (strcmp(attr[j].name, type) == 0) {
+                if (use == EZPLIB_USE_CLI && attr[j].func_orig) {
+                    /* Don't wrap. Just get the value stored in nvram. */
+                    return attr[j].func_orig( ptr_array[j], 
+                                             buf, bsize);
+                } else if (use == EZPLIB_USE_WEB && attr[j].func_wrap) {
+                    /* Wrap the value from nvram. Eg., the attribute
+                     * <enable> is 1 will be wrapped to 'checked'.
+                     */
+                    return attr[j].func_wrap( ptr_array[j], buf, 
+                                             bsize);
+                }
+            }
+        }
+    }
+
+    return EZPLIB_NO_ATTRIBUTE;
+}
+
+int ezplib_op_rule(const char *rule_set, enum opcode op, int nth, const char *new_rule)
+{
+    char buf[EZPLIB_BUF_LEN];
+    char word[EZPLIB_BUF_LEN];
+    char *ptr;
+    int len, ret, i, rule_num;
+    char *rule_sep = RULE_SEP;
+
+    /* Get the number of rules in the rule set. */
+    rule_num = ezplib_get_rule_num(rule_set);
+    if (rule_num < 0) {
+        return EZPLIB_NO_RULE_SET;
+    }
+    
+    len = EZPLIB_BUF_LEN;
+    ptr = buf;
+    for (i = 0; i < rule_num; i++) {
+        ret = ezplib_get_rule(rule_set, i, word, EZPLIB_BUF_LEN);
+        if (ret < 0) {
+            return ret;
+        }
+
+        if (i != nth) {
+            ret = snprintf(ptr, len, "%s%s", word, RULE_SEP);
+            if (ret >= len) {
+                return EZPLIB_VAL_TRUNC;
+            }
+        } else {
+            switch (op) {
+                case ADD_RULE:
+                    ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
+                    if (ret >= len) {
+                        return EZPLIB_VAL_TRUNC;
+                    }
+
+                    /**
+                     * Disable nth so that the following flow will only go
+                     * through the block of 'if (i != nth)'.
+                     */
+                    nth = -1;
+
+                    /* Re-fetch the ith rule for the next round loop. */
+                    i--;
+                    break;
+                case DELETE_RULE:
+                    /* Do nothing but ignore on the old, fetched rule. */
+                    continue;
+                    break;
+                case REPLACE_RULE:
+                    ret = snprintf(ptr, len, "%s%s", new_rule, RULE_SEP);
+                    if (ret >= len) {
+                        return EZPLIB_VAL_TRUNC;
+                    }
+                    break;
+                default:
+                    return EZPLIB_INVALID;
+                    break;
+            }
+        }
+
+        ptr += ret;
+        len -= ret;
+    }
+
+    /* Calculate the length of the rule set. */
+    len = EZPLIB_BUF_LEN - len;
+
+    /* Remove the last whitespace. */
+    assert(strlen(RULE_SEP) == 1);
+    if (buf[len - 1] == rule_sep[0]) {
+        buf[--len] = '\0';
+    }
+
+    nvram_set(rule_set, buf);
+    return len;
+}
+
+/**
+ * \brief Replace the nth rule in the rule set.
+ * parameter.
+ * \return The total length of the rule set.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] new_rule: the replacing rule.
+ *
+ * nvram replace rule <rule-set> <nth> <new-rule>
+ */
+int ezplib_replace_rule(const char *rule_set, int nth, const char *new_rule)
+{
+    int rule_num;
+
+    if (!rule_set || !*rule_set || !new_rule) {
+        return EZPLIB_INVALID;
+    }
+
+    rule_num = ezplib_get_rule_num(rule_set);
+    if (rule_num < 0) {
+        return EZPLIB_NO_RULE_SET;
+    }
+
+    if (nth > rule_num || nth < 0) {
+        return EZPLIB_IDX_OUT_RANGE;
+    }
+
+    ezplib_op_rule(rule_set, REPLACE_RULE, nth, new_rule);
+    return 0;
+}
+
+/**
+ * \brief Replace the specific attribute in the nth rule in the rule set.
+ * parameter.
+ * \return The total length of the rule set.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] attr: the attr to be replaced.
+ * \param[in] new_rule: the replacing rule.
+ *
+ * nvram replace attr <rule-set> <nth> <attr> <new-rule> 
+ */
+int ezplib_replace_attr(const char *rule_set, int nth, 
+	const char *attr, const char *new_rule)
+{
+    char *ptr_array[MAX_ATTR_NUM];
+    char word[EZPLIB_BUF_LEN];
+    char tmp[EZPLIB_BUF_LEN];
+    int ret, i, bytes, attr_len;
+    char *val, *str, *sep = ATTR_SEP;
+
+    if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
+        return EZPLIB_INVALID;
+    }
+
+    ret = ezplib_get_rule(rule_set, nth, word, EZPLIB_BUF_LEN);
+    if (ret < 0) {
+        return ret;
+    }
+
+    sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
+    for (i = 0; rules[i].name; i++) {
+        struct attr *attr;
+        int j;
+        if (strcmp(rules[i].name, rule_set) != 0) {
+            continue;
+        }
+    
+        attr = rules[i].attr;
+        bytes = EZPLIB_BUF_LEN;
+        str = tmp;
+        for (j = 0; attr[j].name && ptr_array[j]; j++) {
+            if (strcmp(attr[j].name, (char *)attr) == 0) {
+                val = (char *)new_rule;  
+            } else {
+                val = ptr_array[j];
+            }
+
+            /* include the separator */
+            attr_len = strlen(val) + 1;
+            ret = snprintf(str, bytes, "%s%s", val, sep);
+            if (ret >= bytes) {
+                return EZPLIB_VAL_TRUNC;
+            }
+
+            assert(ret == attr_len);
+
+            bytes -= attr_len;
+            str += attr_len;
+        }
+
+        /* remove the last separator */
+        if (*(--str) == sep[0]) {
+            *str = '\0';
+        }
+
+        return ezplib_replace_rule(rule_set, nth, tmp);
+    }
+
+    return EZPLIB_NO_ATTRIBUTE;
+}
+
+/**
+ * \brief Delete the nth rule in the rule set.
+ * parameter.
+ * \return 0 for success; otherwise a negtive value would be returned.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] nth: to specify the nth rule in the rule set.
+ *
+ * nvram delete rule <rule-set> <nth>
+ */
+int ezplib_delete_rule(const char *rule_set, int nth)
+{
+    if (!rule_set || !*rule_set) {
+        return EZPLIB_INVALID;
+    }
+
+    ezplib_op_rule(rule_set, DELETE_RULE, nth, NULL);
+    return 0;
+}
+
+/**
+ * \brief Add a new rule into the nth position in the rule set.
+ * parameter.
+ * \return 0 for success; otherwise a negtive value would be returned.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] nth: to specify the nth rule in the rule set.
+ * \param[in] new_rule: the replacing rule.
+ *
+ * nvram add rule <rule-set> <nth> <new-rule>
+ */
+int ezplib_add_rule(const char *rule_set, int nth, const char *new_rule)
+{
+    int rule_num;
+
+    if (!rule_set || !*rule_set || !new_rule) {
+        return EZPLIB_INVALID;
+    }
+
+    rule_num = ezplib_get_rule_num(rule_set);
+    if (rule_num < 0) {
+        return EZPLIB_NO_RULE_SET;
+    }
+
+    if (nth > rule_num || nth < 0) {
+        return EZPLIB_IDX_OUT_RANGE;
+    }
+
+    if (nth == rule_num) {
+        ezplib_append_rule(rule_set, new_rule);
+    } else {
+        ezplib_op_rule(rule_set, ADD_RULE, nth, new_rule);
+    }
+    return 0;
+}
+
+/**
+ * \brief Prepend a new rule into the head of the rule set.
+ * parameter.
+ * \return The total length of the rule set.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] new_rule: the replacing rule.
+ *
+ * nvram prepend rule <rule-set> <new-rule>
+ */
+int ezplib_prepend_rule(const char *rule_set, const char *new_rule)
+{
+    if (!rule_set || !*rule_set || !new_rule) {
+        return EZPLIB_INVALID;
+    }
+
+    return ezplib_op_rule(rule_set, ADD_RULE, 0, new_rule);
+}
+
+/**
+ * \brief append a new rule into the tail of the rule set.
+ * parameter.
+ * \return The total length of the rule set.
+ * \param[in] rule_set: to specify the rule_set.
+ * \param[in] new_rule: the replacing rule.
+ *
+ * nvram append rule <rule-set> <new-rule> 
+ */
+int ezplib_append_rule(const char *rule_set, const char *new_rule)
+{
+    char buf[EZPLIB_BUF_LEN];
+    int len;
+    char *old_rules;
+
+    if (!rule_set || !*rule_set || !new_rule) {
+        return EZPLIB_INVALID;
+    }
+
+    old_rules = nvram_get(rule_set);
+    if (!old_rules) {
+        return EZPLIB_NO_RULE_SET;
+    }
+
+    if (!*old_rules) {
+        /* Empty rule set. */
+        len = snprintf(buf, EZPLIB_BUF_LEN, "%s", new_rule);
+    } else {
+        /* Existing rule(s). */
+        len = snprintf(buf, EZPLIB_BUF_LEN, "%s%s%s", old_rules, 
+                       RULE_SEP, new_rule);
+    }
+
+    if (len >= EZPLIB_BUF_LEN) {
+        return EZPLIB_VAL_TRUNC;
+    }
+    nvram_set(rule_set, buf);
+
+    return len;
+}
+
+/**
+ * \brief Get the number of rules in the given rule-name.
+ * \return The number of subrule in the rule set.
+ * \param[in] rule_set: to specify the rule_set.
+ *
+ * nvram rule num <rule-set> 
+ */
+int ezplib_get_rule_num(const char *rule_set)
+{
+    char *sep = RULE_SEP;
+    int i;
+    int count;
+
+    assert(strlen(RULE_SEP) == 1);
+
+    rule_set = nvram_get(rule_set);
+    if (!rule_set) {
+        return EZPLIB_NO_RULE_SET;
+    }
+
+    /* Empty */
+    if (!*rule_set) {
+        return 0;
+    }
+
+    for (i =  0, count = 0; rule_set[i] != '\0'; i++) {
+        if (rule_set[i] == sep[0]) {
+           count++;
+        }
+    }
+
+    /* The number of rules will one more than the count of the separators. */
+    return count+1;
+}
 
