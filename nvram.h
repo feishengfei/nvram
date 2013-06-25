@@ -14,6 +14,10 @@
 
 #define xstr(x)  #x
 #define EZP_PROD_VERSION "2.0.4_PLUS"
+#define EZP_PROD_CAT "2"
+#define EZP_PROD_SUBCAT "1"
+#define EZP_PROD_SUBSUBCAT "1"
+#define EZP_PROD_FW_VERSION "V1.00(BWQ.1)C0"
 
 /* TRACE */
 #define TRACE(msg) \
@@ -154,6 +158,9 @@ int nvram_unset(const char *name);
 int nvram_reset(const char *name);
 nvram_tuple_t * nvram_getall();
 int nvram_commit(void);
+
+int nvram_match(char *name, char *match);
+int nvram_invmatch(char *name, char *invmatch);
 
 /* restore from the whole factory default */
 int nvram_default(void);

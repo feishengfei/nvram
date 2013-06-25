@@ -100,7 +100,7 @@ int _nvram_rehash(nvram_handle_t *h)
 {
 	assert(h != NULL);
 	nvram_header_t *header = _nvram_header(h);
-	char buf[] = "0xXXXXXXXX", *name, *value, *eq;
+	char *name, *value, *eq;
 
 	/* (Re)initialize hash table */
 	_nvram_free(h);
@@ -556,7 +556,6 @@ int _nvram_commit(nvram_handle_t *h)
 {
 	assert(h != NULL);
 	nvram_header_t *header = _nvram_header(h);
-	char *init, *config, *refresh, *ncdl;
 	char *ptr, *end;
 	int i;
 	nvram_tuple_t *t;

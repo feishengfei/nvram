@@ -542,3 +542,29 @@ int nvram_init()
 	free(mtd);
 	return NULL;
 }
+
+/**
+ * \brief Match an NVRAM variable.
+ * \return  TRUE if variable is defined and its value is string equal
+ *      to match or FALSE otherwise
+ * \param   name    name of variable to match
+ * \param   match   value to compare against value of variable
+ */
+int nvram_match(char *name, char *match) 
+{
+	const char *value = nvram_get(name);
+	return (value && !strcmp(value, match));
+}
+
+/**
+ * \brief Inversely match an NVRAM variable.
+ * \return  TRUE if variable is defined and its value is not string
+ *      equal to invmatch or FALSE otherwise
+ * \param   name    name of variable to match
+ * \param   match   value to compare against value of variable
+ */
+int nvram_invmatch(char *name, char *invmatch) {
+	const char *value = nvram_get(name);
+	return (value && strcmp(value, invmatch));
+}
+
