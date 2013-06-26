@@ -14,9 +14,9 @@
 
 #define xstr(x)  #x
 #define EZP_PROD_VERSION "2.0.4_PLUS"
-#define EZP_PROD_CAT "2"
-#define EZP_PROD_SUBCAT "1"
-#define EZP_PROD_SUBSUBCAT "1"
+#define EZP_PROD_CAT 2
+#define EZP_PROD_SUBCAT 1
+#define EZP_PROD_SUBSUBCAT 1
 #define EZP_PROD_FW_VERSION "V1.00(BWQ.1)C0"
 
 /* TRACE */

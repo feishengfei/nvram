@@ -2220,7 +2220,6 @@ int ezplib_op_rule(const char *rule_set, enum opcode op, int nth, const char *ne
     if (buf[len - 1] == rule_sep[0]) {
         buf[--len] = '\0';
     }
-
     nvram_set(rule_set, buf);
     return len;
 }
@@ -2275,7 +2274,6 @@ int ezplib_replace_attr(const char *rule_set, int nth,
     char tmp[EZPLIB_BUF_LEN];
     int ret, i, bytes, attr_len;
     char *val, *str, *sep = ATTR_SEP;
-
     if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
         return EZPLIB_INVALID;
     }
@@ -2287,17 +2285,17 @@ int ezplib_replace_attr(const char *rule_set, int nth,
 
     sep_string(word, ATTR_SEP, ptr_array, MAX_ATTR_NUM);
     for (i = 0; rules[i].name; i++) {
-        struct attr *attr;
+        struct attr *rule_attr;
         int j;
         if (strcmp(rules[i].name, rule_set) != 0) {
             continue;
         }
     
-        attr = rules[i].attr;
+        rule_attr = rules[i].attr;
         bytes = EZPLIB_BUF_LEN;
         str = tmp;
-        for (j = 0; attr[j].name && ptr_array[j]; j++) {
-            if (strcmp(attr[j].name, (char *)attr) == 0) {
+        for (j = 0; rule_attr[j].name && ptr_array[j]; j++) {
+            if (strcmp(rule_attr[j].name, attr) == 0) {
                 val = (char *)new_rule;  
             } else {
                 val = ptr_array[j];

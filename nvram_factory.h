@@ -85,7 +85,7 @@
 #define BW_UPLOAD_MAX "102400"
 #define BW_DOWNLOAD_MIN "64"
 #define BW_UPLOAD_MIN "64"
-/************board specified macros************/
+/* Board dependent definition. */
 
 #define LAN_DHCPSV6_RULE "default^1^2001:db8:feed:b00::^2001:db8:feed:b00::^2001:db8:feed:b00::^liteon.com^custom^^^0^100^200^30|default^0^2001:db8:feed:b10::^2001:db8:feed:b10::^2001:db8:feed:b10::^liteon.com^custom^^^0^100^200^30"
 #define LAN_STATICV6_RULE_DEFAULT "2001:db8:feed:b00::^1^2001:db8:feed:b00::^1^2001:db8:feed:b00::^1^64^^^^^^^^^^|2001:db8:feed:b10::^1^2001:db8:feed:b10::^1^2001:db8:feed:b10::^1^64^^^^^^^^^^"
@@ -418,7 +418,7 @@
 #define BW_EZMODESORT_RULE	"Game Console|VoIP|Instant Messenger|Web Surfing|P2P/FTP|E-Mail"
 
 /**
- *\var nvram_factory_default The factory default settings
+ *\brief nvram_factory_default The factory default settings
  *\note Sort in alphabet order
  */
 nvram_tuple_t nvram_factory_default[] = {                        
