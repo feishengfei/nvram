@@ -312,7 +312,6 @@ int nvram_export(const char *filename)
 			continue;
 		}
 		value = nvram_safe_get(v->name);
-		printf("%s=%s\n", v->name, value);
 		fprintf(fp, "%s=%s\n", v->name, value);
 	}
 	fclose(fp);
@@ -352,12 +351,14 @@ int nvram_import(const char *filename)
 		return 1;
 	}
 	p += strlen("EZP_");
+
 	/* prod_cat */
 	q = nvram_safe_get("prod_cat");
 	if (p[0] != q[0]) {
 		printf("log file format error: prod_cat\n");
 		return 1;
 	}
+
 	/* prod_subcat */
 	q = nvram_safe_get("prod_subcat");
 	if (p[1] != q[0]) {

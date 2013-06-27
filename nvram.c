@@ -392,10 +392,11 @@ int _nvram_close(nvram_handle_t *h)
 	if (NULL == h) {
 		fprintf(stderr,
 				"Could not open nvram! Possible reasons are:\n"
-				"	- No device found (/proc not mounted or no nvram present)\n"
-				"	- Insufficient permissions to open mtd device\n"
+				"	- No \'nvram\' block found in /proc/mtd\n"
+				"	- Unable to open mtd device\n"
 				"	- Insufficient memory to complete operation\n"
 				"	- Memory mapping failed or not supported\n"
+				"	- Mtd block not initialized. Run \'nvram init\' first.\n"
 			   );
 		return -1;
 	}
