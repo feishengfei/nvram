@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "nvram.h"
 #include "nvram_fw.h"
 #include "nvram_factory.h"
@@ -6,6 +8,7 @@
 nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
 extern size_t nvram_erase_size;
+
 
 /****************** public functions **************** */
 /**
@@ -299,7 +302,7 @@ int nvram_export(const char *filename)
 
 	//HEADER of export
 	fprintf(fp, 
-		"[EZP_LOG v1.1] %s %s [EZP_%s%s] " xstr(EZP_PROD_VERSION) "\n",
+		"[EZP_LOG v1.1] %s %s [EZP_%s%s] " EZP_PROD_VERSION "\n",
 		nvram_safe_get("brand"), 
 		nvram_safe_get("model"),
 		nvram_safe_get("prod_cat"), 
@@ -332,7 +335,7 @@ int nvram_import(const char *filename)
 	char buf[NVRAM_TMP_LEN];
 	char old_str[32], new_str[32];
 	int old, new = 0;
-//	int i;
+	int i=0;
 
 	struct nvram_tuple *v;
 	struct nvram_fw_tuple *w;
@@ -375,14 +378,13 @@ int nvram_import(const char *filename)
 	}
 
 	/* XXX:We don't accept any thing higher than our current version. */
-	strcpy(new_str, xstr(EZP_PROD_VERSION));
+	strcpy(new_str, EZP_PROD_VERSION);
 	/* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
-/*
 	for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
 	old_str[i]='\0';
 	for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
 	new_str[i]='\0';
-*/
+	printf("Firmware:%s\r\nConfiguration:%s\r\n", new_str, old_str);
 
 	/* Very likely we cannot find the matched version since our firmware might
 	 * be older than the config file. */
@@ -477,7 +479,7 @@ int nvram_dump(void)
  * \brief Init NVRAM flash block 
  * \return Return 0 on success
  **/
-int nvram_init()
+void *nvram_init()
 {
 	nvram_to_staging();
 	char *file = NVRAM_STAGING;
@@ -516,7 +518,7 @@ int nvram_init()
 			if( offset >= 0 )
 			{
 				free(mtd);
-				return NULL;
+				return NULL; 
 			}
 
 			if( (h = malloc(sizeof(nvram_handle_t))) != NULL )

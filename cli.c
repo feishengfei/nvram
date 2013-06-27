@@ -634,7 +634,7 @@ int main( int argc, const char *argv[] )
 		/* nvram mtd */
 		else if( !strncmp(*argv, "init", 4) )
 		{
-			stat = nvram_init();
+			stat = *((int *)nvram_init());
 			done++;
 		}
 		else

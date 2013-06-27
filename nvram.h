@@ -13,7 +13,7 @@
 #include <linux/limits.h>
 
 #define xstr(x)  #x
-#define EZP_PROD_VERSION "2.0.4_PLUS"
+#define EZP_PROD_VERSION "0.0.0_ALPHA"
 #define EZP_PROD_CAT "2"
 #define EZP_PROD_SUBCAT "1"
 #define EZP_PROD_SUBSUBCAT "1"
@@ -38,7 +38,7 @@
 #define	NVRAM_ROUNDUP(x, y)	((((x)+((y)-1))/(y))*(y))
 
 /* NVRAM constants */
-#define NVRAM_OFFSET		64
+#define NVRAM_OFFSET		0
 #define NVRAM_SPACE			0x8000
 #define NVRAM_MAGIC			0x48534C46	/* 'FLSH' */
 #define NVRAM_VERSION		1
@@ -143,7 +143,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 int _nvram_commit(nvram_handle_t *h);
 
 /* init NVRAM flash block */
-int nvram_init();
+void *nvram_init();
 /* **************** public functions **************** */
 const nvram_handle_t * get_nvram_handle();
 nvram_header_t * nvram_header();

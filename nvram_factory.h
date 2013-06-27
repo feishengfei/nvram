@@ -665,7 +665,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "fw_version", xstr(EZP_PROD_VERSION), 
+	{ "fw_version", EZP_PROD_VERSION, 
 		NVRAM_NONE, 
 		0 
 	},   
@@ -1047,7 +1047,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},  
 
-	{ "prod_cat", xstr(EZP_PROD_CAT), 
+	{ "prod_cat", EZP_PROD_CAT, 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},           
@@ -1055,11 +1055,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE, 
 		0 
 	},   
-	{ "prod_subcat", xstr(EZP_PROD_SUBCAT), 
+	{ "prod_subcat", EZP_PROD_SUBCAT, 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},        
-	{ "prod_subsubcat", xstr(EZP_PROD_SUBSUBCAT), 
+	{ "prod_subsubcat", EZP_PROD_SUBSUBCAT, 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},        
