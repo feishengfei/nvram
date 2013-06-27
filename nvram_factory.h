@@ -185,7 +185,7 @@
 #define WL_WDS_RULE "disabled^1|disabled^1"
 #define WL1_WDS_RULE "disabled^1|disabled^1"
 #define WL_WME_RULE "15 1023 7 0 0 off^15 1023 3 0 0 off^7 15 2 6016 3008 off^3 7 2 3264 1504 off^15 1023 7 0 0 off^15 63 3 0 0 off^7 15 1 6016 3008 off^3 7 1 3264 1504 off^off^128|15 1023 7 0 0 off^15 1023 3 0 0 off^7 15 2 6016 3008 off^3 7 2 3264 1504 off^15 1023 7 0 0 off^15 63 3 0 0 off^7 15 1 6016 3008 off^3 7 1 3264 1504 off^off^128"
-#define WL_MODE_RULE "ur^0^0|ur^0^0"
+#define WL_MODE_RULE "ap^0^0|ur^0^0"
 #define WL1_MODE_RULE "ur^0^0|ur^0^0"
 #define WL_WPS_RULE "0^^0|0^^0"
 #define WL1_WPS_RULE "0^^0|0^^0"
@@ -440,7 +440,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_PROTECTED,
 		0 
 	},        
-	{ "board_model_rule", "",
+	{ "board_model_rule", "0A22",
 		NVRAM_DEFAULT,
 		0
 	},
@@ -1047,7 +1047,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},  
 
-	{ "prod_cat", EZP_PROD_CAT, 
+	{ "prod_cat", xstr(EZP_PROD_CAT), 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},           
@@ -1055,11 +1055,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE, 
 		0 
 	},   
-	{ "prod_subcat", EZP_PROD_SUBCAT, 
+	{ "prod_subcat", xstr(EZP_PROD_SUBCAT), 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},        
-	{ "prod_subsubcat", EZP_PROD_SUBSUBCAT, 
+	{ "prod_subsubcat", xstr(EZP_PROD_SUBSUBCAT), 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},        
