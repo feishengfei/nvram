@@ -107,7 +107,8 @@ int _nvram_rehash(nvram_handle_t *h);
 /* Computes a crc8 over the input data. */
 uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
 
-/* **************** inner functions **************** */
+/** \defgroup inner_func Inner Functions 
+ *@{*/ 
 /* Get nvram header. */
 nvram_header_t * _nvram_header(nvram_handle_t *h);
 
@@ -141,10 +142,12 @@ int _nvram_unset(nvram_handle_t *h, const char *name);
 
 /* Regenerate NVRAM. */
 int _nvram_commit(nvram_handle_t *h);
+/**@}*/
 
+/** \defgroup pub_func Public Functions 
+ * @{ */
 /* init NVRAM flash block */
 void *nvram_init();
-/* **************** public functions **************** */
 const nvram_handle_t * get_nvram_handle();
 nvram_header_t * nvram_header();
 
@@ -178,5 +181,79 @@ int nvram_downgrade(const char *target);
 
 //helper function
 int nvram_dump(void);
-/********************************************************/
+/**@}*/
 #endif /* _nvram_h_ */
+
+/**
+\mainpage The NVRAM module for easy settings management
+\section sec_str 1.Structure:
+
+(1)cli.c 
+
+Command line of nvram, a demo on how to call nvram_XXX functions from libnvram.so
+I use #if/#else/#endif to disable the original version MAIN function and enable the 
+current EZP integrated version MAIN.
+
+(2)cli.h 
+
+Command line header of nvram. The original version MAIN will call the inner function
+interface of nvram, while my wrapped version version will call the public function of 
+nvram. Using the later public interface, you can forget the management of nvram_handle_t.
+
+(M)Makefile 
+
+All nvram interfaces (public or inner) are compiled into a single dynamic library called
+libnvram.so.0.1. If you want to use nvram_XXX functions in your code, do as what the Makefile
+do.
+
+(3)crc.c 
+
+CRC related functions
+
+(4)nvram.c
+
+The inner functions of nvram are implemented.
+
+(5)nvram_factory.h
+
+the factory default key-value pairs are defined. A bunch of pairs will 
+be stored in the libnvram.so.0.1. In this current version, I only write 'abc' and 'abc_rule' for 
+demo.
+
+(6)nvram_fw.c (7)nvram_fw.h 
+
+nvram_upgrade/nvram_downgrade related function will be defined here. Currently the 2 file 
+are copyed from EZP-NVRAM.
+
+(8)nvram.h
+
+Both the inner functions and public functions of nvram are defined here.
+
+(9)nvram_public.c
+
+the public functions of nvram are implemented.
+
+(10)nvram_rule.c (11)nvram_rule.h
+
+Rule/SubRule/Attribute related function are defined/implemented here. You can refer to
+ezp-lib.c/ezp-lib.h in EZP-NVRAM. Which we will explain it later.
+
+\section sec_rule 2.Rule/SubRule/Attribute
+The Rule/SubRule/Attribute is defined in EZP-NVRAM. You can treat them as:
+Rule	-	Rule is the whole value of key-value pair.
+SubRule	-	If the Rule is connected by several '|' character, then each part of it is a SubRule;
+			If there is no '|' character, the whole Rule is a SubRule of itself.
+			Each SubRule has similar sturcture. 
+			SubRule can be treated like Array. The first index of the SubRule is 0. 
+Attribute -	The Rule/SubRule is made up of short concatenated characters. And the Attr seperate is '^'.
+
+Given the lan_main_rule as an example(Refers to nvram_ezpacket.h in EZP-NVRAM):
+			lan_main_rule="LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0"
+
+Rule	-	LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0	
+SubRule	-	LAN1^1^1500^1^1^0				//0
+			GuestLAN^0^1500^1^1^0			//1
+Attribute - LAN1							//name
+			1								//enable
+			1500							//mtu
+ */
