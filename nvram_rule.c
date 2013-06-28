@@ -5,19 +5,13 @@
 #include "nvram.h"
 #include "nvram_rule.h"
 
-
-char *mask[] = {
-    "255.255.255.0",
-    "255.255.255.128",
-    "255.255.255.192",
-    "255.255.255.224",
-    "255.255.255.240",
-    "255.255.255.248",
-    "255.255.255.252",
-    "255.255.255.254"
-};
-
-
+/**
+ *\brief Function Pointer Mapping from "0"/"1" to "disabled"/"enabled"
+ *\return The strlen of the output string or \ref EZPLIB_VAL_TRUNC
+ *\param[in] val The char * which point to "0" or "1"
+ *\param[in,out] buf where to output converted string(char *)
+ *\param[in] bsize  The size of buf.
+ */
 int show_enable_value(char *val, char *buf, int bsize)
 {
     if (!val) {
@@ -32,6 +26,13 @@ int show_enable_value(char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
+/**
+ *\brief Function Pointer Return origin string
+ *\return The strlen of the output string or \ref EZPLIB_VAL_TRUNC
+ *\param[in] val The char * which point to 
+ *\param[in,out] buf where to output converted string(char *)
+ *\param[in] bsize  The size of buf.
+ */
 int show_value(char *val, char *buf, int bsize)
 {
     if (!val) {
@@ -46,6 +47,13 @@ int show_value(char *val, char *buf, int bsize)
 
 char *iftype[] = { "wan", "lan", NULL };
 
+/**
+ *\brief Function Pointer Mapping Interface "wan"/"lan"
+ *\return The strlen of the output string or \ref EZPLIB_VAL_TRUNC
+ *\param[in] val The char * which point to 
+ *\param[in,out] buf where to output converted string(char *)
+ *\param[in] bsize  The size of buf.
+ */
 int show_if_value(char *val, char *buf, int bsize)
 {
     char *ptr;
@@ -78,6 +86,15 @@ int show_if_value(char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
+/**
+ *\brief Function Pointer Mapping from 
+ 		"both" / "tcp" / "udp" / whatever to 
+ 		"UDP/TCP" / "TCP" / "UDP" /WHATEVER
+ *\return The strlen of the output string or \ref EZPLIB_VAL_TRUNC
+ *\param[in] val The char * which point to
+ *\param[in,out] buf where to output converted string(char *)
+ *\param[in] bsize  The size of buf.
+ */
 int show_proto_value(char *val, char *buf, int bsize)
 {
     if (!val) {
@@ -104,6 +121,24 @@ int show_proto_value(char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
+char *mask[] = {
+    "255.255.255.0",
+    "255.255.255.128",
+    "255.255.255.192",
+    "255.255.255.224",
+    "255.255.255.240",
+    "255.255.255.248",
+    "255.255.255.252",
+    "255.255.255.254"
+};
+
+/**
+ *\brief Function Pointer Mapping from mask bits to "255.255.255.XXX"
+ *\return The strlen of the output string or \ref EZPLIB_VAL_TRUNC
+ *\param[in] val The char * which point to
+ *\param[in,out] buf where to output converted string(char *)
+ *\param[in] bsize  The size of buf.
+ */
 int show_mask_value(char *val, char *buf, int bsize)
 {
     if (!val) {
@@ -126,6 +161,14 @@ int show_mask_value(char *val, char *buf, int bsize)
     return strlen(buf);
 }
 
+/**
+ * \brief Use strsep to split word into attrs
+ * \return the token at the pos of delim if find, otherwise the entire str
+ * \param[in] word The word to be splited
+ * \param[in] delim The character as delim(We use \ref ATTR_SEP)
+ * \param[out] idx_arr idx_arr res
+ * \param[in] max_tok Maxim strlen of a single attr(we use \ref MAX_ATTR_NUM)
+ */
 int sep_string(char *word, const char *delim, char **idx_arr, int max_tok)
 {
     char *str = word;
@@ -1550,8 +1593,8 @@ struct attr wl_wisp_mode_rule_attr[] = {
     { "mode5g", show_value, show_value },
     { NULL, NULL, NULL }
 };
-/*-----------------Qos configuration---------------------  --Jack--20121219*/
-#ifdef QOS_CONFIG
+/*-----------------Qos configuration---------------------  
+--Jack--20121219*/
 
 /* port_status */
 struct attr direct_multicast_status_attr[] = {
@@ -1699,7 +1742,6 @@ struct attr root_bw_attr[] = {
     { NULL, NULL, NULL }
 };
 
-#endif //QOS_CONFIG
 struct attr wl_brg_mode_rule_attr[] = {
 	{ "brg_mode", show_value, show_value },
 	{ NULL, NULL, NULL }
@@ -1789,9 +1831,7 @@ struct rule rules[] = {
     { "rt_rule", rt_rule_attr },
     { "rt_rip_rule" , rt_rip_rule_attr },
     { "nat_rule" , nat_rule_attr },
-#ifdef CONFIG_EZP_ARCH_RT305X
     { "hwnat_rule" , nat_rule_attr },
-#endif
     { "wf_content_rule", wf_content_rule_attr },
     { "wf_rule", wf_rule_attr },
     { "igmp_proxy_rule", igmp_proxy_rule_attr },
@@ -1922,7 +1962,7 @@ struct rule rules[] = {
 
     { "wl_easy_mode_rule", wl_ezsy_mode_rule_attr },
     { "wl_wisp_mode_rule", wl_wisp_mode_rule_attr },
-#ifdef QOS_CONFIG
+
     { "direct_multicast_status", direct_multicast_status_attr },
     { "direct_multicast_maxnum", direct_multicast_maxnum_attr },
     { "tos_classification_status", tos_classification_status_attr },
@@ -1942,7 +1982,7 @@ struct rule rules[] = {
     { "heuristics_classify", heuristics_classify_attr },
     { "tos_mark", tos_mark_attr },
     { "root_bw", root_bw_attr },
-#endif
+
 	{ NULL, NULL }
 };
 
