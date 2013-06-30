@@ -417,8 +417,10 @@
 #define SNMPD_COM2SEC_RULE_DEFAULT	"com2sec^ro^default""|""com2sec^rw^default"
 #define BW_EZMODESORT_RULE	"Game Console|VoIP|Instant Messenger|Web Surfing|P2P/FTP|E-Mail"
 
+
 /**
  *\brief nvram_factory_default The factory default settings
+ *\showinitializer
  *\note Sort in alphabet order
  */
 nvram_tuple_t nvram_factory_default[] = {                        
@@ -2124,5 +2126,6 @@ nvram_tuple_t nvram_factory_default[] = {
 
 	{ 0, 0, 0 ,0 }
 };
+
 
 #endif//# __NVRAM_FACTORY_H_

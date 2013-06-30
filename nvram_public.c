@@ -229,6 +229,13 @@ int nvram_commit(void)
 /**
  * \brief Restore settings to Factory Default if it belongs to.
  * \return Return 0 on success
+ * \test Test Case for Performance:
+ *
+ * count=1;while(true); do echo count=$count;
+ * dd if=/dev/zero of=/dev/mtdblock* bs=1k count=*;
+ * nvram init; nvram default;nvram commit;
+ * count=$(($count+1)); done;
+ * \sa nvram_default nvram_factory
  **/
 int nvram_default(void)
 {
@@ -269,6 +276,13 @@ int nvram_default_rule(const char *name)
 /**
  * \brief Restore settings to Factory Default if it belongs to, followed by commit process.
  * \return Return 0 on success
+ * \test Test Case for Performance:
+ *
+ * count=1;while(true); do echo count=$count;
+ * dd if=/dev/zero of=/dev/mtdblock* bs=1k count=*;
+ * nvram init; nvram default;nvram commit;
+ * count=$(($count+1)); done;
+ * \sa nvram_default nvram_factory
  **/
 int nvram_factory(void)
 {
@@ -443,15 +457,24 @@ int nvram_import(const char *filename)
 
 	return 0;
 }
-
-//TODO
+/**
+ *\brief Upgrade configurations to specified source version
+ *\return Return 0 on success
+ *\param[in] source The specified version to upgrade
+ *\todo Need to be implemented
+ */
 int nvram_upgrade(const char *source)
 {
 	int change = 0;
 	return change;
 }
 
-//TODO
+/**
+ *\brief Downgrade configurations to specified target version
+ *\return Return 0 on success
+ *\param[in] source The specified version to downgrade
+ *\todo Need to be implemented
+ */
 int nvram_downgrade(const char *target)
 {
 	int change = 0;
@@ -478,6 +501,13 @@ int nvram_dump(void)
 /**
  * \brief Init NVRAM flash block 
  * \return Return 0 on success
+ * \test Test Case for Performance:
+ *
+ * count=1;while(true); do echo count=$count;
+ * dd if=/dev/zero of=/dev/mtdblock* bs=1k count=*;
+ * nvram init; nvram default;nvram commit;
+ * count=$(($count+1)); done;
+ * \sa nvram_default nvram_factory
  **/
 void *nvram_init()
 {
@@ -570,4 +600,5 @@ int nvram_invmatch(char *name, char *invmatch) {
 	const char *value = nvram_get(name);
 	return (value && strcmp(value, invmatch));
 }
+
 

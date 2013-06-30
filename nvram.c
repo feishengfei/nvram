@@ -413,6 +413,7 @@ int _nvram_close(nvram_handle_t *h)
  *\return Return the value of the name, or NULL if name does not exist
  *\param[in] h NVRAM handler
  *\param[in] name The specified name
+ *\deprecated Invoked in inner functions only.
  **/
 char * _nvram_get(nvram_handle_t *h, const char *name)
 {
@@ -442,6 +443,7 @@ char * _nvram_get(nvram_handle_t *h, const char *name)
  *\brief Get all NVRAM variables. 
  *\return The iterator of all NVRAM settings.
  *\param[in] h The NVRAM handler
+ *\deprecated Invoked in inner functions only.
  **/
 nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
 {
@@ -477,6 +479,7 @@ nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
  * \param[in] h The NVRAM handler
  * \param[in] name The specified name 
  * \param[in] value The specified value 
+ * \deprecated Invoked in inner functions only.
  **/
 int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 {
@@ -519,6 +522,7 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
  *\return Return 0 on success //FIXME
  *\param[in] h The NVRAM handler
  *\param[in] name The specifed name
+ *\deprecated Invoked in inner functions only.
  */
 int _nvram_unset(nvram_handle_t *h, const char *name)
 {
@@ -552,6 +556,7 @@ int _nvram_unset(nvram_handle_t *h, const char *name)
  * \brief Regenerate NVRAM. 
  * \return Return 0 on success
  * \param[in] h The NVRAM handler
+ * \deprecated Invoked in inner functions only.
  **/
 int _nvram_commit(nvram_handle_t *h)
 {

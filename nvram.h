@@ -235,25 +235,33 @@ the public functions of nvram are implemented.
 
 (10)nvram_rule.c (11)nvram_rule.h
 
-Rule/SubRule/Attribute related function are defined/implemented here. You can refer to
+\b Rule/SubRule/Attribute related function are defined/implemented here. You can refer to
 ezp-lib.c/ezp-lib.h in EZP-NVRAM. Which we will explain it later.
 
 \section sec_rule 2.Rule/SubRule/Attribute
 The Rule/SubRule/Attribute is defined in EZP-NVRAM. You can treat them as:
-Rule	-	Rule is the whole value of key-value pair.
-SubRule	-	If the Rule is connected by several '|' character, then each part of it is a SubRule;
-			If there is no '|' character, the whole Rule is a SubRule of itself.
+
+\b Rule	-	\b Rule is the whole value of key-value pair.
+
+\b SubRule	-	If the \b Rule is connected by several '|' character, then each part of it is a SubRule;
+			If there is no '|' character, the whole \b Rule is a SubRule of itself.
 			Each SubRule has similar sturcture. 
 			SubRule can be treated like Array. The first index of the SubRule is 0. 
-Attribute -	The Rule/SubRule is made up of short concatenated characters. And the Attr seperate is '^'.
+
+\b Attribute -	The Rule/SubRule is made up of short concatenated characters. And the Attr seperate is '^'.
 
 Given the lan_main_rule as an example(Refers to nvram_ezpacket.h in EZP-NVRAM):
 			lan_main_rule="LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0"
 
-Rule	-	LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0	
-SubRule	-	LAN1^1^1500^1^1^0				//0
-			GuestLAN^0^1500^1^1^0			//1
-Attribute - LAN1							//name
-			1								//enable
+\b Rule	-	LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0	
+
+\b SubRule	-	LAN1^1^1500^1^1^0				//0
+
+				GuestLAN^0^1500^1^1^0			//1
+
+\b Attribute - LAN1							//name
+
+				1								//enable
+
 			1500							//mtu
  */
