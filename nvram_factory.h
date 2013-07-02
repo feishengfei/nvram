@@ -5,16 +5,19 @@
 /* Board dependent definition. */
 #define ARCH "RT3883"
 
+#define LAN_NUM "1"
+#define WAN_NUM "1"
+
 #ifndef WL_NUM
-#define WL_NUM 1
+#define WL_NUM "1"
 #endif
 
 #ifndef WL_WDS_NUM
-#define WL_WDS_NUM 4
+#define WL_WDS_NUM "4"
 #endif
 
 #ifndef WL_APCLI_NUM
-#define WL_APCLI_NUM 1
+#define WL_APCLI_NUM "1"
 #endif
 
 #define WL_BASIC_RULE "1^9^100^6^1"
@@ -22,8 +25,8 @@
 #define WL5G_BASIC_RULE "1^8^100^0^1"
 #define WL0_IFNAME_RULE "rai0|rai1|rai2|rai3"
 #define WL1_IFNAME_RULE "ra0|ra1|ra2|ra3"
-#define WL0_RULE_NUM 4 
-#define WL0_RULE_MAX 4 
+#define WL0_RULE_NUM "4"
+#define WL0_RULE_MAX "4"
 #define WDS_RULE_MAX WL_WDS_NUM
 #define APCLI_RULE_MAX WL_APCLI_NUM
 
@@ -48,17 +51,17 @@
 #define BR_RULE_GUESTLAN "GuestLAN^0^ra1^"
 #define BR_RULE "LAN1^1^vlan1 ra0 ra1 rai0 rai1 wds0 wds1 apcli0 apclii0^|WAN1^0^vlan2^|"BR_RULE_GUESTLAN
 
-#define BR_RULE_NUM 3
-#define BR_RULE_MAX 8
+#define BR_RULE_NUM "3"
+#define BR_RULE_MAX "8"
 
 #define STATS_RULE "^1^60^vlan1 vlan2 ppp0 br0 ra0 rai0 usb0 eth0"
-#define VLAN_RULE_NUM 2
-#define VLAN_RULE_MAX 8
+#define VLAN_RULE_NUM "2"
+#define VLAN_RULE_MAX "8"
 
 #define VLAN_RULE "LAN1^0^eth2^1^1111011^|WAN1^0^eth2^2^0000111^"
 
-#define VLANPORT_RULE_NUM 5
-#define VLANPORT_RULE_MAX 7
+#define VLANPORT_RULE_NUM "5"
+#define VLANPORT_RULE_MAX "7"
 #define VLANPORT_RULE "PORT1^0^1^0^011101|PORT2^1^1^0^011011|PORT3^2^1^0^010111|PORT4^3^1^0^001111|PORT5^4^2^0^000001|PORT6^5^1^1^|PORT7^6^0^1^"
 
 #define LAN0_PORTS "0 1 2 3"
@@ -474,11 +477,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0
 	},
-	{ "br_rule_max", xstr(BR_RULE_MAX),
+	{ "br_rule_max", BR_RULE_MAX,
 		NVRAM_NONE,
 		0
 	},
-	{ "br_rule_num", xstr(BR_RULE_NUM),
+	{ "br_rule_num", BR_RULE_NUM,
 		NVRAM_NONE,
 		0
 	},
@@ -938,7 +941,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "lan_num", xstr(LAN_NUM), 
+	{ "lan_num", LAN_NUM, 
 		NVRAM_NONE,
 		0 
 	},  
@@ -1397,11 +1400,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},	
-	{ "vlanport_rule_max", xstr(VLANPORT_RULE_MAX),
+	{ "vlanport_rule_max", VLANPORT_RULE_MAX,
 		NVRAM_NONE,
 		0 
 	},
-	{ "vlanport_rule_num", xstr(VLANPORT_RULE_NUM),
+	{ "vlanport_rule_num", VLANPORT_RULE_NUM,
 		NVRAM_NONE,
 		0 
 	},      
@@ -1409,11 +1412,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},	
-	{ "vlan_rule_max", xstr(VLAN_RULE_MAX),
+	{ "vlan_rule_max", VLAN_RULE_MAX,
 		NVRAM_NONE,
 		0 
 	},
-	{ "vlan_rule_num", xstr(VLAN_RULE_NUM),
+	{ "vlan_rule_num", VLAN_RULE_NUM,
 		NVRAM_NONE,
 		0 
 	},      
@@ -1721,11 +1724,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},      
-	{ "wl0_apcli_rule_max", xstr(APCLI_RULE_MAX),  
+	{ "wl0_apcli_rule_max", APCLI_RULE_MAX,  
 		NVRAM_NONE,
 		0 
 	},   
-	{ "wl0_apcli_rule_num", xstr(APCLI_RULE_MAX),   
+	{ "wl0_apcli_rule_num", APCLI_RULE_MAX,   
 		NVRAM_NONE,
 		0 
 	},   
@@ -1773,11 +1776,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},  
-	{ "wl0_wds_rule_max", xstr(WDS_RULE_MAX),
+	{ "wl0_wds_rule_max", WDS_RULE_MAX,
 		NVRAM_NONE,
 		0 
 	},   
-	{ "wl0_wds_rule_num", xstr(WDS_RULE_MAX),
+	{ "wl0_wds_rule_num", WDS_RULE_MAX,
 		NVRAM_NONE,
 		0 
 	},   
@@ -1877,11 +1880,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},      
-	{ "wl1_apcli_rule_max", xstr(APCLI_RULE_MAX),   
+	{ "wl1_apcli_rule_max", APCLI_RULE_MAX,   
 		NVRAM_NONE,
 		0 
 	},   
-	{ "wl1_apcli_rule_num", xstr(APCLI_RULE_MAX),   
+	{ "wl1_apcli_rule_num", APCLI_RULE_MAX,   
 		NVRAM_NONE,
 		0 
 	},   
@@ -1945,11 +1948,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl1_wds_rule_max", xstr(WDS_RULE_MAX),    
+	{ "wl1_wds_rule_max", WDS_RULE_MAX,    
 		NVRAM_NONE,
 		0 
 	},  
-	{ "wl1_wds_rule_num", xstr(WDS_RULE_MAX),     
+	{ "wl1_wds_rule_num", WDS_RULE_MAX,     
 		NVRAM_NONE,
 		0 
 	},   
@@ -2041,7 +2044,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},
 
-	{ "wl_num", xstr(WL_NUM), 
+	{ "wl_num", WL_NUM, 
 		NVRAM_NONE,
 		0 
 	},
@@ -2068,20 +2071,20 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},
 
-	{ "wl_rule_max", xstr(WL_NUM),    
+	{ "wl_rule_max", WL_NUM,    
 		NVRAM_NONE,
 		0 
 	},   
-	{ "wl_rule_num", xstr(WL_NUM),     
+	{ "wl_rule_num", WL_NUM,     
 		NVRAM_NONE,
 		0 
 	},   
 
-	{ "wlv_rule_max", xstr(WL0_RULE_MAX),     
+	{ "wlv_rule_max", WL0_RULE_MAX,     
 		NVRAM_NONE,
 		0 
 	},   
-	{ "wlv_rule_num", xstr(WL0_RULE_NUM) ,     
+	{ "wlv_rule_num", WL0_RULE_NUM,     
 		NVRAM_NONE,
 		0 
 	},   

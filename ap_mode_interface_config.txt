@@ -1,0 +1,149 @@
+----------------AP Mode Config and Interface on WP688----------------
+
+AP Mode can be divided into (1)Station List (2)Basic Settings (3) Sec-
+urity Settings and (4)Advanced Settings.
+
+
+(1)Station List
+
+
+In WP688, only Station MAC and associated Time is required. In 'src\wi
+reless.c' all data are structed as RT_802_11_MAC_TABLE. The 'getwifiSt
+aInfo' interface will provide convenience.
+
+
+(2)Basic Settings
+
+
+(2-01) The Wifi Status can be get from getRadioStatusASP(refert to wir
+eless.c)
+
+	wl0_basic_rule
+
+	enable ^ hidden ^ rate ^ wme ^ isolation 
+	  |        |        |     |        '-------- (2-03)
+	  |        |        |     '----------------- 
+	  |        |        '----------------------- 
+	  |        '-------------------------------- (2-04)
+	  '----------------------------------------- (2-02)
+
+(2-02) The on/off status of each VAP.
+
+(2-03) The isolation of each VAP.
+
+(2-04) Whether SSID of each VAP is hidden.
+
+    wl_ap_basic_rule, wl_basic_rule
+
+	enable ^ net_mode ^ txpower ^ channel ^ bisolation
+	  |         |          |        |           '--------- (2-06) <4-15>
+	  |         |          |        '--------------------- (2-05) (4-07)
+	  |         |          '------------------------------ (4-03)
+	  |         '----------------------------------------- (4-04)
+	  '---------------------------------------------------
+(2-05) Channel Select 
+
+(2-06) Communication between wireless clients with different SSIDs
+
+
+(3)Security Settings
+
+	Not specified in PHASE 1
+
+(4)Advanced Settings
+
+    wl_ap_advanced_rule, wl_advanced_rule
+
+    infra ^ ap_mode ^ rateset ^ mrate ^ frag ^ rts ^ dtim 
+      |        |         |        |      |      |     '------ (4-01)
+      |        |         |        |      |      '------------ <4-21>
+      |        |         |        |      '------------------- <4-16>
+      |        |         |        '--------------------------
+      |        |         '-----------------------------------
+      |        '---------------------------------------------
+      '------------------------------------------------------
+
+	^ bcn ^ plcphdr ^ antdiv ^ gmode ^ gmode_protection 
+	   |       |        |        |             '-------------
+	   |       |        |        '---------------------------
+	   |       |        '------------------------------------
+	   |       '---------------------------------------------
+	   '-----------------------------------------------------
+
+	^ afterburner ^ frameburst ^ txburst ^ pktaggr ^ txmode 
+	       |            |           |         |         '----
+	       |            |           |         '--------------
+	       |            |           '------------------------ <4-18>
+	       |            '------------------------------------
+	       '-------------------------------------------------
+
+	^ rdg ^ linkadapt ^ htc ^ htbw ^ gi ^ opmode ^ mcs 
+	   |        |        |      |     |      |      '-------- <4-08>
+	   |        |        |      |     |      '--------------- <4-17>
+	   |        |        |      |     '---------------------- (4-06)
+	   |        |        |      '---------------------------- (4-05)
+	   |        |        '-----------------------------------
+	   |        '--------------------------------------------
+	   '----------------------------------------------------- <4-09>
+
+	^ mpdu ^ amsdu ^ autoba ^ bawinsize ^ badecline ^ extcha 
+	   |       |        |         |           |          '--- (4-07)
+	   |       |        |         |           '-------------- <4-12>
+	   |       |        |         '--------------------------
+	   |       |        '------------------------------------ <4-11>
+	   |       '--------------------------------------------- <4-10>
+	   '-----------------------------------------------------
+
+	^ wdstxmode ^ antennamode ^ distance
+	      |            |           '------------------------- (4-02)
+	      |            '------------------------------------- <4-19>
+	      '--------------------------------------------------
+	
+	wl_mode_rule
+
+	mode ^ auto_bridge ^ ab_status
+	  |         |            '------------------------------- 
+	  |         '--------------------------------------------
+	  '------------------------------------------------------ (4-07)
+
+
+(4-01)DTIM
+
+(4-02)Distance
+
+(4-03)Txpower
+
+(4-04)Network Mode:bg_mix,b_only,g_only,n_only,bgn_mix
+
+<!!! 05~07 is available under 11n mode !!!>
+
+(4-05) Channel BandWidth
+
+(4-06) Guard Interval
+
+(4-07) Extension Channel
+
+<!!! 08~21 is not implemented in WP688 !!!>
+
+<4-08> MCS
+<4-09> RDG
+<4-10> AMSDU
+<4-11> AutoBA
+<4-12> BADecline
+<4-13> TxStream		---- Not Found
+<4-14> RxStream		---- Not Found
+<4-15> NoForwardingAdv   
+<4-16> Fragment Threshold
+<4-17> OP Mode
+<4-18> Tx Burst
+<4-19> Antenna Mode
+<4-20> Sec Mode
+	wlv_rule_max
+
+	wl0_sec_rule
+
+	secmode
+	   '------- <4-20>
+
+
+<4-21> RTS Threshold

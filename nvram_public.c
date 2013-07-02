@@ -5,7 +5,7 @@
 #include "nvram_factory.h"
 
 /* Global */
-nvram_handle_t *nvram_h = NULL;
+static nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
 extern size_t nvram_erase_size;
 
@@ -53,6 +53,7 @@ char * nvram_get(const char *name)
 		}
 	}
 
+
 	ret = _nvram_get(nvram_h, name);
 	return ret;
 }
@@ -97,6 +98,7 @@ int nvram_set(const char *name, const char *value)
 			return _nvram_close(nvram_h);
 		}
 	}
+
 
 	uint32_t opt = nvram_get_option(name);
 
@@ -216,6 +218,7 @@ int nvram_commit(void)
 			return _nvram_close(nvram_h);
 		}
 	}
+
 
 	stat |= _nvram_commit(nvram_h);
 
@@ -508,6 +511,7 @@ int nvram_dump(void)
  * nvram init; nvram default;nvram commit;
  * count=$(($count+1)); done;
  * \sa nvram_default nvram_factory
+ * \bug nvram init may get SIGSEGV if the last commit runs uncomplete.
  **/
 void *nvram_init()
 {

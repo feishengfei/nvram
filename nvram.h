@@ -12,7 +12,9 @@
 #include <sys/stat.h>
 #include <linux/limits.h>
 
-#define xstr(x)  #x
+#define xstr(s) str(s)
+#define str(s)  #s 
+
 #define EZP_PROD_VERSION "0.0.0_ALPHA"
 #define EZP_PROD_CAT "2"
 #define EZP_PROD_SUBCAT "1"

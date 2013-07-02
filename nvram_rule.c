@@ -1332,7 +1332,8 @@ struct attr l2tpd_user_rule_attr[] = {
    bawinsize[1~64,default=8,iot=64->64]^
    badecline[0:disable|1:enable->1->0]^
    extcha^wdstxmode[CCK|OFDM|HTMIX|GREENFIELD]
-   antennamode [1:external0:internal]*/
+   antennamode [1:external0:internal]^
+   distance*/
 struct attr wl_advanced_rule_attr[] = {
     { "infra", show_value, show_value },
     { "ap_mode", show_value, show_value },
