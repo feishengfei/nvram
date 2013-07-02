@@ -1,4 +1,9 @@
 #include <ctype.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/types.h>
+#include <string.h>
+#include <assert.h>
 
 #include "nvram.h"
 #include "nvram_fw.h"
@@ -9,6 +14,56 @@ nvram_handle_t *nvram_h = NULL;
 extern struct nvram_fw_tuple nvram_fw_table[];
 extern size_t nvram_erase_size;
 
+nvram_handle_t *get_shm_handle()
+{
+	int shm_id = -1;
+	key_t key = -1;
+	nvram_handle_t *h;
+
+	key = ftok("/tmp", NVRAM_SHM_PROJ_ID);
+	if(key==-1) {   
+		perror("ftok error");
+	}
+
+	//try get first
+	shm_id = shmget(key,0, 0);
+	if(shm_id == -1) {  
+		perror("shmget error");
+		//try create
+		shm_id=shmget(key,sizeof(nvram_handle_t *),
+			IPC_CREAT|IPC_EXCL|0600);
+		//create failure
+		if(shm_id==-1) {  
+			//incredible !!!FIXME
+			perror("create shmget error");
+			assert(0);
+			return NULL;
+		}
+		//create success	
+		else {
+			h = (nvram_handle_t *)shmat(shm_id,NULL,0);
+			memcpy(h, NULL, sizeof(nvram_handle_t*));
+			return NULL;
+		}
+	}
+	//read ok
+	else {
+
+	}
+
+
+
+
+
+
+
+	return NULL;
+}
+
+void set_shm_handle(nvram_handle_t *h)
+{
+
+}
 
 /****************** public functions **************** */
 /**

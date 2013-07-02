@@ -64,6 +64,10 @@
 /* NVRAM is undefined. */
 #define NVRAM_UNDEFINED 0x80000000
 
+/* NVRAM shared memory proj_id (non-zero)*/
+#define NVRAM_SHM_PROJ_ID 0x03
+
+
 struct nvram_header {
 	uint32_t magic;
 	uint32_t len;
@@ -181,6 +185,8 @@ int nvram_downgrade(const char *target);
 
 //helper function
 int nvram_dump(void);
+nvram_handle_t *get_shm_handle();
+void set_shm_handle(nvram_handle_t *h);
 /**@}*/
 #endif /* _nvram_h_ */
 
