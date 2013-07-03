@@ -32,14 +32,14 @@
 
 
 
-#define WAN0_IFNAME "vlan2"
+#define WAN0_IFNAME "eth2"
 
 #define WAN0_IFNAMES ""
 #define WAN0_HWNAME ""
-#define WAN0_DEVICE "vlan2"
+#define WAN0_DEVICE "eth2"
 #define WAN0_PORTS "4"
 
-#define LAN0_IFNAME "br0"
+#define LAN0_IFNAME "br-lan0"
 #define LAN0_IFNAMES "vlan1 ra0 ra1 apcli0 apclii0"
 #define LAN0_IFNAMES_WDS "vlan1 ra0 ra1 rai0 rai1 apcli0 apclii0 wds0 wds1 wds2 wds3 wdsi0 wdsi1 wdsi2 wdsi3"
 #define LAN0_HWNAME ""
@@ -49,7 +49,7 @@
 #define LAN1_DEVICE "br2"
 
 #define BR_RULE_GUESTLAN "GuestLAN^0^ra1^"
-#define BR_RULE "LAN1^1^vlan1 ra0 ra1 rai0 rai1 wds0 wds1 apcli0 apclii0^|WAN1^0^vlan2^|"BR_RULE_GUESTLAN
+#define BR_RULE "LAN1^1^rai0 rai1 wds0 apcli0^|WAN1^0^eth2^|GuestLAN^0^ra1^"
 
 #define BR_RULE_NUM "3"
 #define BR_RULE_MAX "8"
@@ -148,7 +148,7 @@
 #define WAN_DETECT_RULE "^0^ping^208.67.222.222^60^8|^0^ping^208.67.222.222^60^8"
 #define WAN_WEIGHT_RULE "1^1|1^1"
 #define WAN_FAILOVER_RULE "0^wan0^wan1"
-#define WAN_STATIC_RULE "10.1.1.25^24^10.1.1.254^10.1.1.254^^|10.1.2.25^24^10.1.2.254^10.1.2.254^^"
+#define WAN_STATIC_RULE "10.1.1.25^24^10.1.1.254^10.1.1.254^^^|10.1.2.25^24^10.1.2.254^10.1.2.254^^"
 #define WAN_DHCP_RULE "^^86400|^^86400"
 #define WAN_HTC_RULE "^^86400^512^0|^^86400^512^0"
 #define WAN_PPPOE_RULE "chap^^^0^300^5^5^1492^1492^isp^^|chap^^^0^300^5^5^1492^1492^isp^^"
@@ -175,9 +175,9 @@
 
 /* LAN amount dependent definition. */
 #define LAN_MAIN_GUESTLAN "GuestLAN^0^1500^1^1^0"
-#define LAN_MAIN_RULE "LAN1^1^1500^1^1^0|"LAN_MAIN_GUESTLAN
+#define LAN_MAIN_RULE "LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0"
 #define LAN_STATIC_GUESTLAN "192.168.100.1^24^^192.168.100.1^^0^^^192.168.100.1^24^192.168.1.2^24"
-#define LAN_STATIC_RULE_DEFAULT "192.168.1.10^24^^192.168.1.10^^0^^^192.168.1.10^24^192.168.1.10^24|"LAN_STATIC_GUESTLAN
+#define LAN_STATIC_RULE_DEFAULT "192.168.1.20^24^192.168.1.1^^^^^^192.168.1.20^24^^"
 #define LAN_HWADDR_CLONE_RULE "0^"
 
 /* WLAN amount dependent definition. */
@@ -188,7 +188,7 @@
 #define WL_WDS_RULE "disabled^1|disabled^1"
 #define WL1_WDS_RULE "disabled^1|disabled^1"
 #define WL_WME_RULE "15 1023 7 0 0 off^15 1023 3 0 0 off^7 15 2 6016 3008 off^3 7 2 3264 1504 off^15 1023 7 0 0 off^15 63 3 0 0 off^7 15 1 6016 3008 off^3 7 1 3264 1504 off^off^128|15 1023 7 0 0 off^15 1023 3 0 0 off^7 15 2 6016 3008 off^3 7 2 3264 1504 off^15 1023 7 0 0 off^15 63 3 0 0 off^7 15 1 6016 3008 off^3 7 1 3264 1504 off^off^128"
-#define WL_MODE_RULE "ap^0^0|ur^0^0"
+#define WL_MODE_RULE "normal^2^0|normal^2^0"
 #define WL1_MODE_RULE "ur^0^0|ur^0^0"
 #define WL_WPS_RULE "0^^0|0^^0"
 #define WL1_WPS_RULE "0^^0|0^^0"
@@ -445,12 +445,12 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_PROTECTED,
 		0 
 	},        
-	{ "board_model_rule", "0A22",
+	{ "board_model_rule", "",
 		NVRAM_DEFAULT,
 		0
 	},
-	{ "board_model_rule_default", "0",
-		NVRAM_DEFAULT,
+	{ "board_model_rule_default", "0A22",
+		NVRAM_NONE,
 		0
 	},
 
@@ -469,7 +469,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		0
 	},
 	{"bridge_rule_default", "0",
-		NVRAM_DEFAULT,
+		NVRAM_NONE,
 		0
 	},
 
@@ -945,7 +945,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},  
-	{ "lan_static_rule", "192.168.1.20^255.255.255.0^192.168.1.1^^^^^^^^^^", 
+	{ "lan_static_rule", "", 
 		NVRAM_DEFAULT,
 		0 
 	},
@@ -1558,7 +1558,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},	
-	{ "wan_num", xstr(WAN_NUM),     
+	{ "wan_num", WAN_NUM,     
 		NVRAM_NONE,
 		0 
 	},
@@ -1793,11 +1793,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},
 	{"wl0_wpa_auth_rule", "^^^",
-		NVRAM_NONE,
+		NVRAM_DEFAULT,
 		0
 	},
 	{"wl0_wpa_auth_rule_default", "1^^",
-		NVRAM_DEFAULT,
+		NVRAM_NONE,
 		0
 	},
 
@@ -1965,11 +1965,11 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},
 	{"wl1_wpa_auth_rule", "^^^",
-		NVRAM_NONE,
+		NVRAM_DEFAULT,
 		0
 	},
 	{"wl1_wpa_auth_rule_default", "1^^",
-		NVRAM_DEFAULT,
+		NVRAM_NONE,
 		0
 	},
 	{ "wl1_wps_rule", WL1_WPS_RULE, 

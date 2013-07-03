@@ -592,11 +592,11 @@ int main( int argc, const char *argv[] )
 				}
 			}
 		}
-/* TODO nvram boot
-	   else if (!strncmp(*argv, "boot", 4)) {
-		   return 0;
-	   }
-*/
+		else if (!strncmp(*argv, "boot", 4)) {
+			nvram_boot();
+			stat = 0;
+			done++;
+		}
 		/* nvram default */
 		else if( !strncmp(*argv, "default", 7) )
 		{
@@ -667,8 +667,8 @@ int main( int argc, const char *argv[] )
 				"	nvram delete rule <rule-set> <nth>\n"
 				"	nvram rule num <rule-set>\n"
 
-//TODO			"	nvram boot\n"
-				"	nvram default\n"						//TODO
+				"	nvram boot\n"
+				"	nvram default [rule-set]\n"				//TODO
 				"	nvram factory\n"						//TODO
 
 				"	nvram commit\n"

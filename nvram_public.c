@@ -55,6 +55,7 @@ char * nvram_get(const char *name)
 
 
 	ret = _nvram_get(nvram_h, name);
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -104,7 +105,7 @@ int nvram_set(const char *name, const char *value)
 
 	/* If anything exists, return permission denied. */
 	if (opt & NVRAM_PROTECTED) {
-		char *exist = nvram_get(name);
+		char *exist = _nvram_get(nvram_h, name);
 		if (exist && *exist) {
 			return EACCES; 
 		}
@@ -112,6 +113,7 @@ int nvram_set(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -140,6 +142,7 @@ int nvram_fset(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -176,6 +179,7 @@ int nvram_reset(const char *name)
 	}
 
 	ret = _nvram_unset(nvram_h, name);
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -293,6 +297,41 @@ int nvram_factory(void)
 	stat = nvram_default();
 	stat = nvram_commit();
 	return stat;
+}
+
+
+/**
+ * \brief 	Update the \ref NVRAM_DEFAULT rule if it's empty.
+ *			This may be effect only once it revert to factory default.
+ *			1.Empty \ref NVRAM_DEFAULT will be updated by it's _default brother.
+ *			2.Valid \ref NVRAM_TEMP will be reverted to it's factory default.
+ */
+void nvram_boot(void)
+{
+	struct nvram_tuple *v;
+    char *value;
+
+	for (v = &nvram_factory_default[0]; v->name ; v++) {
+		value = nvram_get(v->name);
+        if (!value || !*value) {
+            /* NULL or "\0" */
+            if (v->option & NVRAM_EMPTY)
+                continue; /* NULL or "\0" is allowed. */
+
+            if (v->option & NVRAM_DEFAULT) {
+                char default_name[64];
+                /* Get the default value. */
+                sprintf(default_name, "%s_default", v->name);
+                v->value = nvram_get(default_name);
+            }
+
+            nvram_set(v->name, v->value);
+        } else {
+            /* Some value exist. */
+            if (v->option & NVRAM_TEMP)
+				nvram_set(v->name, v->value);
+        }
+	}
 }
 
 /**

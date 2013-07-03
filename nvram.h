@@ -173,6 +173,7 @@ int nvram_default(void);
 int nvram_default_rule(const char *name);
 /* commit  after restore the whole factory default */
 int nvram_factory(void);
+void nvram_boot(void);
 
 int nvram_export(const char *filename);
 int nvram_import(const char *filename);
