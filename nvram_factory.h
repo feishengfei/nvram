@@ -25,8 +25,8 @@
 #define WL5G_BASIC_RULE "1^8^100^0^1"
 #define WL0_IFNAME_RULE "rai0|rai1|rai2|rai3"
 #define WL1_IFNAME_RULE "ra0|ra1|ra2|ra3"
-#define WL0_RULE_NUM "4"
-#define WL0_RULE_MAX "4"
+#define WL0_RULE_NUM "9"
+#define WL0_RULE_MAX "9"
 #define WDS_RULE_MAX WL_WDS_NUM
 #define APCLI_RULE_MAX WL_APCLI_NUM
 
@@ -213,9 +213,9 @@
 #define WL0_APCLI_SEC_WPA2_RULE "^aes"
 #define WL1_APCLI_SEC_WPA2_RULE "^aes"
 
-#define WL0_BASIC_RULE "1^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0"
+#define WL0_BASIC_RULE "1^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0"
 #define WL1_BASIC_RULE "1^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0"
-#define WL0_SSID_RULE "CPE_2.4G|CPE_2.4G_SSID1|CPE_2.4G_SSID2|CPE_2.4G_SSID3"
+#define WL0_SSID_RULE "CPE_2.4G|CPE_2.4G_SSID1|CPE_2.4G_SSID2|CPE_2.4G_SSID3|CPE_2.4G_SSID4|CPE_2.4G_SSID5|CPE_2.4G_SSID6|CPE_2.4G_SSID7|CPE_2.4G_SSID8"
 #define WL5G_SSID_RULE "CPE_5G|CPE_5G_SSID1|CPE_5G_SSID2|CPE_5G_SSID3"
 #define WL0_SEC_RULE "disabled|disabled|disabled|disabled"
 #define WL0_SEC_WEP_RULE   "1^^^^^^open|1^^^^^^open|1^^^^^^open|1^^^^^^open"
