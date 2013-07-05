@@ -108,6 +108,9 @@ nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
 int _nvram_rehash(nvram_handle_t *h);
 /* Computes a crc8 over the input data. */
 uint8_t hndcrc8 (uint8_t * pdata, uint32_t nbytes, uint8_t crc);
+/* Test Count size */
+void count_nvram(nvram_handle_t *h);
+
 
 /** \defgroup inner_func Inner Functions 
  *@{*/ 

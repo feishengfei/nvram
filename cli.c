@@ -2,6 +2,7 @@
 #include <signal.h>
 #include "cli.h"
 #include "nvram_rule.h"
+#include <time.h>
 
 void puts_trim_cr(char *str)
 {   
@@ -636,6 +637,21 @@ int main( int argc, const char *argv[] )
 		{
 			stat = *((int *)nvram_init());
 			done++;
+		}
+		else if( !strncmp(*argv, "test", 4) ) {
+			while(1) {
+				time_t t = time(NULL);	
+				char t_str[16]={};
+				sprintf(t_str, "%d\r\n", t);
+				nvram_set("date", t_str);
+				printf("set date"":%s\r\n", t_str);	
+				sleep(2);	
+				printf("get date "":%s\r\n", nvram_get("date"));	
+				sleep(2);	
+				nvram_set(t_str, "date");
+				printf("set %s:date\r\n", t_str);	
+				sleep(2);	
+			}
 		}
 		else
 		{

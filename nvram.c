@@ -36,6 +36,7 @@ void _nvram_free(nvram_handle_t *h)
 	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
 		for (t = h->nvram_hash[i]; t; t = next) {
 			next = t->next;
+			free(t->value);
 			free(t);
 		}
 		h->nvram_hash[i] = NULL;
@@ -44,6 +45,7 @@ void _nvram_free(nvram_handle_t *h)
 	/* Free dead table */
 	for (t = h->nvram_dead; t; t = next) {
 		next = t->next;
+		free(t->value);
 		free(t);
 	}
 
@@ -343,6 +345,7 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 				else
 				{
 					munmap(h->mmap, h->length);
+					free(mtd);
 					free(h);
 				}
 			}
@@ -500,8 +503,9 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 		return -12; /* -ENOMEM */
 
 	/* Value reallocated */
-	if (t && t == u)
+	if (t && t == u){
 		return 0;
+	}
 
 	/* Move old tuple to the dead table */
 	if (t) {
@@ -513,8 +517,45 @@ int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
 	/* Add new tuple to the hash table */
 	u->next = h->nvram_hash[i];
 	h->nvram_hash[i] = u;
-
 	return 0;
+}
+
+/* Test Count size */
+void count_nvram(nvram_handle_t *h)
+{
+	assert(h != NULL);
+	uint32_t i;
+	nvram_tuple_t *t, *next;
+
+	/* stat hash table */
+	int sum_hash_i[257] = {0};
+	int sum_hash = 0;
+	int sum_dead = 0;
+	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
+		for (t = h->nvram_hash[i]; t; t = next) {
+			next = t->next;
+			sum_hash++;
+			sum_hash_i[i]++;
+		}
+	}
+
+	/* stat dead table */
+	for (t = h->nvram_dead; t; t = next) {
+		next = t->next;
+		sum_dead++;
+	}
+
+	printf("hash(%d):\r\n", sum_hash);
+	for (i = 0; i < NVRAM_ARRAYSIZE(sum_hash_i); i++) {
+		printf("%02d ", sum_hash_i[i]);	
+		if(0 == (i+1)%8) {
+			printf(" - ");
+		}
+		if(0 == (i+1)%16) {
+			printf("\r\n");
+		}
+	}
+	printf("\r\ndead:%d\r\n", sum_dead);
 }
 
 /**
@@ -620,6 +661,6 @@ int _nvram_commit(nvram_handle_t *h)
 	fsync(h->fd);
 
 	/* Reinitialize hash table */
-	return _nvram_rehash(h);
+	return _nvram_rehash(h); 
 }
 
