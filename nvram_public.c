@@ -5,9 +5,11 @@
 #include "nvram_factory.h"
 
 /* Global */
-static nvram_handle_t *nvram_h = NULL;
+nvram_handle_t *nvram_h = NULL;
+char nvram_get_buf[NVRAM_TMP_LEN] = {0};
 extern struct nvram_fw_tuple nvram_fw_table[];
 extern size_t nvram_erase_size;
+
 
 
 /****************** public functions **************** */
@@ -55,8 +57,15 @@ char * nvram_get(const char *name)
 
 
 	ret = _nvram_get(nvram_h, name);
-//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
-	return ret;
+	if(ret){
+		strcpy(nvram_get_buf, ret);
+		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+		return nvram_get_buf;
+	}
+	else {
+		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+		return NULL;
+	}
 }
 
 /**
@@ -113,7 +122,7 @@ int nvram_set(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
-//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -142,7 +151,7 @@ int nvram_fset(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
-//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -179,7 +188,7 @@ int nvram_reset(const char *name)
 	}
 
 	ret = _nvram_unset(nvram_h, name);
-//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -310,9 +319,22 @@ void nvram_boot(void)
 {
 	struct nvram_tuple *v;
     char *value;
+	nvram_handle_t *h_r = NULL;
+	nvram_handle_t *h_w = NULL;
+
+	h_r = _nvram_open_rdonly();
+	if(NULL == h_r) {
+		_nvram_close(h_r);
+		return NULL;
+	}
+
+	h_w = _nvram_open_staging();
+	if(NULL == h_w) {
+		return _nvram_close(h_w);
+	}
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
-		value = nvram_get(v->name);
+		value = _nvram_get(h_r, v->name);
         if (!value || !*value) {
             /* NULL or "\0" */
             if (v->option & NVRAM_EMPTY)
@@ -322,16 +344,21 @@ void nvram_boot(void)
                 char default_name[64];
                 /* Get the default value. */
                 sprintf(default_name, "%s_default", v->name);
-                v->value = nvram_get(default_name);
+                v->value = _nvram_get(h_r, default_name);
             }
 
-            nvram_set(v->name, v->value);
+            _nvram_set(h_w, v->name, v->value);
+			_nvram_commit(h_w);
         } else {
             /* Some value exist. */
             if (v->option & NVRAM_TEMP)
-				nvram_set(v->name, v->value);
+				_nvram_set(h_w, v->name, v->value);
+				_nvram_commit(h_w);
         }
 	}
+
+	_nvram_close(h_w);
+	_nvram_close(h_r);
 }
 
 /**
