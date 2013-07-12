@@ -13,7 +13,7 @@ LIB_FILENAME = libnvram.so
 
 LIB_CFLAGS  = $(CFLAGS) -shared -fPIC
 
-CLI_CFLAGS  = $(CFLAGS) -ggdb3 
+CLI_CFLAGS  = $(CFLAGS)
 CLI_LDFLAGS = $(LDFLAGS)
 
 CLI_OBJ = cli.o

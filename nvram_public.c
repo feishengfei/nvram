@@ -59,11 +59,11 @@ char * nvram_get(const char *name)
 	ret = _nvram_get(nvram_h, name);
 	if(ret){
 		strcpy(nvram_get_buf, ret);
-		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+//		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 		return nvram_get_buf;
 	}
 	else {
-		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+//		{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 		return NULL;
 	}
 }
@@ -122,7 +122,7 @@ int nvram_set(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
-	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -151,7 +151,7 @@ int nvram_fset(const char *name, const char *value)
 
 	ret = _nvram_set(nvram_h, name, value);
 	ret = _nvram_commit(nvram_h);
-	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 
@@ -188,7 +188,7 @@ int nvram_reset(const char *name)
 	}
 
 	ret = _nvram_unset(nvram_h, name);
-	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
+//	{_nvram_close(nvram_h); nvram_h = NULL;}	//RESOLVE_II
 	return ret;
 }
 

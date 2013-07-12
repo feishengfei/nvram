@@ -449,7 +449,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_DEFAULT,
 		0
 	},
-	{ "board_model_rule_default", "0A22",
+	{ "board_model_rule_default", "",
 		NVRAM_NONE,
 		0
 	},
@@ -2058,15 +2058,15 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_DEFAULT,
 		0 
 	},
+	{ "wl_region_default", "0", 
+		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
+		0 
+	},
 	{ "wl_regionaband", "", 
 		NVRAM_DEFAULT,
 		0 
 	},
 	{ "wl_regionaband_default", WL_REGION_ABAND, 
-		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
-		0 
-	},
-	{ "wl_region_default", "0", 
 		NVRAM_PROTECTED | NVRAM_CUSTOMIZED,
 		0 
 	},
