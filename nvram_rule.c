@@ -951,6 +951,19 @@ struct attr br_rule_attr[] = {
     { NULL, NULL, NULL }
 };
 
+ /* name^lan_ifnames^wan_ifnames*/
+struct attr lan_wan_mode_rule_attr[] = {
+    { "name", show_value, show_value },
+    { "lan_ifnames", show_value, show_value },
+    { "wan_ifnames", show_value, show_value },
+    { NULL, NULL, NULL }
+};
+struct attr system_mode_attr[] = {
+    { "name", show_value, show_value },
+    { "id", show_value, show_value },
+    { NULL, NULL, NULL }
+};
+
  /* name^enable[0|1]^port */
 struct attr ssh_rule_attr[] = {
     { "name", show_value, show_value },
@@ -1846,6 +1859,12 @@ struct rule rules[] = {
     { "vlan_rule", vlan_rule_attr },
     { "vlanport_rule", vlanport_rule_attr },
     { "br_rule", br_rule_attr },
+
+    { "br_lan_rule", br_rule_attr },
+    { "br_wan_rule", br_rule_attr },
+    { "lan_wan_mode_rule", lan_wan_mode_rule_attr },
+    { "system_mode", system_mode_attr },
+
     { "ntp_rule", ntp_rule_attr },
     { "ssh_rule", ssh_rule_attr },
     { "log_rule", log_rule_attr },

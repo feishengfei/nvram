@@ -258,13 +258,6 @@ int nvram_default(void)
 	int stat = 0;
 	struct nvram_tuple *v;
 
-	if(NULL == nvram_h) {
-		nvram_h = _nvram_open_rdonly();
-		if(NULL == nvram_h) {
-			return _nvram_close(nvram_h);
-		}
-	}
-
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		stat += nvram_set(v->name, v->value);
 	}
@@ -373,12 +366,6 @@ int nvram_export(const char *filename)
 	struct nvram_tuple *v;
 	char *value;
 
-	if(NULL == nvram_h) {
-		nvram_h = _nvram_open_rdonly();
-		if(NULL == nvram_h) {
-			return _nvram_close(nvram_h);
-		}
-	}
 
 	if ( !(fp = fopen(filename, "wb") ))
 		return EACCES;

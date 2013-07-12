@@ -32,7 +32,7 @@
 
 
 
-#define WAN0_IFNAME "eth2"
+#define WAN0_IFNAME "br-wan0"
 
 #define WAN0_IFNAMES ""
 #define WAN0_HWNAME ""
@@ -40,7 +40,7 @@
 #define WAN0_PORTS "4"
 
 #define LAN0_IFNAME "br-lan0"
-#define LAN0_IFNAMES "vlan1 ra0 ra1 apcli0 apclii0"
+#define LAN0_IFNAMES "rai0 rai1 rai2 rai3 rai4 rai5 rai6 rai7"
 #define LAN0_IFNAMES_WDS "vlan1 ra0 ra1 rai0 rai1 apcli0 apclii0 wds0 wds1 wds2 wds3 wdsi0 wdsi1 wdsi2 wdsi3"
 #define LAN0_HWNAME ""
 #define LAN0_DEVICE "vlan1"
@@ -49,7 +49,12 @@
 #define LAN1_DEVICE "br2"
 
 #define BR_RULE_GUESTLAN "GuestLAN^0^ra1^"
-#define BR_RULE "LAN1^1^rai0 rai1 wds0 apcli0^|WAN1^0^eth2^|GuestLAN^0^ra1^"
+#define BR_RULE "LAN1^1^rai0 rai1 rai2 rai3 rai4 rai5 rai6 rai7^|WAN1^0^eth2^|GuestLAN^0^rai0^"
+#define BR_LAN_RULE "LAN1^1^rai0 rai1 rai2 rai3 rai4 rai5 rai6 rai7^|GuestLAN^0^ra1^"
+#define BR_WAN_RULE "WAN1^1^eth2^"
+#define LAN_WAN_MODE_RULE "normal^rai0 rai1 rai2 rai3 rai4 rai5 rai6 rai7^eth2|ap^rai0 rai1 rai2 rai3 rai4 rai5 rai6 rai7 eth2^|wisp0^rai1 rai2 rai3 rai4 rai5 rai6 rai7 eth2^apclii0|wisp1^rai0 rai2 rai3 rai4 rai5 rai6 rai7 eth2^rai1|repeater^^"
+ 
+#define LAN_WAN_MODE_DEFAULT "normal^0"
 
 #define BR_RULE_NUM "3"
 #define BR_RULE_MAX "8"
@@ -177,7 +182,7 @@
 #define LAN_MAIN_GUESTLAN "GuestLAN^0^1500^1^1^0"
 #define LAN_MAIN_RULE "LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0"
 #define LAN_STATIC_GUESTLAN "192.168.100.1^24^^192.168.100.1^^0^^^192.168.100.1^24^192.168.1.2^24"
-#define LAN_STATIC_RULE_DEFAULT "192.168.1.20^24^192.168.1.1^^^^^^192.168.1.20^24^^"
+#define LAN_STATIC_RULE_DEFAULT "192.168.1.20^24^^192.168.1.1^^^^^192.168.1.20^24^192.168.1.20^24"
 #define LAN_HWADDR_CLONE_RULE "0^"
 
 /* WLAN amount dependent definition. */
@@ -473,10 +478,19 @@ nvram_tuple_t nvram_factory_default[] = {
 		0
 	},
 
+	{ "system_mode", LAN_WAN_MODE_DEFAULT,
+		NVRAM_NONE,
+		0
+	},
+
 	{ "br_rule", BR_RULE,
 		NVRAM_NONE,
 		0
 	},
+	{ "lan_wan_mode_rule", LAN_WAN_MODE_RULE,
+ 		NVRAM_NONE,
+ 		0
+ 	},
 	{ "br_rule_max", BR_RULE_MAX,
 		NVRAM_NONE,
 		0
@@ -485,6 +499,34 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0
 	},
+
+	{ "br_lan_rule", BR_LAN_RULE,
+ 		NVRAM_NONE,
+ 		0
+ 	},
+	{ "br_lan_rule_max", BR_RULE_MAX,
+		NVRAM_NONE,
+		0
+	},
+	{ "br_lan_rule_num", BR_RULE_NUM,
+		NVRAM_NONE,
+		0
+	},
+
+	{ "br_wan_rule", BR_WAN_RULE,
+		NVRAM_NONE,
+		0
+	},
+	{ "br_wan_rule_max", BR_RULE_MAX,
+		NVRAM_NONE,
+		0
+	},
+	{ "br_wan_rule_num", BR_RULE_NUM,
+		NVRAM_NONE,
+		0
+	},
+
+
 
 	{ "bw_app_rule", BW_APP_RULE,
 		NVRAM_NONE,

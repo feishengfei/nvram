@@ -345,6 +345,7 @@ nvram_handle_t * _nvram_open(const char *file, int access)
 				else
 				{
 					munmap(h->mmap, h->length);
+					free(mtd);
 					free(h);
 				}
 			}
