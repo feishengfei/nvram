@@ -20,9 +20,9 @@
 #define WL_APCLI_NUM "1"
 #endif
 
-#define WL_BASIC_RULE "1^9^100^6^1"
-#define WL_AP_BASIC_RULE "1^9^100^6^1"
-#define WL5G_BASIC_RULE "1^8^100^0^1"
+#define WL_BASIC_RULE "1^9^100^0^0"
+#define WL_AP_BASIC_RULE "1^9^100^0^0"
+#define WL5G_BASIC_RULE "1^8^100^0^0"
 #define WL0_IFNAME_RULE "rai0|rai1|rai2|rai3"
 #define WL1_IFNAME_RULE "ra0|ra1|ra2|ra3"
 #define WL0_RULE_NUM "8"
@@ -31,12 +31,13 @@
 #define APCLI_RULE_MAX WL_APCLI_NUM
 
 
+#define WLAN_DEV_PREFIX "rai apclii"
 
 #define WAN0_IFNAME "br-wan0"
 
 #define WAN0_IFNAMES ""
 #define WAN0_HWNAME ""
-#define WAN0_DEVICE "eth2"
+#define WAN0_DEVICE "br-wan0"
 #define WAN0_PORTS "4"
 
 #define LAN0_IFNAME "br-lan0"
@@ -108,20 +109,25 @@
 #define BW_RULE_MAX "32"
 #define BW_SBM_RULE_MAX "32"
 #define BW_DBM_RULE_MAX "32"
+
+#define FL_RULE ""
 #define FL_RULE_MAX "64"
+#define FL_RULE_NUM "0"
+
+#define FR_RULE ""
 #define FR_RULE_MAX "64"
+#define FR_RULE_NUM "0"
+
 #define PT_RULE_MAX "64"
 #define WF_RULE_MAX "16"
 #define IGMP_PROXY_RULE "0"
 #define IGMP_SNOOP_RULE "0^0^0^0^0"
 #define SBM_MAX "8"
 #define DBM_MAX "8"
-#define FL_RULE_NUM "3"
-#define FL_RULE "MSN Messenger^0^^^^^207.46.1.1^207.46.255.255^^^^^^0^0001^0^0|MSN Messenger^0^^^^^65.54.1.1^65.54.255.255^^^^^^0^0002^1^1|Yahoo! Messenger^0^^^^^216.155.1.1^216.155.255.255^^^^^^0^0003^2^2"
 #define BW_ENABLE "1"
 #define BW_SBM_RULE_NUM "0"
 #define BW_SBM_RULE ""
-#define LAN_DHCPS_RULE "default^1^33^32^86400^liteon.com^^dnsrelay^^^^^none^opendns^opendns^192.168.1.10^24^60"
+#define LAN_DHCPS_RULE "default^0^33^32^86400^liteon.com^^dnsrelay^^^^^none^opendns^opendns^192.168.1.10^24^60"
 #define VNC_SESSION_MAX "16"
 
 #define BT_TORRENT_MAX "10"
@@ -153,7 +159,7 @@
 #define WAN_DETECT_RULE "^0^ping^208.67.222.222^60^8|^0^ping^208.67.222.222^60^8"
 #define WAN_WEIGHT_RULE "1^1|1^1"
 #define WAN_FAILOVER_RULE "0^wan0^wan1"
-#define WAN_STATIC_RULE "10.1.1.25^24^10.1.1.254^10.1.1.254^^^|10.1.2.25^24^10.1.2.254^10.1.2.254^^"
+#define WAN_STATIC_RULE "10.1.1.25^24^10.1.1.254^10.1.1.254^^|10.1.2.25^24^10.1.2.254^10.1.2.254^^"
 #define WAN_DHCP_RULE "^^86400|^^86400"
 #define WAN_HTC_RULE "^^86400^512^0|^^86400^512^0"
 #define WAN_PPPOE_RULE "chap^^^0^300^5^5^1492^1492^isp^^|chap^^^0^300^5^5^1492^1492^isp^^"
@@ -173,8 +179,6 @@
 #define RT_RULE "SMTP^0^^^^^tcp^^^25^25^wan0^default^^^"
 #define RT_RIP_RULE "none"
 #define NAT_RULE "1"
-#define FR_RULE "HTTP^0^wan0^tcp^80^80^192.168.1.20^^|HTTPS^0^wan0^tcp^443^443^192.168.1.20^^|POP3^0^wan0^tcp^110^110^192.168.1.20^^|POP3S^0^wan0^tcp^995^995^192.168.1.20^^|SMTP^0^wan0^tcp^25^25^192.168.1.20^^|SMTPS^0^wan0^tcp^465^465^192.168.1.20^^|SSH^0^wan0^tcp^22^22^192.168.1.21^^|eMule^0^wan1^both^4662^4672^192.168.1.21^^"
-#define FR_RULE_NUM "8"
 #define FR_DMZ_RULE "^0^|^0^"
 #define PT_RULE "^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0|^0^all^0^0^0^0"
 
@@ -182,12 +186,12 @@
 #define LAN_MAIN_GUESTLAN "GuestLAN^0^1500^1^1^0"
 #define LAN_MAIN_RULE "LAN1^1^1500^1^1^0|GuestLAN^0^1500^1^1^0"
 #define LAN_STATIC_GUESTLAN "192.168.100.1^24^^192.168.100.1^^0^^^192.168.100.1^24^192.168.1.2^24"
-#define LAN_STATIC_RULE_DEFAULT "192.168.1.20^24^^192.168.1.1^^^^^192.168.1.20^24^192.168.1.20^24"
+#define LAN_STATIC_RULE_DEFAULT "192.168.1.1^24^^8.8.8.8^^^^^192.168.1.1^24^192.168.1.2^24"
 #define LAN_HWADDR_CLONE_RULE "0^"
 
 /* WLAN amount dependent definition. */
-#define WL_ADVANCED_RULE "1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000|1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000"
-#define WL_AP_ADVANCED_RULE "1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000|1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000"
+#define WL_ADVANCED_RULE "1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^0^1^0^33^5^0^1^64^0^1^0^1^2000|1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000"
+#define WL_AP_ADVANCED_RULE "1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^0^1^0^33^5^0^1^64^0^1^0^1^2000|1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^1^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1^2000"
 
 #define WL1_ADVANCED_RULE "1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^0^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1|1^ap^default^0^2346^2346^1^100^0^1^1^off^off^off^0^0^0^0^0^0^1^1^0^33^5^0^1^64^0^1^0^1"
 #define WL_WDS_RULE "disabled^1|disabled^1"
@@ -218,14 +222,32 @@
 #define WL0_APCLI_SEC_WPA2_RULE "^aes"
 #define WL1_APCLI_SEC_WPA2_RULE "^aes"
 
-#define WL0_BASIC_RULE "1^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0"
+#define WL0_BASIC_RULE "1^0^0^1^0|1^0^0^1^0|1^0^0^1^0|1^0^0^1^0|1^0^0^1^0|1^0^0^1^0|1^0^0^1^0|1^0^0^1^0"
 #define WL1_BASIC_RULE "1^0^0^1^0|0^0^0^1^0|0^0^0^1^0|0^0^0^1^0"
 #define WL0_SSID_RULE "CPE_2.4G|CPE_2.4G_SSID1|CPE_2.4G_SSID2|CPE_2.4G_SSID3|CPE_2.4G_SSID4|CPE_2.4G_SSID5|CPE_2.4G_SSID6|CPE_2.4G_SSID7"
 #define WL5G_SSID_RULE "CPE_5G|CPE_5G_SSID1|CPE_5G_SSID2|CPE_5G_SSID3"
-#define WL0_SEC_RULE "disabled|disabled|disabled|disabled"
-#define WL0_SEC_WEP_RULE   "1^^^^^^open|1^^^^^^open|1^^^^^^open|1^^^^^^open"
-#define WL0_SEC_WPA_RULE   "12345678^mixed^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000"
-#define WL0_SEC_WPA2_RULE   "12345678^mixed^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1"
+
+#define WL0_SEC_RULE "disabled|disabled|disabled|disabled|disabled|disabled|disabled|disabled"
+#define WL0_SEC_WEP_RULE   "1^^^^^^open|1^^^^^^open"\
+			"|1^^^^^^open|1^^^^^^open"\
+			"|1^^^^^^open|1^^^^^^open"\
+			"|1^^^^^^open|1^^^^^^open"
+#define WL0_SEC_WPA_RULE   "12345678^mixed^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"\
+			"|^tkip^^^1812^time^3600^5000^3000"
+#define WL0_SEC_WPA2_RULE "12345678^mixed^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"\
+			"|^aes^^^1812^time^3600^5000^0^10^3000^1"
 #define WL0_SEC_5G_WEP_RULE   "1^^^^^^open|1^^^^^^open|1^^^^^^open|1^^^^^^open"
 #define WL0_SEC_5G_WPA_RULE   "12345678^mixed^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000|^tkip^^^1812^time^3600^5000^3000"
 #define WL0_SEC_5G_WPA2_RULE   "12345678^mixed^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1|^aes^^^1812^time^3600^5000^0^10^3000^1"
@@ -828,7 +850,10 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-
+	{ "wlan_dev_prefix", WLAN_DEV_PREFIX, 
+		NVRAM_NONE,
+		0 
+	},  
 
 	{ "lan0_device", LAN0_DEVICE, 
 		NVRAM_NONE,
@@ -1259,7 +1284,7 @@ nvram_tuple_t nvram_factory_default[] = {
 	},
 
 
-	{ "smb_vpn_passthrough_rule", "1^1^1", 
+	{ "smb_vpn_passthrough_rule", "0^0^0", 
 		NVRAM_NONE,
 		0 
 	}, 
@@ -1290,7 +1315,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	}, 
-	{ "snmpd_ro_community", "private", 
+	{ "snmpd_ro_community", "public", 
 		NVRAM_NONE,
 		0 	
 	},
@@ -1302,7 +1327,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "snmpd_rw_community", "public", 
+	{ "snmpd_rw_community", "private", 
 		NVRAM_NONE,
 		0 
 	},
@@ -1537,7 +1562,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_TEMP,
 		0 
 	},         
-	{ "wan0_proto", "dhcp", 
+	{ "wan0_proto", "static", 
 		NVRAM_NONE,
 		0 
 	},        
@@ -1698,7 +1723,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl00_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl00_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1715,7 +1740,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl01_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl01_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1732,7 +1757,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl02_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl02_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1749,7 +1774,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl03_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl03_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1758,6 +1783,74 @@ nvram_tuple_t nvram_factory_default[] = {
 		0 
 	},
 	{ "wl03_acl_rule", "", 
+		NVRAM_NONE,
+		0 
+	},
+
+	{ "wl04_acl_basic_rule", WL_ACL_BASIC_RULE, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl04_acl_max", WL_ACL_MAX, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl04_acl_num", "0", 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl04_acl_rule", "", 
+		NVRAM_NONE,
+		0 
+	},
+
+	{ "wl05_acl_basic_rule", WL_ACL_BASIC_RULE, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl05_acl_max", WL_ACL_MAX, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl05_acl_num", "0", 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl05_acl_rule", "", 
+		NVRAM_NONE,
+		0 
+	},
+
+	{ "wl06_acl_basic_rule", WL_ACL_BASIC_RULE, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl06_acl_max", WL_ACL_MAX, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl06_acl_num", "0", 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl06_acl_rule", "", 
+		NVRAM_NONE,
+		0 
+	},
+
+	{ "wl07_acl_basic_rule", WL_ACL_BASIC_RULE, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl07_acl_max", WL_ACL_MAX, 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl07_acl_num", "0", 
+		NVRAM_NONE,
+		0 
+	},
+	{ "wl07_acl_rule", "", 
 		NVRAM_NONE,
 		0 
 	},
@@ -1847,7 +1940,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl10_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl10_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1864,7 +1957,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl11_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl11_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1881,7 +1974,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl12_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl12_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},
@@ -1898,7 +1991,7 @@ nvram_tuple_t nvram_factory_default[] = {
 		NVRAM_NONE,
 		0 
 	},
-	{ "wl13_acl_max", xstr(WL_ACL_MAX), 
+	{ "wl13_acl_max", WL_ACL_MAX, 
 		NVRAM_NONE,
 		0 
 	},

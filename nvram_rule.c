@@ -1765,7 +1765,7 @@ struct attr wl0_wpa_rule_attr[] = {
 	{ "wpa_auth", show_value, show_value },
 	{ "wpa_user", show_value, show_value },
 	{ "wpa_passwd", show_value, show_value },
-       { "wpa_crypto", show_value, show_value },
+    { "wpa_crypto", show_value, show_value },
 	{ NULL, NULL, NULL }
 };
 
@@ -1773,7 +1773,7 @@ struct attr wl1_wpa_rule_attr[] = {
 	{ "wpa_auth", show_value, show_value },
 	{ "wpa_user", show_value, show_value },
 	{ "wpa_passwd", show_value, show_value },
-       { "wpa_crypto", show_value, show_value },
+    { "wpa_crypto", show_value, show_value },
 	{ NULL, NULL, NULL }
 };
 
@@ -1828,8 +1828,8 @@ struct rule rules[] = {
     { "guest_lan_rule", guest_lan_rule_attr },
     { "guest1_lan_rule", guest_lan_rule_attr },
     { "lan_static_rule", lan_static_rule_attr },
-    { "lan_static_rule_default", lan_static_rule_attr },
     { "lan_staticv6_rule", lan_staticv6_rule_attr },
+    { "lan_static_rule_default", lan_static_rule_attr },
     { "lan_staticv6_rule_default", lan_staticv6_rule_attr },
     { "lan_dhcps_rule", lan_dhcps_rule_attr },
     { "lan_dhcpsv6_rule", lan_dhcpsv6_rule_attr },
@@ -1953,6 +1953,15 @@ struct rule rules[] = {
     { "wl02_acl_rule", wlv_acl_rule_attr },
     { "wl03_acl_basic_rule", wlv_acl_basic_rule_attr },
     { "wl03_acl_rule", wlv_acl_rule_attr },
+    { "wl04_acl_basic_rule", wlv_acl_basic_rule_attr },
+    { "wl04_acl_rule", wlv_acl_rule_attr },
+    { "wl05_acl_basic_rule", wlv_acl_basic_rule_attr },
+    { "wl05_acl_rule", wlv_acl_rule_attr },
+    { "wl06_acl_basic_rule", wlv_acl_basic_rule_attr },
+    { "wl06_acl_rule", wlv_acl_rule_attr },
+    { "wl07_acl_basic_rule", wlv_acl_basic_rule_attr },
+    { "wl07_acl_rule", wlv_acl_rule_attr },
+
     { "wl10_acl_basic_rule", wlv_acl_basic_rule_attr },
     { "wl10_acl_rule", wlv_acl_rule_attr },
     { "wl11_acl_basic_rule", wlv_acl_basic_rule_attr },

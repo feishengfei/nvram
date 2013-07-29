@@ -68,6 +68,12 @@ char * nvram_get(const char *name)
 	}
 }
 
+char * nvram_safe_get(const char *name)
+{
+       char *ret = nvram_get(name);
+       return ret ? ret : "";
+}
+
 /**
  *\brief Get the Option of an NVRAM variable. 
  *\return Return the option of the name accroding to Factory Default, NVRAM_UNDEFINED if the name doesn't exist.

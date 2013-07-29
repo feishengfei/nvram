@@ -155,7 +155,8 @@ nvram_header_t * nvram_header();
 
 /* wrapper of above common functions */
 char * nvram_get(const char *name);
-#define nvram_safe_get(name) (nvram_get(name) ? : "")
+char * nvram_safe_get(const char *name);
+//#define nvram_safe_get(name) (nvram_get(name) ? : "")
 int nvram_get_option(const char *name);
 int nvram_set(const char *name, const char *value);
 int nvram_fset(const char *name, const char *value);
