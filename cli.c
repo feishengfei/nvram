@@ -1,5 +1,8 @@
 #include <sys/types.h>
+#include <stdlib.h>
 #include <signal.h>
+#include <string.h>
+#include <stdio.h>
 #include "cli.h"
 #include "nvram_rule.h"
 
@@ -14,57 +17,16 @@ void puts_trim_cr(char *str)
 	printf("%.*s\n", len, str);
 }
 
-int _do_show(nvram_handle_t *nvram)
-{
-	nvram_tuple_t *t;
-	int stat = 1;
-
-	if( (t = _nvram_getall(nvram)) != NULL )
-	{
-		while( t )
-		{
-			printf("%s=%s\n", t->name, t->value);
-			t = t->next;
-		}
-
-		stat = 0;
-	}
-
-	return stat;
-}
 
 int do_show()
 {
-	nvram_tuple_t *t;
 	int stat = 1;
-
-	if( (t = nvram_getall()) != NULL )
-	{
-		while( t )
-		{
-			printf("%s=%s\n", t->name, t->value);
-			t = t->next;
-		}
-
-		stat = 0;
-	}
+	char buf[1024 * 10] = {0};
+	nvram_getall(buf, sizeof(buf));
 
 	return stat;
 }
 
-int _do_get(nvram_handle_t *nvram, const char *var)
-{
-	const char *val;
-	int stat = 1;
-
-	if( (val = _nvram_get(nvram, var)) != NULL )
-	{
-		printf("%s\n", val);
-		stat = 0;
-	}
-
-	return stat;
-}
 
 int do_get(const char *var)
 {
@@ -80,31 +42,11 @@ int do_get(const char *var)
 	return stat;
 }
 
-int _do_unset(nvram_handle_t *nvram, const char *var)
-{
-	return _nvram_unset(nvram, var);
-}
-
 int do_unset(const char *var)
 {
 	return nvram_unset(var);
 }
 
-int _do_set(nvram_handle_t *nvram, const char *pair)
-{
-	char *val = strstr(pair, "=");
-	char var[strlen(pair)];
-	int stat = 1;
-
-	if( val != NULL )
-	{
-		memset(var, 0, sizeof(var));
-		strncpy(var, pair, (int)(val-pair));
-		stat = _nvram_set(nvram, var, (char *)(val + 1));
-	}
-
-	return stat;
-}
 
 int do_set(const char *pair)
 {
@@ -138,37 +80,10 @@ int do_fset(const char *pair)
 	return stat;
 }
 
-int _do_info(nvram_handle_t *nvram)
-{
-	nvram_header_t *hdr = _nvram_header(nvram);
-
-	/* CRC8 over the last 11 bytes of the header and data bytes */
-	uint8_t crc = hndcrc8((unsigned char *) &hdr[0] + NVRAM_CRC_START_POSITION,
-			hdr->len - NVRAM_CRC_START_POSITION, 0xff);
-
-	/* Show info */
-	printf("Magic:         0x%08X\n",   hdr->magic);
-	printf("Length:        0x%08X\n",   hdr->len);
-	printf("Offset:        0x%08X\n",   nvram->offset);
-
-	printf("CRC8:          0x%02X (calculated: 0x%02X)\n",
-			hdr->crc_ver_init & 0xFF, crc);
-
-	printf("Version:       0x%02X\n",   (hdr->crc_ver_init >> 8) & 0xFF);
-	printf("SDRAM init:    0x%04X\n",   (hdr->crc_ver_init >> 16) & 0xFFFF);
-	printf("SDRAM config:  0x%04X\n",   hdr->config_refresh & 0xFFFF);
-	printf("SDRAM refresh: 0x%04X\n",   (hdr->config_refresh >> 16) & 0xFFFF);
-	printf("NCDL values:   0x%08X\n\n", hdr->config_ncdl);
-
-	printf("%i bytes used / %i bytes available (%.2f%%)\n",
-			hdr->len, NVRAM_SPACE - hdr->len,
-			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
-
-	return 0;
-}
 
 int do_info()
 {
+#if 0
 	nvram_header_t *hdr = nvram_header();
 	if(NULL == hdr){
 		return -1;
@@ -196,141 +111,11 @@ int do_info()
 			hdr->len, NVRAM_SPACE - hdr->len,
 			(100.00 / (double)NVRAM_SPACE) * (double)hdr->len);
 
+#endif
 	return 0;
 }
 
 
-#if 0
-//original version
-int main( int argc, const char *argv[] )
-{
-	nvram_handle_t *nvram;
-	int commit = 0;
-	int write = 0;
-	int stat = 1;
-	int done = 0;
-	int i;
-
-	/* Ugly... iterate over arguments to see whether we can expect a write */
-	for( i = 1; i < argc; i++ )
-		if( ( !strcmp(argv[i], "set")   && ++i < argc ) ||
-				( !strcmp(argv[i], "unset") && ++i < argc ) ||
-				!strcmp(argv[i], "commit") )
-		{
-			write = 1;
-			break;
-		}
-
-
-	nvram = write ? _nvram_open_staging() : _nvram_open_rdonly();
-
-	if( nvram != NULL && argc > 1 )
-	{
-		for( i = 1; i < argc; i++ )
-		{
-			if( !strcmp(argv[i], "show") )
-			{
-				stat = _do_show(nvram);
-				done++;
-			}
-			else if( !strcmp(argv[i], "info") )
-			{
-				stat = _do_info(nvram);
-				done++;
-			}
-			else if( !strcmp(argv[i], "get") 
-					|| !strcmp(argv[i], "unset") 
-					|| !strcmp(argv[i], "set") 
-					|| !strcmp(argv[i], "export") 
-					|| !strcmp(argv[i], "import") 
-				   )
-			{
-				if( (i+1) < argc )
-				{
-					switch(argv[i++][0])
-					{
-						case 'g':
-							stat = _do_get(nvram, argv[i]);
-							break;
-
-						case 'u':
-							stat = _do_unset(nvram, argv[i]);
-							break;
-
-						case 's':
-							stat = _do_set(nvram, argv[i]);
-							break;
-
-						case 'e':
-							stat = do_export(argv[i]);
-							break;
-
-						case 'i':
-							stat = do_import(argv[i]);
-							break;
-					}
-					done++;
-				}
-				else
-				{
-					fprintf(stderr, "Command '%s' requires an argument!\n", argv[i]);
-					done = 0;
-					break;
-				}
-			}
-			else if( !strcmp(argv[i], "commit") )
-			{
-				commit = 1;
-				done++;
-			}
-			else
-			{
-				fprintf(stderr, "Unknown option '%s' !\n", argv[i]);
-				done = 0;
-				break;
-			}
-		}
-
-		if( write )
-			stat = _nvram_commit(nvram);
-
-		_nvram_close(nvram);
-
-		if( commit )
-			stat = staging_to_nvram();
-	}
-
-	if( !nvram )
-	{
-		fprintf(stderr,
-				"Could not open nvram! Possible reasons are:\n"
-				"	- No device found (/proc not mounted or no nvram present)\n"
-				"	- Insufficient permissions to open mtd device\n"
-				"	- Insufficient memory to complete operation\n"
-				"	- Memory mapping failed or not supported\n"
-			   );
-
-		stat = 1;
-	}
-	else if( !done )
-	{
-		fprintf(stderr,
-				"Usage:\n"
-				"	nvram show\n"
-				"	nvram info\n"
-				"	nvram get variable\n"
-				"	nvram set variable=value [set ...]\n"
-				"	nvram unset variable [unset ...]\n"
-				"	nvram commit\n"
-				"	nvram export/import backup_file\n"
-			   );
-
-		stat = 1;
-	}
-
-	return stat;
-}
-#else
 int main( int argc, const char *argv[] )
 {
 	int stat = 1;
@@ -377,7 +162,7 @@ int main( int argc, const char *argv[] )
 		}
 		/* nvram info */
 		else if( !strncmp(*argv, "info", 4) ) {
-			stat = do_info();
+			//stat = do_info();
 			done++;
 		}
 		/* nvram get <rule>*/
@@ -427,7 +212,7 @@ int main( int argc, const char *argv[] )
 		/* nvram export <backup_file>*/
 		else if (!strncmp(*argv, "export", 6)) {
 			if (*++argv) {
-				stat = nvram_export(*argv);
+//				stat = nvram_export(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -438,7 +223,7 @@ int main( int argc, const char *argv[] )
 		/* nvram import <backup_file>*/
 		else if (!strncmp(*argv, "import", 6)) {
 			if (*++argv) {
-				stat = nvram_import(*argv);
+//				stat = nvram_import(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -449,7 +234,7 @@ int main( int argc, const char *argv[] )
 		/*nvram upgrade <version> */
 		else if (!strncmp(*argv, "upgrade", 7)) {
 			if (*++argv) {
-				stat = nvram_upgrade(*argv);
+//				stat = nvram_upgrade(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -460,7 +245,7 @@ int main( int argc, const char *argv[] )
 		/*nvram downgrade <version> */
 		else if (!strncmp(*argv, "downgrade", 9)) {
 			if (*++argv) {
-				stat = nvram_downgrade(*argv);
+//				stat = nvram_downgrade(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -593,7 +378,7 @@ int main( int argc, const char *argv[] )
 			}
 		}
 		else if (!strncmp(*argv, "boot", 4)) {
-			nvram_boot();
+//			nvram_boot();
 			stat = 0;
 			done++;
 		}
@@ -601,19 +386,19 @@ int main( int argc, const char *argv[] )
 		else if( !strncmp(*argv, "default", 7) )
 		{
 			if(argc == 1) {
-				stat = nvram_default();
+//				stat = nvram_default();
 			}
 			else {
 				/* Added for single rule default */
 				argv++;
-				stat = nvram_default_rule(*argv);
+//				stat = nvram_default_rule(*argv);
 			}
 			done++;
 		}
 		/* nvram factory */
 		else if( !strncmp(*argv, "factory", 7) )
 		{
-			stat = nvram_factory();
+//			stat = nvram_factory();
 			/* send SIGTERM to init for reboot */
 			if(!stat)
 				kill(1, 15);
@@ -628,15 +413,16 @@ int main( int argc, const char *argv[] )
 		/* nvram dump */
 		else if( !strncmp(*argv, "dump", 4) )
 		{
-			stat = nvram_dump();
+//			stat = nvram_dump();
 			done++;
 		}
-		/* nvram mtd */
+		/* nvram mtd 
 		else if( !strncmp(*argv, "init", 4) )
 		{
 			stat = *((int *)nvram_init());
 			done++;
 		}
+		*/
 		else
 		{
 			fprintf(stderr, "Unknown option '%s' !\n", *argv);
@@ -673,9 +459,8 @@ int main( int argc, const char *argv[] )
 
 				"	nvram commit\n"
 				"	nvram dump\n"
-				"	nvram init\n"
+//				"	nvram init\n"
 			   );
 	}
 	return stat;
 }
-#endif

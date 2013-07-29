@@ -1,628 +1,435 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
 #include <assert.h>
+
 #include "nvram.h"
 
+char libnvram_debug = 0;
+#define LIBNV_PRINT(x, ...) do { if (libnvram_debug) printf("%s %d: " x, __FILE__, __LINE__, ## __VA_ARGS__); } while(0)
+#define LIBNV_ERROR(x, ...) do { printf("%s %d: ERROR! " x, __FILE__, __LINE__, ## __VA_ARGS__); } while(0)
 
-size_t nvram_erase_size = 0;
-
-/* -- Helper functions -- */
-
-/**
- * \brief Caculate the hash value of specified string
- * \return The hash value
- * \param[in] s The specified string.
- */
-uint32_t hash(const char *s)
+static block_t fb[FLASH_BLOCK_NUM] =
 {
-	assert(s!=NULL);
-	uint32_t hash = 0;
-
-	while (*s)
-		hash = 31 * hash + *s++;
-
-	return hash;
-}
-
-/**
- * \brief Free all tuples of NVRAM handler. 
- * \param[in] h The specified NVRAM handler.
- */
-void _nvram_free(nvram_handle_t *h)
-{
-	assert(h != NULL);
-	uint32_t i;
-	nvram_tuple_t *t, *next;
-
-	/* Free hash table */
-	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
-		for (t = h->nvram_hash[i]; t; t = next) {
-			next = t->next;
-			free(t->value);
-			free(t);
-		}
-		h->nvram_hash[i] = NULL;
-	}
-
-	/* Free dead table */
-	for (t = h->nvram_dead; t; t = next) {
-		next = t->next;
-		free(t->value);
-		free(t);
-	}
-
-	h->nvram_dead = NULL;
-}
-
-/**
- *\brief (Re)allocate NVRAM tuples. 
- *\return The (Re)allocated tuple.
- *\param[in] h The NVRAM handler//FIXME USELESS
- *\param[in] t The tuples need to be (re)allocated
- *\param[in] name The current name
- *\param[in] value The current value
- *\remark If t is NULL, we allocate t with t's curr name. \
-  If t is not NULL, we compare the curr value with its original, reallocate and copy curr value if diff exists.
- */
-nvram_tuple_t * _nvram_realloc( nvram_handle_t *h, nvram_tuple_t *t,
-	const char *name, const char *value )
-{
-	assert(h != NULL);
-	//FIXME
-	if ((strlen(value) + 1) > NVRAM_SPACE)
-		return NULL;
-
-	if (!t) {
-		if (!(t = malloc(sizeof(nvram_tuple_t) + strlen(name) + 1)))
-			return NULL;
-
-		/* Copy name */
-		t->name = (char *) &t[1];
-		strcpy(t->name, name);
-
-		t->value = NULL;
-	}
-
-	/* Copy value */
-	if (!t->value || strcmp(t->value, value))
 	{
-		if(!(t->value = (char *) realloc(t->value, strlen(value)+1)))
-			return NULL;
-
-		strcpy(t->value, value);
-		t->value[strlen(value)] = '\0';
+		.name = "2860",
+		.flash_offset =  0x0,
+		//.flash_max_len = 0x10000,
+		.flash_max_len = 0x8000,
+		.valid = 0
 	}
+};
 
-	return t;
+//x is the value returned if the check failed
+#define LIBNV_CHECK_INDEX(x) do { \
+	if (index < 0 || index >= FLASH_BLOCK_NUM) { \
+		LIBNV_PRINT("index(%d) is out of range\n", index); \
+		return x; \
+	} \
+} while (0)
+
+#define LIBNV_CHECK_VALID(nvramfd_addr) do { \
+	if (!fb[index].valid ) { \
+		LIBNV_PRINT("fb[%d] invalid, init again\n", index); \
+		nvram_init(nvramfd_addr); \
+	} \
+} while (0)
+
+#define FREE(x) do { if (x != NULL) {free(x); x=NULL;} } while(0)
+
+/*
+ * 1. read env from flash
+ * 2. parse entries
+ * 3. save the entries to cache
+ */
+int nvram_init(int * nvram_fd) 
+{
+	unsigned long from;
+	int i, len;
+	char *p, *q;
+	int fd;
+	nvram_ioctl_t nvr;
+	int ret;
+
+	int index = 0;
+	LIBNV_PRINT("--> nvram_init %d\n", index);
+	LIBNV_CHECK_INDEX();
+	if (fb[index].valid)
+		return 0;
+	
+	/*
+	 * read data from flash
+	 * skip crc checking which is done by Kernel NVRAM module 
+	 */
+	from = fb[index].flash_offset + sizeof(fb[index].env.crc);
+	len = fb[index].flash_max_len - sizeof(fb[index].env.crc);
+	fb[index].env.data = (char *)malloc(len);
+	nvr.index = index;
+	nvr.value = fb[index].env.data;
+
+	//printf("======from %lx len %x index %d=====\n",from, len, nvr.index);
+       
+	*nvram_fd = fd = open(NV_DEV, O_RDONLY);//here maybe not useful because write is use ioctl in the below set also open the NV_DEV with 	O_RDONLY ,commented by daniel
+	//printf("=========*nvram_fd %d= fd=%d===========\n", *nvram_fd,fd);
+	if (fd < 0) {
+		perror(NV_DEV);
+		ret=fd;
+		goto out;
+	}
+	if (ioctl(fd, NVRAM_IOCTL_GETALL, &nvr) < 0) {
+		perror("ioctl");
+		close(fd);
+		ret=fd;
+		goto out;
+	}
+	close(fd);
+
+	//parse env to cache
+	p = fb[index].env.data;
+	for (i = 0; i < MAX_CACHE_ENTRY; i++) {
+		if (NULL == (q = strchr(p, '='))) {
+			LIBNV_PRINT("parsed failed - cannot find '='\n");
+			break;
+		}
+		*q = '\0'; //strip '='
+		fb[index].cache[i].name = strdup(p);
+		//printf("  %d '%s'->", i, p);
+
+		p = q + 1; //value
+		if (NULL == (q = strchr(p, '\0'))) {
+			LIBNV_PRINT("parsed failed - cannot find '\\0'\n");
+			break;
+		}
+		fb[index].cache[i].value = strdup(p);
+		//printf("'%s'\n", p);
+
+		p = q + 1; //next entry
+		if (p - fb[index].env.data + 1 >= len) //end of block
+			break;
+		if (*p == '\0') //end of env
+			break;
+	}
+	if (i == MAX_CACHE_ENTRY)
+		LIBNV_PRINT("run out of env cache, please increase MAX_CACHE_ENTRY\n");
+
+	fb[index].valid = 1;
+	fb[index].dirty = 0;
+	return 0;
+
+out:
+	FREE(fb[index].env.data); //free it to save momery
+	return ret;
 }
 
-/**
- * \brief (Re)initialize the hash table. 
- * \return Return 0 on success
- * \param[in] h The NVRAM handler*/
-int _nvram_rehash(nvram_handle_t *h)
+void nvram_close()
 {
-	assert(h != NULL);
-	nvram_header_t *header = _nvram_header(h);
-	char *name, *value, *eq;
+	int i;
+	int index = 0;
+	LIBNV_PRINT("--> nvram_close %d\n", index);
+	LIBNV_CHECK_INDEX();
 
-	/* (Re)initialize hash table */
-	_nvram_free(h);
+	if (!fb[index].valid)
+		return;
 
-	/* Parse and set "name=value\0 ... \0\0" */
-	name = (char *) &header[1];
+	//free env
+	FREE(fb[index].env.data);
 
-	for (; *name; name = value + strlen(value) + 1) {
-		if (!(eq = strchr(name, '=')))
-			break;
-		*eq = '\0';
-		value = eq + 1;
-		_nvram_set(h, name, value);
-		*eq = '=';
+	//free cache
+	for (i = 0; i < MAX_CACHE_ENTRY; i++) {
+		FREE(fb[index].cache[i].name);
+		FREE(fb[index].cache[i].value);
 	}
+
+	fb[index].valid = 0;
+}
+
+int nvram_set(const char *name, const char *value)
+{
+	if (-1 == nvram_bufset(name, value))
+		return -1;
+
 	return 0;
 }
 
-/**
- *\brief Copy NVRAM flash block data to staging file.
- *\return Return zero on success.
- */
-int nvram_to_staging(void)
+int nvram_fset(const char *name, const char *value)
 {
-	int fdmtd, fdstg, stat;
-	char *mtd = nvram_find_mtd();
-	char buf[nvram_erase_size];
-
-	stat = -1;
-
-	if( (mtd != NULL) && (nvram_erase_size > 0) )
-	{
-		if( (fdmtd = open(mtd, O_RDONLY)) > -1 )
-		{
-			if( read(fdmtd, buf, sizeof(buf)) == sizeof(buf) )
-			{
-				if((fdstg = open(NVRAM_STAGING, O_WRONLY | O_CREAT, 0600)) > -1)
-				{
-					write(fdstg, buf, sizeof(buf));
-					fsync(fdstg);
-					close(fdstg);
-
-					stat = 0;
-				}
-			}
-
-			close(fdmtd);
-		}
-	}
-
-	free(mtd);
-	return stat;
+	return nvram_set(name, value);
 }
 
-/**
- *\brief Copy staging file to NVRAM flash bock. 
- *\return Return zero on success.
- */
-int staging_to_nvram(void)
+int nvram_unset(const char *name)
 {
-	int fdmtd, fdstg, stat;
-	char *mtd = nvram_find_mtd();
-	char buf[nvram_erase_size];
-
-	stat = -1;
-
-	if( (mtd != NULL) && (nvram_erase_size > 0) )
-	{
-		if( (fdstg = open(NVRAM_STAGING, O_RDONLY)) > -1 )
-		{
-			if( read(fdstg, buf, sizeof(buf)) == sizeof(buf) )
-			{
-				if( (fdmtd = open(mtd, O_WRONLY | O_SYNC)) > -1 )
-				{
-					write(fdmtd, buf, sizeof(buf));
-					fsync(fdmtd);
-					close(fdmtd);
-					stat = 0;
-				}
-			}
-
-			close(fdstg);
-
-			if( !stat )
-				stat = unlink(NVRAM_STAGING) ? 1 : 0;
-		}
-	}
-
-	free(mtd);
-	return stat;
+	return nvram_set(name, "");
 }
 
 
-/* -- inner functions -- */
-
-/** 
- *\brief Get NVRAM header from its handler. 
- *\return The request NVRAM header
- *\param[in] h The specified NVRAM handler
- */
-nvram_header_t * _nvram_header(nvram_handle_t *h)
+char * nvram_get(const char *name)
 {
-	return (nvram_header_t *) &h->mmap[h->offset];
+	return nvram_bufget(name);
 }
 
-/**
- *\brief Determine NVRAM device node. 
- *\return the path-to-file of flash block
- */
-char * nvram_find_mtd(void)
-{
-	FILE *fp;
-	int i, esz;
-	char dev[PATH_MAX];
-	char *path = NULL;
-	struct stat s;
-	int supported = 1;
 
-	if( supported && (fp = fopen("/proc/mtd", "r")) )
-	{
-		while( fgets(dev, sizeof(dev), fp) )
-		{
-			if( strstr(dev, NVRAM_MTD_NAME) && sscanf(dev, "mtd%d: %08x", &i, &esz) )
-			{
-				nvram_erase_size = esz;
+char * nvram_safe_get(const char *name)                                       
+{      
+	char *ret = nvram_get(name);                                           
+	return ret ? ret : "";                                                 
+} 
 
-				sprintf(dev, "/dev/mtdblock/%d", i);
-				if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
-				{
-					if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
-					{
-						strncpy(path, dev, strlen(dev)+1);
-						break;
-					}
-				}
-				else
-				{
-					sprintf(dev, "/dev/mtdblock%d", i);
-					if( stat(dev, &s) > -1 && (s.st_mode & S_IFBLK) )
-					{
-						if( (path = (char *) malloc(strlen(dev)+1)) != NULL )
-						{
-							strncpy(path, dev, strlen(dev)+1);
-							break;
-						}
-					}
-				}
-			}
-		}
-		fclose(fp);
-	}
-
-	return path;
-}
-
-/**
- *\brief Check NVRAM staging file. 
- *\return Return the path-to-file of staging file 
-  or NULL if staging file does not exist
- */
-char * nvram_find_staging(void)
-{
-	struct stat s;
-
-	if( (stat(NVRAM_STAGING, &s) > -1) && (s.st_mode & S_IFREG) )
-	{
-		return NVRAM_STAGING;
-	}
-
-	return NULL;
-}
-
-/**
- *\brief Open NVRAM and obtain a handle. 
- *\return The NVRAM handler
- *\param[in] file File to be opened. Either staging file or flash block device name. 
- *\param[in] access Either NVRAM_RO or NVRAM_RW
- */
-nvram_handle_t * _nvram_open(const char *file, int access)
+int nvram_getall(char *buf,int count)
 {
 
-	int i;
+	unsigned long from;
+	int len;
 	int fd;
-	char *mtd = NULL;
-	nvram_handle_t *h;
-	nvram_header_t *header;
-	int offset = -1;
+	nvram_ioctl_t nvr;
+	int ret;
+	int index = 0;
+	LIBNV_PRINT("--> nvram_init %d\n", index);
+	LIBNV_CHECK_INDEX(-1);
+	
+	/*
+	 * read data from flash
+	 * skip crc checking which is done by Kernel NVRAM module 
+	 */
+	from = fb[index].flash_offset ;
+	len = fb[index].flash_max_len;
+	
+	if (count <=len)
+		len =count;
+	
+	
+	fb[index].env.data = (char *)malloc(len);
+	nvr.index = index;
+	nvr.value = fb[index].env.data;
 
-	/* If erase size or file are undefined then try to define them */
-	if( (nvram_erase_size == 0) || (file == NULL) )
-	{
-		/* Finding the mtd will set the appropriate erase size */
-		if( (mtd = nvram_find_mtd()) == NULL || nvram_erase_size == 0 )
-		{
-			free(mtd);
-			return NULL;
-		}
+	fd = open(NV_DEV, O_RDONLY);
+
+	if (fd < 0) {
+		perror(NV_DEV);
+		ret=fd;
+		goto out;
 	}
-
-	if( (fd = open(file ? file : mtd, O_RDWR)) > -1 )
-	{
-		char *mmap_area = (char *) mmap(
-			NULL, nvram_erase_size, PROT_READ | PROT_WRITE,
-			(( access == NVRAM_RO ) ? MAP_PRIVATE : MAP_SHARED) | MAP_LOCKED, fd, 0);
-
-		if( mmap_area != MAP_FAILED )
-		{
-			for( i = 0; i <= ((nvram_erase_size - NVRAM_SPACE) / sizeof(uint32_t)); i++ )
-			{
-				if( ((uint32_t *)mmap_area)[i] == NVRAM_MAGIC )
-				{
-					offset = i * sizeof(uint32_t);
-					break;
-				}
-			}
-
-			if( offset < 0 )
-			{
-				free(mtd);
-				return NULL;
-			}
-			else if( (h = malloc(sizeof(nvram_handle_t))) != NULL )
-			{
-				memset(h, 0, sizeof(nvram_handle_t));
-
-				h->fd     = fd;
-				h->mmap   = mmap_area;
-				h->length = nvram_erase_size;
-				h->offset = offset;
-				h->access = access;
-
-				header = _nvram_header(h);
-
-				if( header->magic == NVRAM_MAGIC )
-				{
-					_nvram_rehash(h);
-					free(mtd);
-					return h;
-				}
-				else
-				{
-					munmap(h->mmap, h->length);
-					free(mtd);
-					free(h);
-				}
-			}
-		}
+	if (ioctl(fd, NVRAM_IOCTL_GETALL, &nvr) < 0) {
+		perror("ioctl");
+		close(fd);
+		ret=fd;
+		goto out;
 	}
+	close(fd);
 
-	free(mtd);
-	return NULL;
+	
+	memcpy(buf,nvr.value,len);
+
+out:
+	FREE(fb[index].env.data); //free it to save momery
+	return len;
+
+}
+/*
+ *  * return idx (0 ~ iMAX_CACHE_ENTRY)
+ *   * return -1 if no such value or empty cache
+ *    */
+int cache_idx(const char *name)
+{
+	int i;
+	int index = 0;
+	for (i = 0; i < MAX_CACHE_ENTRY; i++) {
+		if (!fb[index].cache[i].name)
+			return -1;
+		if (!strcmp(name, fb[index].cache[i].name))
+			return i;
+	}
+	return -1;
 }
 
-/**
- *\brief Invoke NVRAM handle for read. 
- *\return The NVRAM handler
- */
-nvram_handle_t * _nvram_open_rdonly(void)
+int nvram_bufset(const char *name, const char *value)
 {
-	const char *file = nvram_find_staging();
+	int idx;
+	int fd;
+	nvram_ioctl_t nvr;
 
-	if( file == NULL )
-		file = nvram_find_mtd();
+	//LIBNV_PRINT("--> nvram_bufset\n");
+	int tmpfd=-1;
+	int index = 0;
+	LIBNV_CHECK_INDEX(-1);
+	LIBNV_CHECK_VALID(&tmpfd);
 
-
-	if( file != NULL )
-		return _nvram_open(file, NVRAM_RO);
-
-	return NULL;
-}
-
-/**
- *\brief Invoke NVRAM handle for read & write. 
- *\return The NVRAM handler
- **/
-nvram_handle_t * _nvram_open_staging(void)
-{
-	if( nvram_find_staging() != NULL || nvram_to_staging() == 0 )
-		return _nvram_open(NVRAM_STAGING, NVRAM_RW);
-
-	return NULL;
-}
-
-/**
- *\brief Close NVRAM and free memory. 
- *\return Always return 0
- **/
-int _nvram_close(nvram_handle_t *h)
-{
-	if (NULL == h) {
-		fprintf(stderr,
-				"Could not open nvram! Possible reasons are:\n"
-				"	- No \'nvram\' block found in /proc/mtd\n"
-				"	- Unable to open mtd device\n"
-				"	- Insufficient memory to complete operation\n"
-				"	- Memory mapping failed or not supported\n"
-				"	- Mtd block not initialized. Run \'nvram init\' first.\n"
-			   );
+	nvr.index = index;
+	nvr.name = name;
+	nvr.value = value;
+	fd = open(NV_DEV, O_RDONLY);
+	if (fd < 0) {
+		perror(NV_DEV);
 		return -1;
 	}
-	_nvram_free(h);
-	munmap(h->mmap, h->length);
-	close(h->fd);
-	free(h);
-	
+	if (ioctl(fd, NVRAM_IOCTL_SET, &nvr) < 0) {
+		perror("ioctl");
+		close(fd);
+		return -1;
+	}
+	close(fd);
+
+	idx = cache_idx(name);
+
+	if (-1 == idx) {
+		//find the first empty room
+		for (idx = 0; idx < MAX_CACHE_ENTRY; idx++) {
+			if (!fb[index].cache[idx].name)
+				break;
+		}
+		//no any empty room
+		if (idx == MAX_CACHE_ENTRY) {
+			LIBNV_ERROR("run out of env cache, please increase MAX_CACHE_ENTRY\n");
+			return -1;
+		}
+		fb[index].cache[idx].name = strdup(name);
+		fb[index].cache[idx].value = strdup(value);
+	}
+	else {
+		//abandon the previous value
+		FREE(fb[index].cache[idx].value);
+		fb[index].cache[idx].value = strdup(value);
+	}
+	LIBNV_PRINT("bufset %d '%s'->'%s'\n", index, name, value);
+	fb[index].dirty = 1;
+
 	return 0;
 }
 
-/**
- *\brief Get the value of an NVRAM variable. 
- *\return Return the value of the name, or NULL if name does not exist
- *\param[in] h NVRAM handler
- *\param[in] name The specified name
- *\deprecated Invoked in inner functions only.
- **/
-char * _nvram_get(nvram_handle_t *h, const char *name)
+char  *nvram_bufget(const char *name)
 {
-	assert(h != NULL);
-	uint32_t i;
-	nvram_tuple_t *t;
-	char *value;
+	int idx;
+	static char  *ret;
+	int fd;
+	nvram_ioctl_t nvr;
+	//add by daniel
+	int tmpfd=-1;
+	//LIBNV_PRINT("--> nvram_bufget %d\n", index);
+	int index = 0;
+	LIBNV_CHECK_INDEX("");
+	LIBNV_CHECK_VALID(&tmpfd);
 
-	if (!name)
-		return NULL;
-
-
-	/* Hash the name */
-	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
-
-	/* Find the associated tuple in the hash table */
-	for (t = h->nvram_hash[i]; t && strcmp(t->name, name); t = t->next)
-	{
+	nvr.index = index;
+	nvr.name = name;
+	nvr.value = malloc(MAX_VALUE_LEN);
+	fd = open(NV_DEV, O_RDONLY);
+	if (fd < 0) {
+		perror(NV_DEV);
+		FREE(nvr.value);
+		return "";
 	}
+	if (ioctl(fd, NVRAM_IOCTL_GET, &nvr) < 0) {
+		perror("ioctl");
+		close(fd);
+		FREE(nvr.value);
+		return "";
+	}
+	close(fd);
 
-	value = t ? t->value : NULL;
+	idx = cache_idx(name);
 
-	return value;
-}
-
-/**
- *\brief Get all NVRAM variables. 
- *\return The iterator of all NVRAM settings.
- *\param[in] h The NVRAM handler
- *\deprecated Invoked in inner functions only.
- **/
-nvram_tuple_t * _nvram_getall(nvram_handle_t *h)
-{
-	assert(h != NULL);
-	int i;
-	nvram_tuple_t *t, *l, *x;
-
-	l = NULL;
-
-	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
-		for (t = h->nvram_hash[i]; t; t = t->next) {
-			if( (x = (nvram_tuple_t *) malloc(sizeof(nvram_tuple_t))) != NULL )
-			{
-				x->name  = t->name;
-				x->value = t->value;
-				x->next  = l;
-				l = x;
-			}
-			else
-			{
-				break;
-			}
+	if (-1 != idx) {
+		if (fb[index].cache[idx].value) {
+			//duplicate the value in case caller modify it
+			//ret = strdup(fb[index].cache[idx].value);
+			FREE(fb[index].cache[idx].value);
+			fb[index].cache[idx].value = strdup(nvr.value);
+			FREE(nvr.value);
+			ret = fb[index].cache[idx].value;
+			LIBNV_PRINT("bufget %d '%s'->'%s'\n", index, name, ret);
+			return ret;
 		}
 	}
 
-	return l;
+	//no default value set?
+	//btw, we don't return NULL anymore!
+	LIBNV_PRINT("bufget %d '%s'->''(empty) Warning!\n", index, name);
+
+	FREE(nvr.value);
+     
+	return "";
 }
 
-
-/**
- * \brief Set the value of an NVRAM variable. 
- * \return Return 0 on success, errno on fail
- * \param[in] h The NVRAM handler
- * \param[in] name The specified name 
- * \param[in] value The specified value 
- * \deprecated Invoked in inner functions only.
- **/
-int _nvram_set(nvram_handle_t *h, const char *name, const char *value)
+void nvram_buflist(void)
 {
-	assert(h != NULL);
-	uint32_t i;
-	nvram_tuple_t *t, *u, **prev;
+	int i;
 
-	/* Hash the name */
-	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
+	int  tmpfd=-1;
+	int index = 0;	
+	//LIBNV_PRINT("--> nvram_buflist %d\n", index);
+	LIBNV_CHECK_INDEX();
+	LIBNV_CHECK_VALID(&tmpfd);
 
-	/* Find the associated tuple in the hash table */
-	for (prev = &h->nvram_hash[i], t = *prev;
-		 t && strcmp(t->name, name); 
-		 prev = &t->next, t = *prev);
-
-	/* (Re)allocate tuple */
-	if (!(u = _nvram_realloc(h, t, name, value)))
-		return -12; /* -ENOMEM */
-
-	/* Value reallocated */
-	if (t && t == u)
-		return 0;
-
-	/* Move old tuple to the dead table */
-	if (t) {
-		*prev = t->next;
-		t->next = h->nvram_dead;
-		h->nvram_dead = t;
+	for (i = 0; i < MAX_CACHE_ENTRY; i++) {
+		if (!fb[index].cache[i].name)
+			break;
+		printf("  '%s'='%s'\n", fb[index].cache[i].name, fb[index].cache[i].value);
 	}
-
-	/* Add new tuple to the hash table */
-	u->next = h->nvram_hash[i];
-	h->nvram_hash[i] = u;
-
-	return 0;
 }
 
-/**
- *\brief Unset the value of an NVRAM variable.
- *\return Return 0 on success //FIXME
- *\param[in] h The NVRAM handler
- *\param[in] name The specifed name
- *\deprecated Invoked in inner functions only.
+/*
+ * write flash from cache
  */
-int _nvram_unset(nvram_handle_t *h, const char *name)
+int nvram_commit()
 {
-	assert(h != NULL);
-	uint32_t i;
-	nvram_tuple_t *t, **prev;
+	int fd;
+	nvram_ioctl_t nvr;
+	//add by daniel 
+	int tmpfd=-1;
+	
+	int index = 0;
+	//LIBNV_PRINT("--> nvram_commit %d\n", index);
+	LIBNV_CHECK_INDEX(-1);
+	//LIBNV_PRINT("==commit====fb %p  value addr %pvalid=%d=====\n", fb, &(fb[index].valid),fb[index].valid);
+	LIBNV_CHECK_VALID(&tmpfd);
 
-	//FIXME
-	if (!name)
-		return EACCES;
 
-	/* Hash the name */
-	i = hash(name) % NVRAM_ARRAYSIZE(h->nvram_hash);
-
-	/* Find the associated tuple in the hash table */
-	for (prev = &h->nvram_hash[i], t = *prev;
-		 t && strcmp(t->name, name); prev = &t->next, t = *prev);
-
-	/* Move it to the dead table */
-	if (t) {
-		*prev = t->next;
-		t->next = h->nvram_dead;
-		h->nvram_dead = t;
+	nvr.index = index;
+	fd = open(NV_DEV, O_RDWR);
+	if (fd < 0) {
+		perror(NV_DEV);
+		return -1;
 	}
+	if (ioctl(fd, NVRAM_IOCTL_COMMIT, &nvr) < 0) { 
+		perror("ioctl"); 
+		close(fd); 
+		return -1;
+	}
+	close(fd);
+
+	fb[index].dirty = 0;
 
 	return 0;
 }
 
-
-/**
- * \brief Regenerate NVRAM. 
- * \return Return 0 on success
- * \param[in] h The NVRAM handler
- * \deprecated Invoked in inner functions only.
- **/
-int _nvram_commit(nvram_handle_t *h)
+/*
+ * clear flash by writing all 1's value
+ */
+int nvram_clear()
 {
-	assert(h != NULL);
-	nvram_header_t *header = _nvram_header(h);
-	char *ptr, *end;
-	int i;
-	nvram_tuple_t *t;
-	nvram_header_t tmp;
-	uint8_t crc;
+	int fd;
+	nvram_ioctl_t nvr;
+	
+	int index = 0;
+	LIBNV_PRINT("--> nvram_clear %d\n", index);
+	LIBNV_CHECK_INDEX(-1);
+	nvram_close();
 
-	/* Regenerate header */
-	header->magic = NVRAM_MAGIC;
-	header->crc_ver_init = (NVRAM_VERSION << 8);
-
-	/* Clear data area */
-	ptr = (char *) header + sizeof(nvram_header_t);
-	memset(ptr, 0xFF, NVRAM_SPACE - sizeof(nvram_header_t));
-	memset(&tmp, 0, sizeof(nvram_header_t));
-
-	/* Leave space for a double NUL at the end */
-	end = (char *) header + NVRAM_SPACE - 2;
-
-	/* Write out all tuples */
-	for (i = 0; i < NVRAM_ARRAYSIZE(h->nvram_hash); i++) {
-		for (t = h->nvram_hash[i]; t; t = t->next) {
-			if ((ptr + strlen(t->name) + 1 + strlen(t->value) + 1) > end)
-				break;
-			ptr += sprintf(ptr, "%s=%s", t->name, t->value) + 1;
-		}
+	nvr.index = index;
+	fd = open(NV_DEV, O_RDONLY);
+	if (fd < 0) {
+		perror(NV_DEV);
+		return -1;
 	}
+	if (ioctl(fd, NVRAM_IOCTL_CLEAR, &nvr) < 0) {
+		perror("ioctl");
+		close(fd);
+		return -1;
+	}
+	close(fd);
 
-	/* End with a double NULL and pad to 4 bytes */
-	*ptr = '\0';
-	ptr++;
-
-	if( (int)ptr % 4 )
-		memset(ptr, 0, 4 - ((int)ptr % 4));
-
-	ptr++;
-
-	/* Set new length */
-	header->len = NVRAM_ROUNDUP(ptr - (char *) header, 4);
-
-	/* Little-endian CRC8 over the last 11 bytes of the header */
-	tmp.crc_ver_init   = header->crc_ver_init;
-	tmp.config_refresh = header->config_refresh;
-	tmp.config_ncdl    = header->config_ncdl;
-	crc = hndcrc8((unsigned char *) &tmp + NVRAM_CRC_START_POSITION,
-		sizeof(nvram_header_t) - NVRAM_CRC_START_POSITION, 0xff);
-
-	/* Continue CRC8 over data bytes */
-	crc = hndcrc8((unsigned char *) &header[0] + sizeof(nvram_header_t),
-		header->len - sizeof(nvram_header_t), crc);
-
-	/* Set new CRC8 */
-	header->crc_ver_init |= crc;
-
-	/* Write out */
-	msync(h->mmap, h->length, MS_SYNC);
-	fsync(h->fd);
-
-	/* Reinitialize hash table */
-	return _nvram_rehash(h);
+	fb[index].dirty = 0;
+	return 0;
 }
-
