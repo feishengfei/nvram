@@ -448,6 +448,14 @@
 #define BW_EZMODESORT_RULE	"Game Console|VoIP|Instant Messenger|Web Surfing|P2P/FTP|E-Mail"
 
 
+/* For fw upgrade/downgrade only */
+#define LAN_DHCPS_GUESTLAN "default^0^33^32^86400^liteon.com^^ispdns^^^^^none^opendns^opendns^192.168.1.10^24^60"
+
+#define USER_SBM_DEFAULT_IPADDR_START ""
+#define USER_SBM_DEFAULT_IPADDR_END   ""
+#define GuestLANtoLAN "GuestLANtoLAN^0^"USER_SBM_DEFAULT_IPADDR_START"^"USER_SBM_DEFAULT_IPADDR_END"^^wan0^0^0^Game Console^1^^^^^0"
+#define GuestLANtoWAN "GuestLANtoWAN^0^"USER_SBM_DEFAULT_IPADDR_START"^"USER_SBM_DEFAULT_IPADDR_END"^^wan0^0^0^Game Console^1^^^^^0"
+
 /**
  *\brief nvram_factory_default The factory default settings
  *\showinitializer

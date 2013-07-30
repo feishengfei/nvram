@@ -5,10 +5,12 @@
 
 #include "nvram.h"
 #include "nvram_fw.h"
-#include "nvram_factory.h"
+#include "nvram_rule.h"
 
 /* Global */
 extern struct nvram_fw_tuple nvram_fw_table[];
+extern nvram_tuple_t nvram_factory_default[];
+extern int _nvram_set(const char *name, const char *value);
 
 /**
  * **************Advanced Interface*************************
@@ -98,10 +100,33 @@ int nvram_factory(void)
  *			1.Empty \ref NVRAM_DEFAULT will be updated by it's _default brother.
  *			2.Valid \ref NVRAM_TEMP will be reverted to it's factory default.
  */
+
+int nvram_set_boot(const char *name, const char *value)
+{
+    unsigned int opt = nvram_get_option(name);
+    int ret = 0;
+  
+    //printf("==============in nvram_set=== opt  %x,name %s,value %s===========\n",opt,name,value);
+    if (opt & NVRAM_UNDEFINED) {
+        return EINVAL;
+    }
+    if (opt & NVRAM_PROTECTED) {
+        char *exist = nvram_get(name);
+        if (exist && *exist) {
+            return EACCES; /* If anything exists, return permission denied. */
+        }
+    }
+	
+    ret = _nvram_set(name, value);
+    return ret;
+}
+
 void nvram_boot(void)
 {
 	struct nvram_tuple *v;
     char *value;
+
+    nvram_init(NULL);
 
 	for (v = &nvram_factory_default[0]; v->name ; v++) {
 		value = nvram_get(v->name);
@@ -117,15 +142,14 @@ void nvram_boot(void)
                 v->value = nvram_get( default_name);
             }
 
-            nvram_set(v->name, v->value);
-			nvram_commit();
+            nvram_set_boot(v->name, v->value);
         } else {
             /* Some value exist. */
             if (v->option & NVRAM_TEMP)
-				nvram_set( v->name, v->value);
-				nvram_commit();
+               nvram_set_boot(v->name, v->value);
         }
 	}
+    nvram_close();
 }
 
 /**
@@ -287,6 +311,28 @@ int nvram_import(const char *filename)
 
 	return 0;
 }
+
+int special_processing()
+{
+    char tmp[32];
+    char *val;
+
+    ezplib_get_attr_val("ssh_rule", 0, "enable", tmp, sizeof(tmp),
+                    EZPLIB_USE_CLI);
+    if (tmp[0] != '0') {
+        ezplib_replace_attr("ssh_rule", 0, "enable", "0");
+        return 1;
+    }
+
+    val = nvram_get("turbonat_enable");
+    if (!val || *val == '0') {
+        nvram_fset("turbonat_enable", "1");
+    }
+
+    return 0;
+}
+
+
 /**
  *\brief Upgrade configurations to specified source version
  *\return Return 0 on success
@@ -295,8 +341,76 @@ int nvram_import(const char *filename)
  */
 int nvram_upgrade(const char *source)
 {
-	int change = 0;
-	return change;
+    struct nvram_fw_tuple *v;
+    int old, new;
+    char old_str[32];
+    char new_str[32];
+    int i, change = 0;
+
+    /* If source is empty, get it from fw_version. */
+    if (source && *source) {
+        strcpy(old_str, source);
+    } else {
+        strcpy(old_str, nvram_safe_get("fw_version"));
+    }
+    strcpy(new_str, xstr(EZP_PROD_VERSION));
+
+	//add for test
+    printf("====== old_str :%s ===  new_str :%s=====\n",old_str,new_str);
+
+    if (strcmp(old_str, new_str)) {
+        /** 
+         * If the versions have any difference, 
+         * eg., 2.0.2-RC1 to 2.0.2-RC3, we
+         * should enforce the special processing, 
+         * fg., closing the backdoor.
+         */
+        change = special_processing();
+    }
+
+    /* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
+    for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
+    old_str[i]='\0';
+    for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
+    new_str[i]='\0';
+
+    /* Use "0.0.0" instead of "". */
+    if (!*old_str) {
+        strcpy(old_str, nvram_fw_table[0].fw_str);
+    }
+
+    /* We might not be able to find out the version. Skip upgrade if cannot. */
+    old = 0xEFFFFFFF;
+    for (v = &nvram_fw_table[0]; v->fw_str ; v++) {
+        if (!strcmp(v->fw_str, old_str)) {
+            old = v->fw_version;
+        }
+        if (!strcmp(v->fw_str, new_str)) {
+            new = v->fw_version;
+        }
+    }
+	printf("=======old:%d==new:%d=======\n",old,new);
+	
+    if (old < new) {
+        printf("Upgrade [%s->%s], index[%d->%d]\n", old_str, new_str, old, new);
+        /* Upgrade. Use the upgrade functions from (old + 1) to new. */
+        for (i = old + 1; i <= new; i++) {
+            if (nvram_fw_table[i].fw_upgrade_func) {
+                (*nvram_fw_table[i].fw_upgrade_func)();
+            }
+        }
+        /* nvram is the only place to set fw_version. */
+        nvram_fset("fw_version", xstr(EZP_PROD_VERSION));
+        change = 1;
+    }
+    
+    if(strcmp(nvram_safe_get("prod_subsubcat"), "")) {
+        /* unset prod_subsubcat to make sure prod_subsubcat the same with 
+         * special firmware */
+        nvram_unset("prod_subsubcat"); 
+        change = 1;
+    }
+    return change;
 }
 
 /**
@@ -307,8 +421,70 @@ int nvram_upgrade(const char *source)
  */
 int nvram_downgrade(const char *target)
 {
-	int change = 0;
-	return change;
+    struct nvram_fw_tuple *v;
+    int old, new;
+    char old_str[32];
+    char new_str[32];
+    int i, change = 0;
+
+    strcpy(old_str, nvram_safe_get("fw_version"));
+    strcpy(new_str, target);
+	printf("old str: %s, new str: %s\n", old_str, new_str);
+    if (strcmp(old_str, new_str)) {
+        /* If the versions have any difference, eg., 2.0.2-RC1 to 2.0.2-RC3, we
+         * should enforce the special processing, fg., closing the backdoor.
+         */
+        change = special_processing();
+    }
+
+    /* Purify new_str. e.g. 1.6.5-RC1 => 1.6.5 */
+    for (i = 0; old_str[i] == '.' || isdigit(old_str[i]) ; i++);
+    old_str[i]='\0';
+    for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
+    new_str[i]='\0';
+
+    /* Use "0.0.0" instead of "". */
+    if (!*old_str) {
+        strcpy(old_str, nvram_fw_table[0].fw_str);
+    }
+    if (!*new_str) {
+        strcpy(new_str, nvram_fw_table[0].fw_str);
+    }
+
+    /* We might not find out the version. Skip downgrade if cannot. */
+    old = 0;
+    for (v = &nvram_fw_table[0]; v->fw_str ; v++) {
+        if (!strcmp(v->fw_str, old_str)) {
+            old = v->fw_version;
+        }
+        if (!strcmp(v->fw_str, new_str)) {
+            new = v->fw_version;
+        }
+    }
+	printf("old:%d, new:%d\n ", old, new);
+    if (old > new) {
+        printf("Downgrade [%s->%s], [%d->%d]\n", old_str, new_str, old, new);
+        /* Downgrade. Use the upgrade functions from old to (new + 1). */
+        for (i = old; i >= new + 1; i-- ) {
+            if (nvram_fw_table[i].fw_downgrade_func) {
+                (*nvram_fw_table[i].fw_downgrade_func)();
+            }
+        }
+        /* nvram is the only place to set fw_version. */
+        if (!strcmp(new_str, nvram_fw_table[0].fw_str)) {
+            nvram_unset("fw_version"); /* 0.0.0 */
+        } else {
+            nvram_fset("fw_version", target);
+        }
+        change = 1;
+    }
+    if(strcmp(nvram_safe_get("prod_subsubcat"), "")) {
+        /* unset prod_subsubcat to make sure prod_subsubcat the same with 
+         * special firmware */
+        nvram_unset("prod_subsubcat"); 
+        change = 1;
+    }
+    return change;
 }
 
 /**

@@ -250,23 +250,32 @@ int main( int argc, const char *argv[] )
 		}
 		/*nvram upgrade <version> */
 		else if (!strncmp(*argv, "upgrade", 7)) {
-			if (*++argv) {
-				stat = nvram_upgrade(*argv);
+			argc -= 1;
+			argv += 1;
+			if (nvram_upgrade((argc >= 1)? argv[0]: NULL)) {
+				nvram_commit();
 				done++;
-			} else {
-				fprintf(stderr, "Command '%s' requires an argument!\n", 
+				stat = 0;
+			}
+			else {
+				fprintf(stderr, "nvram upgrade error\n", 
 						*--argv);
 				done = 0;
 			}
 		}
-		/*nvram downgrade <version> */
+		/*nvram downgrade version */
 		else if (!strncmp(*argv, "downgrade", 9)) {
-			if (*++argv) {
-				stat = nvram_downgrade(*argv);
-				done++;
-			} else {
-				fprintf(stderr, "Command '%s' requires an argument!\n", 
-						*--argv);
+			argc -= 1;
+			argv += 1;
+			if (argc == 1) {
+				if (nvram_downgrade(argv[0])) {
+					nvram_commit();
+					done++;
+					stat = 0;
+				}
+			}  
+			else {
+				fprintf(stderr, "nvram downgrade error\n");
 				done = 0;
 			}
 		}
@@ -458,8 +467,8 @@ int main( int argc, const char *argv[] )
 				"	nvram set/fset <rule=value> \n"
 				"	nvram unset <rule> \n"
 				"	nvram export/import <backup_file>\n"
-				"	nvram downgrade/upgrade <version>\n"	//TODO
-
+				"	nvram upgrade <version>\n"
+				"	nvram downgrade version\n"
 				"	nvram replace rule <rule-set> <nth> <new-rule>\n"
 				"	nvram replace attr <rule-set> <nth> <attr> <new-attr> \n"
 				"	nvram append rule <rule-set> <new-rule>\n"
@@ -467,11 +476,9 @@ int main( int argc, const char *argv[] )
 				"	nvram add rule <rule-set> <nth> <new-rule>\n"
 				"	nvram delete rule <rule-set> <nth>\n"
 				"	nvram rule num <rule-set>\n"
-
 				"	nvram boot\n"
 				"	nvram default [rule-set]\n"				//TODO
 				"	nvram factory\n"						//TODO
-
 				"	nvram commit\n"
 			   );
 	}
