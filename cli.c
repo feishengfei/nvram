@@ -18,13 +18,30 @@ void puts_trim_cr(char *str)
 }
 
 
-int do_show()
+int do_show(void)
 {
-	int stat = 1;
-	char buf[1024 * 10] = {0};
-	nvram_getall(buf, sizeof(buf));
+	char *name, buf[NVRAM_SPACE];
+	int size, crc;
 
-	return stat;
+	/* nvram show */
+	nvram_getall(buf, sizeof(buf));
+	memcpy(&crc, buf, 4);
+
+	/*get crc size in nvram*/
+	size = strlen(buf) + 1;
+
+	/*show contents start second string, hide crc content*/
+	for (name = buf + strlen(name) + 1; *name; name += strlen(name) + 1)
+	{
+		puts_trim_cr(name);
+	}
+
+	size = size + (int) name - (int) buf;
+
+	fprintf(stderr, "crc = %x\n", crc);
+	fprintf(stderr, "size: %d bytes (%d left)\n",
+			size, NVRAM_SPACE - size);
+	return 0;
 }
 
 
@@ -212,7 +229,7 @@ int main( int argc, const char *argv[] )
 		/* nvram export <backup_file>*/
 		else if (!strncmp(*argv, "export", 6)) {
 			if (*++argv) {
-//				stat = nvram_export(*argv);
+				stat = nvram_export(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -223,7 +240,7 @@ int main( int argc, const char *argv[] )
 		/* nvram import <backup_file>*/
 		else if (!strncmp(*argv, "import", 6)) {
 			if (*++argv) {
-//				stat = nvram_import(*argv);
+				stat = nvram_import(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -234,7 +251,7 @@ int main( int argc, const char *argv[] )
 		/*nvram upgrade <version> */
 		else if (!strncmp(*argv, "upgrade", 7)) {
 			if (*++argv) {
-//				stat = nvram_upgrade(*argv);
+				stat = nvram_upgrade(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -245,7 +262,7 @@ int main( int argc, const char *argv[] )
 		/*nvram downgrade <version> */
 		else if (!strncmp(*argv, "downgrade", 9)) {
 			if (*++argv) {
-//				stat = nvram_downgrade(*argv);
+				stat = nvram_downgrade(*argv);
 				done++;
 			} else {
 				fprintf(stderr, "Command '%s' requires an argument!\n", 
@@ -378,7 +395,7 @@ int main( int argc, const char *argv[] )
 			}
 		}
 		else if (!strncmp(*argv, "boot", 4)) {
-//			nvram_boot();
+			nvram_boot();
 			stat = 0;
 			done++;
 		}
@@ -386,19 +403,19 @@ int main( int argc, const char *argv[] )
 		else if( !strncmp(*argv, "default", 7) )
 		{
 			if(argc == 1) {
-//				stat = nvram_default();
+				stat = nvram_default();
 			}
 			else {
 				/* Added for single rule default */
 				argv++;
-//				stat = nvram_default_rule(*argv);
+				stat = nvram_default_rule(*argv);
 			}
 			done++;
 		}
 		/* nvram factory */
 		else if( !strncmp(*argv, "factory", 7) )
 		{
-//			stat = nvram_factory();
+			stat = nvram_factory();
 			/* send SIGTERM to init for reboot */
 			if(!stat)
 				kill(1, 15);
@@ -437,11 +454,9 @@ int main( int argc, const char *argv[] )
 				"	nvram show <rule-set> <nth>\n"
 				"	nvram show <rule-set> <nth> <attr-type>\n"
 				"	nvram show <rule-set> <nth> subrule <start> <end>\n"
-				"	nvram info\n"
 				"	nvram get <rule>\n"
 				"	nvram set/fset <rule=value> \n"
 				"	nvram unset <rule> \n"
-//TODO			"	nvram reset <rule> \n"
 				"	nvram export/import <backup_file>\n"
 				"	nvram downgrade/upgrade <version>\n"	//TODO
 
@@ -458,8 +473,6 @@ int main( int argc, const char *argv[] )
 				"	nvram factory\n"						//TODO
 
 				"	nvram commit\n"
-				"	nvram dump\n"
-//				"	nvram init\n"
 			   );
 	}
 	return stat;
