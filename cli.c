@@ -436,19 +436,6 @@ int main( int argc, const char *argv[] )
 			stat = nvram_commit();
 			done++;
 		}
-		/* nvram dump */
-		else if( !strncmp(*argv, "dump", 4) )
-		{
-//			stat = nvram_dump();
-			done++;
-		}
-		/* nvram mtd 
-		else if( !strncmp(*argv, "init", 4) )
-		{
-			stat = *((int *)nvram_init());
-			done++;
-		}
-		*/
 		else
 		{
 			fprintf(stderr, "Unknown option '%s' !\n", *argv);
@@ -477,8 +464,8 @@ int main( int argc, const char *argv[] )
 				"	nvram delete rule <rule-set> <nth>\n"
 				"	nvram rule num <rule-set>\n"
 				"	nvram boot\n"
-				"	nvram default [rule-set]\n"				//TODO
-				"	nvram factory\n"						//TODO
+				"	nvram default [rule-set]\n"
+				"	nvram factory\n"
 				"	nvram commit\n"
 			   );
 	}

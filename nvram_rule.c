@@ -39,9 +39,31 @@ int show_value(char *val, char *buf, int bsize)
         return EZPLIB_NO_ATTRIBUTE;
     }
 
+#if 0
     if (snprintf(buf, bsize, "%s", val) >= bsize) {
         return EZPLIB_VAL_TRUNC;
     }
+#else 
+	
+	//translate | & ^
+	char *dest = buf;
+	char *ptr = val;
+	while ('\0' != *ptr) {
+		if(!strncmp( ptr, "0x5E", 4)) {
+			*dest++ = '^';
+			ptr += 4;
+		}
+		else if(!strncmp( ptr, "0x7C", 4)) {
+			*dest++ = '|';
+			ptr += 4;
+		}
+		else {
+			*dest++ = *ptr++;
+		}
+	}
+#endif
+
+    
     return strlen(buf);
 }
 
@@ -2077,7 +2099,7 @@ int ezplib_get_rule(const char *rule_set, int nth,
             nth --;
             continue;
         }
-        ret = snprintf(buf, bsize, ptr);
+        ret = snprintf(buf, bsize, "%s", ptr);
         if (ret >= bsize) {
             return EZPLIB_VAL_TRUNC;
         }
@@ -2372,8 +2394,35 @@ int ezplib_replace_attr(const char *rule_set, int nth,
             }
 
             /* include the separator */
+#if 0
             attr_len = strlen(val) + 1;
             ret = snprintf(str, bytes, "%s%s", val, sep);
+#else
+			attr_len = 0;
+			char *dest = str;
+			char *ptr = val;
+			while ('\0' != *ptr) {	
+				if('^' == *ptr) {
+					sprintf(dest, "0x5E");
+					dest += 4;
+					attr_len += 4;
+				}
+				else if('|' == *ptr) {
+					sprintf(dest, "0x7C");
+					dest += 4;
+					attr_len += 4;
+				}
+				else {
+					*dest++ = *ptr;
+					attr_len++;
+				}
+				ptr++;
+			}
+			*dest++ = '^';
+			attr_len++;
+			ret = strlen(str);
+#endif
+
             if (ret >= bytes) {
                 return EZPLIB_VAL_TRUNC;
             }
