@@ -2362,8 +2362,8 @@ int ezplib_replace_attr(const char *rule_set, int nth,
 	const char *attr, const char *new_rule)
 {
     char *ptr_array[MAX_ATTR_NUM];
-    char word[EZPLIB_BUF_LEN];
-    char tmp[EZPLIB_BUF_LEN];
+    char word[EZPLIB_BUF_LEN] = {0};
+    char tmp[EZPLIB_BUF_LEN] = {0};
     int ret, i, bytes, attr_len;
     char *val, *str, *sep = ATTR_SEP;
     if (!rule_set || !*rule_set || !attr || !*attr || !new_rule) {
