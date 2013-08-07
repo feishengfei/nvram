@@ -52,7 +52,7 @@ typedef struct nvram_ioctl_s {
 #define xstr(s) str(s)
 #define str(s)  #s 
 
-#define EZP_PROD_VERSION "0.0.0_ALPHA"
+#define EZP_PROD_VERSION "0.0.0_PHASE1"
 #define EZP_PROD_CAT "0"
 #define EZP_PROD_SUBCAT "0"
 #define EZP_PROD_SUBSUBCAT "0"

@@ -122,7 +122,7 @@ int fw_func_2_0_6_to_2_0_7(void);
 
 struct nvram_fw_tuple nvram_fw_table[] = {
     { "0.0.0", NVRAM_FW_0_0_0, NULL, NULL },   
-#if 0
+#if 1
     { "1.6.5", NVRAM_FW_1_6_5, fw_func_0_0_0_to_1_6_5, fw_func_1_6_5_to_0_0_0 },
     { "1.6.6", NVRAM_FW_1_6_6, fw_func_1_6_5_to_1_6_6, fw_func_1_6_6_to_1_6_5 },
     { "1.6.7", NVRAM_FW_1_6_7, fw_func_1_6_6_to_1_6_7, fw_func_1_6_7_to_1_6_6 },

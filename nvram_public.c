@@ -252,7 +252,7 @@ int nvram_import(const char *filename)
 	old_str[i]='\0';
 	for (i = 0; new_str[i] == '.' || isdigit(new_str[i]) ; i++);
 	new_str[i]='\0';
-	printf("Firmware:%s\r\nConfiguration:%s\r\n", new_str, old_str);
+	printf("[import]Firmware:%s\r\nConfiguration:%s\r\n", new_str, old_str);
 
 	/* Very likely we cannot find the matched version since our firmware might
 	 * be older than the config file. */
@@ -288,7 +288,7 @@ int nvram_import(const char *filename)
 		if (!v->name || (v->option & NVRAM_PROTECTED) ||
 				(v->option & NVRAM_TEMP)) {
 			/* No match or NVRAM_PROTECTED or NVRAM_TEMP. */
-			printf("invalid: %s=%s\n", buf, p + 1);
+			//printf("invalid: %s=%s\n", buf, p + 1);
 			continue;
 		}
 
@@ -342,7 +342,7 @@ int special_processing()
 int nvram_upgrade(const char *source)
 {
     struct nvram_fw_tuple *v;
-    int old, new;
+    int old, new = 0;
     char old_str[32];
     char new_str[32];
     int i, change = 0;
@@ -353,7 +353,7 @@ int nvram_upgrade(const char *source)
     } else {
         strcpy(old_str, nvram_safe_get("fw_version"));
     }
-    strcpy(new_str, xstr(EZP_PROD_VERSION));
+    strcpy(new_str, EZP_PROD_VERSION);
 
 	//add for test
     printf("====== old_str :%s ===  new_str :%s=====\n",old_str,new_str);
@@ -379,6 +379,8 @@ int nvram_upgrade(const char *source)
         strcpy(old_str, nvram_fw_table[0].fw_str);
     }
 
+    printf("====== old_str :%s ===  new_str :%s=====\n",old_str,new_str);
+
     /* We might not be able to find out the version. Skip upgrade if cannot. */
     old = 0xEFFFFFFF;
     for (v = &nvram_fw_table[0]; v->fw_str ; v++) {
@@ -390,6 +392,7 @@ int nvram_upgrade(const char *source)
         }
     }
 	printf("=======old:%d==new:%d=======\n",old,new);
+
 	
     if (old < new) {
         printf("Upgrade [%s->%s], index[%d->%d]\n", old_str, new_str, old, new);
@@ -400,7 +403,7 @@ int nvram_upgrade(const char *source)
             }
         }
         /* nvram is the only place to set fw_version. */
-        nvram_fset("fw_version", xstr(EZP_PROD_VERSION));
+        nvram_fset("fw_version", EZP_PROD_VERSION);
         change = 1;
     }
     
